@@ -1,0 +1,61 @@
+{
+  "generated_at": "2026-07-01T05:02:47.190358",
+  "protocol": "stripe_mpp",
+  "mode": "test",
+  "total_receipts": 4,
+  "receipts": [
+    {
+      "receipt_id": "mpp_receipt_001",
+      "spend_card_id": "mpp_creator_001",
+      "protocol": "stripe_mpp",
+      "mode": "test",
+      "status": "simulated_after_founder_approval",
+      "payment_intent": "pi_test_mpp_000001",
+      "stripe_receipt_url": "https://dashboard.stripe.com/test/payments/pi_test_mpp_000001",
+      "resource_unlocked": "https://mpp.example.ai/resources/creator-test",
+      "amount_usd": 125,
+      "currency": "usd",
+      "ledger_note": "Demo receipt only. No live Stripe call and no money moved."
+    },
+    {
+      "receipt_id": "mpp_receipt_002",
+      "spend_card_id": "mpp_data_001",
+      "protocol": "stripe_mpp",
+      "mode": "test",
+      "status": "simulated_after_founder_approval",
+      "payment_intent": "pi_test_mpp_000002",
+      "stripe_receipt_url": "https://dashboard.stripe.com/test/payments/pi_test_mpp_000002",
+      "resource_unlocked": "https://mpp.example.ai/resources/competitor-demand-report",
+      "amount_usd": 12,
+      "currency": "usd",
+      "ledger_note": "Demo receipt only. No live Stripe call and no money moved."
+    },
+    {
+      "receipt_id": "mpp_receipt_003",
+      "spend_card_id": "mpp_launch_001",
+      "protocol": "stripe_mpp",
+      "mode": "test",
+      "status": "simulated_after_founder_approval",
+      "payment_intent": "pi_test_mpp_000003",
+      "stripe_receipt_url": "https://dashboard.stripe.com/test/payments/pi_test_mpp_000003",
+      "resource_unlocked": "https://mpp.example.ai/resources/launch-placement",
+      "amount_usd": 49,
+      "currency": "usd",
+      "ledger_note": "Demo receipt only. No live Stripe call and no money moved."
+    },
+    {
+      "receipt_id": "mpp_receipt_004",
+      "spend_card_id": "mpp_execution_001",
+      "protocol": "stripe_mpp",
+      "mode": "test",
+      "status": "simulated_after_founder_approval",
+      "payment_intent": "pi_test_mpp_000004",
+      "stripe_receipt_url": "https://dashboard.stripe.com/test/payments/pi_test_mpp_000004",
+      "resource_unlocked": "https://mpp.example.ai/resources/browser-session",
+      "amount_usd": 1,
+      "currency": "usd",
+      "ledger_note": "Demo receipt only. No live Stripe call and no money moved."
+    }
+  ],
+  "demo_mode": true
+}

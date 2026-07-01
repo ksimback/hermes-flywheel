@@ -1,0 +1,18 @@
+{
+  "servers": [
+    {
+      "name": "stripe-mcp",
+      "description": "Stripe MCP server for approval-gated payments and spend requests",
+      "transport": {
+        "type": "stdio",
+        "command": "stripe-mcp-server",
+        "args": ["--test-mode"]
+      },
+      "env": {
+        "STRIPE_API_KEY": "${STRIPE_API_KEY}",
+        "STRIPE_WEBHOOK_SECRET": "${STRIPE_WEBHOOK_SECRET}"
+      },
+      "optional": true
+    }
+  ]
+}

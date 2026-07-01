@@ -1,0 +1,46 @@
+{
+  "product_name": "ExampleAI",
+  "url": "https://example.ai",
+  "one_liner": "E-commerce intelligence engine for growth teams",
+  "description": "ExampleAI helps e-commerce founders and growth teams calculate store performance signals, growth planning, and merchandising decisions with AI-assisted optimization.",
+  "category": "e-commerce intelligence",
+  "icp": {
+    "buyer": "e-commerce engineer",
+    "company_stage": "seed to series-a",
+    "company_size": "10-200 employees",
+    "pain_points": [
+      "manual store analysis",
+      "expensive e-commerce software licenses",
+      "manual competitor and store research",
+      "lack of modern UX in e-commerce tools"
+    ],
+    "keywords": ["e-commerce", "e-commerce intelligence", "store", "customer signals", "growth planning"]
+  },
+  "competitors": [
+    "https://cartpilot.example",
+    "https://shopflow.example",
+    "https://growthdock.example",
+    "https://cataloglabs.example"
+  ],
+  "positioning": {
+    "primary_claim": "First AI-powered e-commerce intelligence toolkit with modern UX",
+    "proof_points": [
+      "10x faster customer insight workflows than traditional tools",
+      "Built-in AI optimization reduces customer acquisition costs by 15%",
+      "Modern web interface vs legacy spreadsheet workflows"
+    ],
+    "contra_positioning": [
+      "not a full ecommerce platform",
+      "not a storefront builder",
+      "not generic analytics dashboard"
+    ]
+  },
+  "budget": {
+    "weekly_usd": 200,
+    "max_single_spend_usd": 50,
+    "requires_approval": true,
+    "stripe_mode": "test"
+  },
+  "generated_at": "2026-06-18T10:30:00Z",
+  "demo_mode": true
+}

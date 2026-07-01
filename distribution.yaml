@@ -1,0 +1,45 @@
+name: flywheel-agent
+version: 0.1.0
+description: "Your hardest working GTM employee, packaged as a Hermes Profile Distribution."
+hermes_requires: ">=0.16.0"
+author: "Flywheel Demo Team"
+license: "MIT"
+homepage: "https://hermesflywheel.com"
+keywords: ["gtm", "growth", "acquisition", "customer-acquisition", "startup", "slack", "agent-mentions", "stripe", "nvidia"]
+env_requires:
+  - name: OPENAI_API_KEY
+    description: "Model access if using OpenAI/OpenRouter fallback provider."
+    required: false
+  - name: NVIDIA_API_KEY
+    description: "Optional NVIDIA/NIM/Nemotron access for sponsor integration."
+    required: false
+  - name: SLACK_BOT_TOKEN
+    description: "Optional Slack bot token (xoxb-) for running Flywheel as a tagged Slack GTM employee."
+    required: false
+  - name: SLACK_APP_TOKEN
+    description: "Optional Slack app-level token (xapp-) for Socket Mode gateway connection."
+    required: false
+  - name: STRIPE_API_KEY
+    description: "Optional Stripe test-mode key for MPP approval-gated GTM procurement demos."
+    required: false
+  - name: STRIPE_WEBHOOK_SECRET
+    description: "Optional Stripe webhook secret for payment confirmations."
+    required: false
+files:
+  - SOUL.md
+  - config.yaml
+  - mcp.json
+  - cron/weekly-gtm-sprint.json
+  - skills/flywheel-agent/
+install_notes: |
+  Flywheel Agent is a GTM employee that turns your product, ICP, competitors, and budget
+  into a weekly customer acquisition sprint. It researches launch opportunities, finds
+  backlinks, drafts warm outbound, plans creator campaigns, and proposes spend through
+  approval gates.
+
+  First run: flywheel-agent chat, then type "start my acquisition flywheel"
+  Slack demo: configure Hermes Slack gateway, invite Flywheel, and tag `@Flywheel run a GTM sprint for ...` in a GTM channel.
+  Fresh machine: install Hermes first (`curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash`)
+  Profile setup: Hermes profiles are isolated; run `hermes -p flywheel-agent setup --portal` or `hermes -p flywheel-agent model` if the profile has no model configured.
+  Weekly: Enable cron/weekly-gtm-sprint.json for recurring sprints
+  Safety: All outbound and spend requires explicit human approval

@@ -1,0 +1,250 @@
+{
+  "product_name": "ExampleAI",
+  "generated_at": "2026-07-01T05:02:47.072378",
+  "launch_channels": [
+    {
+      "channel": "betalist",
+      "name": "BetaList",
+      "category": "directory",
+      "effort": "low",
+      "timeline": "1 day",
+      "requirements": [
+        "beta/early access",
+        "signup page",
+        "screenshots"
+      ],
+      "copy": "ExampleAI - E-commerce intelligence engine for growth teams\n\nEarly access for e-commerce founders who want to solve manual store analysis. Turns store and customer signals into weekly GTM actions.\n\n\ud83c\udfaf Perfect for: e-commerce founders working with e-commerce intelligence\n\ud83d\udca1 Key features: [list 3-4 features]\n\ud83d\ude80 Coming soon: [roadmap items]",
+      "success_metrics": [
+        "beta signups",
+        "email subscribers"
+      ],
+      "approval_required": true,
+      "status": "draft",
+      "priority_score": 80
+    },
+    {
+      "channel": "devhunt",
+      "name": "DevHunt",
+      "category": "directory",
+      "effort": "low",
+      "timeline": "1 day",
+      "requirements": [
+        "developer tool angle",
+        "technical screenshots",
+        "GitHub link"
+      ],
+      "copy": "ExampleAI - E-commerce intelligence engine for growth teams\n\nOpen source tool for e-commerce founders. Built because manual store analysis was holding back our e-commerce intelligence projects.\n\n\ud83d\udd27 Tech stack: [your stack]\n\ud83d\udce6 Installation: [install method]\n\ud83c\udf1f GitHub: [repo link]",
+      "success_metrics": [
+        "developer signups",
+        "GitHub stars"
+      ],
+      "approval_required": true,
+      "status": "draft",
+      "priority_score": 80
+    },
+    {
+      "channel": "peerlist",
+      "name": "Peerlist",
+      "category": "professional",
+      "effort": "low",
+      "timeline": "1 day",
+      "requirements": [
+        "professional profile",
+        "project showcase",
+        "network"
+      ],
+      "copy": "Excited to share ExampleAI with the Peerlist community! \ud83c\udf89\n\nE-commerce intelligence engine for growth teams\n\nBuilt for e-commerce founders who manual store analysis. Turns store and customer signals into weekly GTM actions.\n\nWould love to connect with others building in the e-commerce intelligence e-commerce!",
+      "success_metrics": [
+        "professional connections",
+        "project views"
+      ],
+      "approval_required": true,
+      "status": "draft",
+      "priority_score": 70
+    },
+    {
+      "channel": "hacker_news",
+      "name": "Hacker News",
+      "category": "community",
+      "effort": "medium",
+      "timeline": "same day",
+      "requirements": [
+        "technical angle",
+        "HN account with karma",
+        "launch timing"
+      ],
+      "copy": "Show HN: ExampleAI \u2013 E-commerce intelligence engine for growth teams\n\nWe built this because manual store analysis was a constant frustration for e-commerce founders. Turns store and customer signals into weekly GTM actions.\n\nWould love feedback from the HN community on our approach!",
+      "success_metrics": [
+        "points",
+        "comments",
+        "technical discussion"
+      ],
+      "approval_required": true,
+      "status": "draft",
+      "priority_score": 60
+    },
+    {
+      "channel": "indie_hackers",
+      "name": "Indie Hackers",
+      "category": "community",
+      "effort": "medium",
+      "timeline": "1 week",
+      "requirements": [
+        "founder story",
+        "IH account",
+        "metrics/traction"
+      ],
+      "copy": "\ud83d\udee0\ufe0f Just launched ExampleAI after 6 months of building\n\nThe problem: manual store analysis\nOur solution: E-commerce intelligence engine for growth teams\n\nTraction so far: [your metrics here]\n\nWhat would you want to see next? \ud83e\udd14",
+      "success_metrics": [
+        "engagement",
+        "followers",
+        "networking"
+      ],
+      "approval_required": true,
+      "status": "draft",
+      "priority_score": 60
+    },
+    {
+      "channel": "reddit_communities",
+      "name": "Reddit Communities",
+      "category": "community",
+      "effort": "medium",
+      "timeline": "ongoing",
+      "requirements": [
+        "relevant subreddits",
+        "authentic participation",
+        "value-first posts"
+      ],
+      "copy": "Introducing ExampleAI - E-commerce intelligence engine for growth teams\n\nBuilt for e-commerce founders who need better solutions for manual store analysis.",
+      "success_metrics": [
+        "upvotes",
+        "comments",
+        "community engagement"
+      ],
+      "approval_required": true,
+      "status": "draft",
+      "priority_score": 60
+    },
+    {
+      "channel": "product_hunt",
+      "name": "Product Hunt",
+      "category": "launch_platform",
+      "effort": "high",
+      "timeline": "1-2 weeks prep",
+      "requirements": [
+        "product screenshots",
+        "GIF demo",
+        "maker account",
+        "hunter network"
+      ],
+      "copy": "\ud83d\ude80 Introducing ExampleAI - E-commerce intelligence engine for growth teams\n\n\u2728 What makes it special:\n['Turns store and customer signals into weekly GTM actions', 'Highlights audience segments and campaign opportunities', 'Keeps outreach and spend approval-gated']\n\n\ud83c\udfaf Perfect for e-commerce founders who need manual store analysis\n\nCheck it out and let us know what you think! \ud83d\udc47",
+      "success_metrics": [
+        "upvotes",
+        "comments",
+        "traffic",
+        "signups"
+      ],
+      "approval_required": true,
+      "status": "draft",
+      "priority_score": 50
+    },
+    {
+      "channel": "micro_communities",
+      "name": "Micro Communities",
+      "category": "niche",
+      "effort": "high",
+      "timeline": "2-4 weeks",
+      "requirements": [
+        "niche identification",
+        "community research",
+        "relationship building"
+      ],
+      "copy": "Hey [Community Name]! \ud83d\udc4b\n\nNoticed a lot of discussions about manual store analysis here. We just built something that might help: ExampleAI.\n\nE-commerce intelligence engine for growth teams\n\nWould love to get feedback from this community since you're dealing with these challenges daily. Happy to offer early access!",
+      "success_metrics": [
+        "community engagement",
+        "niche adoption"
+      ],
+      "approval_required": true,
+      "status": "draft",
+      "priority_score": 50
+    }
+  ],
+  "timeline": {
+    "week_1": {
+      "focus": "Preparation & Easy Wins",
+      "channels": [
+        "BetaList",
+        "DevHunt",
+        "Peerlist"
+      ],
+      "tasks": [
+        "Prepare assets",
+        "Set up accounts",
+        "Write copy"
+      ]
+    },
+    "week_2": {
+      "focus": "Major Platform Launches",
+      "channels": [
+        "Hacker News",
+        "Indie Hackers",
+        "Reddit Communities"
+      ],
+      "tasks": [
+        "Product Hunt launch",
+        "HN submission",
+        "Community posts"
+      ]
+    },
+    "week_3": {
+      "focus": "Community Engagement",
+      "channels": [
+        "Product Hunt",
+        "Micro Communities"
+      ],
+      "tasks": [
+        "Reddit communities",
+        "Niche outreach",
+        "Follow-up"
+      ]
+    },
+    "ongoing": {
+      "focus": "Sustained Engagement",
+      "channels": [],
+      "tasks": [
+        "Community participation",
+        "Content creation",
+        "Relationship building"
+      ]
+    }
+  },
+  "asset_requirements": [
+    "technical screenshots",
+    "GitHub link",
+    "IH account",
+    "metrics/traction",
+    "relevant subreddits",
+    "project showcase",
+    "screenshots",
+    "value-first posts",
+    "HN account with karma",
+    "relationship building",
+    "niche identification",
+    "signup page",
+    "developer tool angle",
+    "network",
+    "technical angle",
+    "founder story",
+    "beta/early access",
+    "professional profile",
+    "GIF demo",
+    "maker account",
+    "launch timing",
+    "hunter network",
+    "authentic participation",
+    "product screenshots",
+    "community research"
+  ],
+  "total_estimated_effort": 0,
+  "demo_mode": true
+}

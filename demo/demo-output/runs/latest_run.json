@@ -1,0 +1,147 @@
+{
+  "run_id": "flywheel-20260701-050247",
+  "source": "demo_or_slack",
+  "status": "completed",
+  "generated_at": "2026-07-01T05:02:47.254718",
+  "product": "ExampleAI",
+  "thread_native_interface": {
+    "primary_surface": "Slack or Telegram",
+    "mention_pattern": "@Flywheel run a GTM sprint for <product> / send Flywheel a GTM sprint request",
+    "quiet_callbacks": true,
+    "human_thread_receives": [
+      "ack",
+      "help_message",
+      "draft_review_dashboard",
+      "optional_walkthrough",
+      "finalization_commands"
+    ],
+    "audit_only": [
+      "script_progress",
+      "intermediate_generation",
+      "validation_details"
+    ]
+  },
+  "artifacts": [
+    "demo/demo-output/weekly_flywheel_sprint.json",
+    "demo/demo-output/weekly_flywheel_sprint.md",
+    "demo/demo-output/outbound_queue.md",
+    "demo/demo-output/creator_campaign.md",
+    "demo/demo-output/mpp_spend_cards.md",
+    "demo/demo-output/mpp_spend_cards.json",
+    "demo/demo-output/mpp_receipts.json",
+    "demo/demo-output/trend_content.md"
+  ],
+  "approval_actions": [
+    {
+      "id": "help",
+      "label": "Show Flywheel capabilities and commands",
+      "thread_command": "help",
+      "status": "available",
+      "scope": "help",
+      "aliases": [
+        "what can you do?",
+        "commands",
+        "capabilities"
+      ],
+      "safety_note": "Explains what Flywheel can do and how to interact with it."
+    },
+    {
+      "id": "start-walkthrough",
+      "label": "Walk me through the draft step by step",
+      "thread_command": "start walkthrough",
+      "status": "available",
+      "scope": "guided_review",
+      "safety_note": "Switches from dashboard review to sequential section review."
+    },
+    {
+      "id": "finalize-sprint",
+      "label": "Finalize sprint after section review",
+      "thread_command": "finalize sprint",
+      "status": "blocked_until_sections_reviewed",
+      "scope": "plan_finalization",
+      "safety_note": "Finalizes the sprint plan only; it does not send, post, or spend."
+    },
+    {
+      "id": "revise",
+      "label": "Ask Flywheel to revise the draft sprint",
+      "thread_command": "revise <what to change>",
+      "status": "available",
+      "scope": "revision",
+      "safety_note": "Use in Slack to steer the GTM employee in-thread."
+    },
+    {
+      "id": "show-approvals",
+      "label": "Show review/finalization status",
+      "thread_command": "show approvals",
+      "status": "available",
+      "scope": "review_status",
+      "safety_note": "Lists remaining draft sections before finalization."
+    },
+    {
+      "id": "review-launch",
+      "label": "Review Launch channels",
+      "thread_command": "review launch",
+      "status": "draft",
+      "scope": "launch",
+      "approve_command": "approve launch",
+      "edit_command": "edit launch: <change>",
+      "safety_note": "Approves or edits this plan section; execution approvals unlock only after `finalize sprint`."
+    },
+    {
+      "id": "review-backlinks",
+      "label": "Review Backlink/listing opportunities",
+      "thread_command": "review backlinks",
+      "status": "draft",
+      "scope": "backlinks",
+      "approve_command": "approve backlinks",
+      "edit_command": "edit backlinks: <change>",
+      "safety_note": "Approves or edits this plan section; execution approvals unlock only after `finalize sprint`."
+    },
+    {
+      "id": "review-outbound",
+      "label": "Review Outbound targets",
+      "thread_command": "review outbound",
+      "status": "draft",
+      "scope": "outbound",
+      "approve_command": "approve outbound",
+      "edit_command": "edit outbound: <change>",
+      "safety_note": "Approves or edits this plan section; execution approvals unlock only after `finalize sprint`."
+    },
+    {
+      "id": "review-content",
+      "label": "Review Content plan",
+      "thread_command": "review content",
+      "status": "draft",
+      "scope": "content",
+      "approve_command": "approve content",
+      "edit_command": "edit content: <change>",
+      "safety_note": "Approves or edits this plan section; execution approvals unlock only after `finalize sprint`."
+    },
+    {
+      "id": "review-mpp-spend",
+      "label": "Review Stripe MPP spend cards",
+      "thread_command": "review mpp spend",
+      "status": "draft",
+      "scope": "mpp-spend",
+      "approve_command": "approve mpp spend",
+      "edit_command": "edit mpp spend: <change>",
+      "safety_note": "Approves or edits this plan section; execution approvals unlock only after `finalize sprint`."
+    },
+    {
+      "id": "review-budget",
+      "label": "Review Budget/spend gates",
+      "thread_command": "review budget",
+      "status": "draft",
+      "scope": "budget",
+      "approve_command": "approve budget",
+      "edit_command": "edit budget: <change>",
+      "safety_note": "Approves or edits this plan section; execution approvals unlock only after `finalize sprint`."
+    }
+  ],
+  "audit_notes": [
+    "All outbound, posting, and spend actions remain approval-gated.",
+    "Stripe MPP spend cards model paid GTM procurement and require founder approval before any payment authorization.",
+    "Routine progress should stay out of the human Slack thread.",
+    "The final callback should summarize outcomes and ask for numbered approvals."
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-07-01T05:02:47.161743",
+  "total_proposals": 1,
+  "total_budget": 375,
+  "avg_relevance_score": 75.0,
+  "campaign_proposals": [
+    {
+      "creator": "StoreGrowthDemo",
+      "platform": "YouTube",
+      "followers": 45000,
+      "relevance_score": 75,
+      "campaign_type": "tool_review",
+      "campaign_name": "Software Tool Review Campaign",
+      "description": "Detailed review of the product with demo and commentary",
+      "deliverables": [
+        "5-10 minute video review",
+        "written post/thread",
+        "demo walkthrough"
+      ],
+      "timeline": "2 weeks",
+      "pricing": {
+        "base_fee": 250,
+        "performance_bonus": 125,
+        "total_budget": 375,
+        "payment_terms": "50% upfront, 50% on delivery + bonus on performance"
+      },
+      "performance_metrics": [
+        "views",
+        "clicks",
+        "signups"
+      ],
+      "campaign_brief": "# Campaign Brief: Software Tool Review Campaign\n\n## Product Overview\n**Product:** ExampleAI (https://example.ai)\n**Description:** E-commerce intelligence engine for growth teams\n**Key Benefit:** Turns store and customer signals into weekly GTM actions\n**Target Audience:** e-commerce founders in e-commerce intelligence\n\n## Campaign Concept\nDetailed review of the product with demo and commentary\n\n## Deliverables\n- 5-10 minute video review\n- written post/thread\n- demo walkthrough\n\n## Key Messages\n- ExampleAI solves manual store analysis\n- Turns store and customer signals into weekly GTM actions\n- Built specifically for e-commerce founders in e-commerce intelligence\n- Modern alternative to legacy solutions\n\n## Content Guidelines\n- Keep focus on practical value and real-world use cases\n- Show actual product interface and workflows\n- Include your honest opinion and any limitations you notice\n- Encourage audience questions and engagement\n- Use provided discount code: CREATOR20 (20% off)\n\n## Timeline\n2 weeks from agreement to delivery\n\n## Success Metrics\n- views\n- clicks\n- signups\n\n## Assets Provided\n- Product demo account/access\n- High-res screenshots and logos\n- Key messaging document\n- Technical documentation as needed\n\n## Creative Freedom\nYou have full creative control over content style and format. This brief provides direction, but we trust your expertise on what resonates with your audience.\n",
+      "approval_required": true,
+      "status": "proposal"
+    }
+  ],
+  "spend_requests": [
+    {
+      "id": "spend_001",
+      "campaign_id": "creator_campaign_001",
+      "creator": "StoreGrowthDemo",
+      "amount_usd": 125,
+      "purpose": "Creator campaign upfront payment - Software Tool Review Campaign",
+      "description": "50% upfront payment for StoreGrowthDemo tool_review campaign",
+      "expected_outcome": "5-10 minute video review, written post/thread, demo walkthrough",
+      "performance_bonus_potential": 125,
+      "total_campaign_budget": 375,
+      "approval_status": "pending",
+      "requires_approval": true,
+      "stripe_mode": "test",
+      "payment_terms": "50% upfront, 50% on delivery + bonus on performance",
+      "created_at": "2026-07-01T05:02:47.161706",
+      "budget_impact": {
+        "weekly_budget": 500,
+        "max_single_spend": 100,
+        "exceeds_single_limit": true,
+        "percentage_of_weekly": 25.0
+      }
+    }
+  ],
+  "demo_mode": true
+}

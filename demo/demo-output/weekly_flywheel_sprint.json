@@ -1,0 +1,1355 @@
+{
+  "generated_at": "2026-07-01T05:02:47.254718",
+  "sprint_summary": {
+    "sprint_week": "Week of July 01, 2026",
+    "product_name": "ExampleAI",
+    "total_actions": 29,
+    "total_content_pieces": 5,
+    "budget_analysis": {
+      "weekly_budget": 500,
+      "creator_spend_proposed": 125,
+      "mpp_pending_amount": 187,
+      "creator_total_budget": 375,
+      "budget_utilization": 25.0,
+      "within_budget": true
+    },
+    "channel_breakdown": {
+      "launch_channels": 8,
+      "backlink_opportunities": 10,
+      "warm_leads": 10,
+      "creator_partnerships": 1,
+      "mpp_spend_cards": 4
+    },
+    "top_5_actions": [
+      {
+        "type": "backlink",
+        "action": "Outreach to CartPilot alternatives directory...",
+        "priority": 100,
+        "effort": "low",
+        "timeline": "1-2 days"
+      },
+      {
+        "type": "mpp_spend",
+        "action": "Approve MPP spend card for StoreGrowthDemo launch-week test",
+        "priority": 92,
+        "effort": "low",
+        "timeline": "after sprint finalization"
+      },
+      {
+        "type": "launch",
+        "action": "Launch on BetaList",
+        "priority": 80,
+        "effort": "low",
+        "timeline": "1 day"
+      },
+      {
+        "type": "creator",
+        "action": "Partner with StoreGrowthDemo for tool_review",
+        "priority": 75,
+        "effort": "high",
+        "timeline": "2 weeks"
+      }
+    ],
+    "approval_gates": {
+      "outbound_messages": 20,
+      "spend_requests": 1,
+      "mpp_spend_cards": 4,
+      "content_posts": 5,
+      "total_spend_amount": 125,
+      "mpp_pending_amount": 187
+    },
+    "estimated_weekly_impact": {
+      "estimated_weekly_traffic": 1250,
+      "estimated_outbound_responses": 0,
+      "estimated_content_reach": 4368,
+      "estimated_creator_reach": 4500,
+      "total_potential_reach": 8868,
+      "confidence_level": "conservative"
+    },
+    "demo_mode": true
+  },
+  "detailed_data": {
+    "launch_plan": {
+      "product_name": "ExampleAI",
+      "generated_at": "2026-07-01T05:02:47.072378",
+      "launch_channels": [
+        {
+          "channel": "betalist",
+          "name": "BetaList",
+          "category": "directory",
+          "effort": "low",
+          "timeline": "1 day",
+          "requirements": [
+            "beta/early access",
+            "signup page",
+            "screenshots"
+          ],
+          "copy": "ExampleAI - E-commerce intelligence engine for growth teams\n\nEarly access for e-commerce founders who want to solve manual store analysis. Turns store and customer signals into weekly GTM actions.\n\n\ud83c\udfaf Perfect for: e-commerce founders working with e-commerce intelligence\n\ud83d\udca1 Key features: [list 3-4 features]\n\ud83d\ude80 Coming soon: [roadmap items]",
+          "success_metrics": [
+            "beta signups",
+            "email subscribers"
+          ],
+          "approval_required": true,
+          "status": "draft",
+          "priority_score": 80
+        },
+        {
+          "channel": "devhunt",
+          "name": "DevHunt",
+          "category": "directory",
+          "effort": "low",
+          "timeline": "1 day",
+          "requirements": [
+            "developer tool angle",
+            "technical screenshots",
+            "GitHub link"
+          ],
+          "copy": "ExampleAI - E-commerce intelligence engine for growth teams\n\nOpen source tool for e-commerce founders. Built because manual store analysis was holding back our e-commerce intelligence projects.\n\n\ud83d\udd27 Tech stack: [your stack]\n\ud83d\udce6 Installation: [install method]\n\ud83c\udf1f GitHub: [repo link]",
+          "success_metrics": [
+            "developer signups",
+            "GitHub stars"
+          ],
+          "approval_required": true,
+          "status": "draft",
+          "priority_score": 80
+        },
+        {
+          "channel": "peerlist",
+          "name": "Peerlist",
+          "category": "professional",
+          "effort": "low",
+          "timeline": "1 day",
+          "requirements": [
+            "professional profile",
+            "project showcase",
+            "network"
+          ],
+          "copy": "Excited to share ExampleAI with the Peerlist community! \ud83c\udf89\n\nE-commerce intelligence engine for growth teams\n\nBuilt for e-commerce founders who manual store analysis. Turns store and customer signals into weekly GTM actions.\n\nWould love to connect with others building in the e-commerce intelligence e-commerce!",
+          "success_metrics": [
+            "professional connections",
+            "project views"
+          ],
+          "approval_required": true,
+          "status": "draft",
+          "priority_score": 70
+        },
+        {
+          "channel": "hacker_news",
+          "name": "Hacker News",
+          "category": "community",
+          "effort": "medium",
+          "timeline": "same day",
+          "requirements": [
+            "technical angle",
+            "HN account with karma",
+            "launch timing"
+          ],
+          "copy": "Show HN: ExampleAI \u2013 E-commerce intelligence engine for growth teams\n\nWe built this because manual store analysis was a constant frustration for e-commerce founders. Turns store and customer signals into weekly GTM actions.\n\nWould love feedback from the HN community on our approach!",
+          "success_metrics": [
+            "points",
+            "comments",
+            "technical discussion"
+          ],
+          "approval_required": true,
+          "status": "draft",
+          "priority_score": 60
+        },
+        {
+          "channel": "indie_hackers",
+          "name": "Indie Hackers",
+          "category": "community",
+          "effort": "medium",
+          "timeline": "1 week",
+          "requirements": [
+            "founder story",
+            "IH account",
+            "metrics/traction"
+          ],
+          "copy": "\ud83d\udee0\ufe0f Just launched ExampleAI after 6 months of building\n\nThe problem: manual store analysis\nOur solution: E-commerce intelligence engine for growth teams\n\nTraction so far: [your metrics here]\n\nWhat would you want to see next? \ud83e\udd14",
+          "success_metrics": [
+            "engagement",
+            "followers",
+            "networking"
+          ],
+          "approval_required": true,
+          "status": "draft",
+          "priority_score": 60
+        },
+        {
+          "channel": "reddit_communities",
+          "name": "Reddit Communities",
+          "category": "community",
+          "effort": "medium",
+          "timeline": "ongoing",
+          "requirements": [
+            "relevant subreddits",
+            "authentic participation",
+            "value-first posts"
+          ],
+          "copy": "Introducing ExampleAI - E-commerce intelligence engine for growth teams\n\nBuilt for e-commerce founders who need better solutions for manual store analysis.",
+          "success_metrics": [
+            "upvotes",
+            "comments",
+            "community engagement"
+          ],
+          "approval_required": true,
+          "status": "draft",
+          "priority_score": 60
+        },
+        {
+          "channel": "product_hunt",
+          "name": "Product Hunt",
+          "category": "launch_platform",
+          "effort": "high",
+          "timeline": "1-2 weeks prep",
+          "requirements": [
+            "product screenshots",
+            "GIF demo",
+            "maker account",
+            "hunter network"
+          ],
+          "copy": "\ud83d\ude80 Introducing ExampleAI - E-commerce intelligence engine for growth teams\n\n\u2728 What makes it special:\n['Turns store and customer signals into weekly GTM actions', 'Highlights audience segments and campaign opportunities', 'Keeps outreach and spend approval-gated']\n\n\ud83c\udfaf Perfect for e-commerce founders who need manual store analysis\n\nCheck it out and let us know what you think! \ud83d\udc47",
+          "success_metrics": [
+            "upvotes",
+            "comments",
+            "traffic",
+            "signups"
+          ],
+          "approval_required": true,
+          "status": "draft",
+          "priority_score": 50
+        },
+        {
+          "channel": "micro_communities",
+          "name": "Micro Communities",
+          "category": "niche",
+          "effort": "high",
+          "timeline": "2-4 weeks",
+          "requirements": [
+            "niche identification",
+            "community research",
+            "relationship building"
+          ],
+          "copy": "Hey [Community Name]! \ud83d\udc4b\n\nNoticed a lot of discussions about manual store analysis here. We just built something that might help: ExampleAI.\n\nE-commerce intelligence engine for growth teams\n\nWould love to get feedback from this community since you're dealing with these challenges daily. Happy to offer early access!",
+          "success_metrics": [
+            "community engagement",
+            "niche adoption"
+          ],
+          "approval_required": true,
+          "status": "draft",
+          "priority_score": 50
+        }
+      ],
+      "timeline": {
+        "week_1": {
+          "focus": "Preparation & Easy Wins",
+          "channels": [
+            "BetaList",
+            "DevHunt",
+            "Peerlist"
+          ],
+          "tasks": [
+            "Prepare assets",
+            "Set up accounts",
+            "Write copy"
+          ]
+        },
+        "week_2": {
+          "focus": "Major Platform Launches",
+          "channels": [
+            "Hacker News",
+            "Indie Hackers",
+            "Reddit Communities"
+          ],
+          "tasks": [
+            "Product Hunt launch",
+            "HN submission",
+            "Community posts"
+          ]
+        },
+        "week_3": {
+          "focus": "Community Engagement",
+          "channels": [
+            "Product Hunt",
+            "Micro Communities"
+          ],
+          "tasks": [
+            "Reddit communities",
+            "Niche outreach",
+            "Follow-up"
+          ]
+        },
+        "ongoing": {
+          "focus": "Sustained Engagement",
+          "channels": [],
+          "tasks": [
+            "Community participation",
+            "Content creation",
+            "Relationship building"
+          ]
+        }
+      },
+      "asset_requirements": [
+        "technical screenshots",
+        "GitHub link",
+        "IH account",
+        "metrics/traction",
+        "relevant subreddits",
+        "project showcase",
+        "screenshots",
+        "value-first posts",
+        "HN account with karma",
+        "relationship building",
+        "niche identification",
+        "signup page",
+        "developer tool angle",
+        "network",
+        "technical angle",
+        "founder story",
+        "beta/early access",
+        "professional profile",
+        "GIF demo",
+        "maker account",
+        "launch timing",
+        "hunter network",
+        "authentic participation",
+        "product screenshots",
+        "community research"
+      ],
+      "total_estimated_effort": 0,
+      "demo_mode": true
+    },
+    "backlink_opportunities": {
+      "generated_at": "2026-07-01T05:02:47.101660",
+      "total_opportunities": 10,
+      "opportunities": [
+        {
+          "id": "opp_001",
+          "type": "backlink_listing",
+          "source_url": "https://example.com/ecommerce-tools/cartpilot-alternatives",
+          "title": "CartPilot alternatives directory",
+          "description": "Directory of e-commerce analytics and customer intelligence alternatives",
+          "why_relevant": "High-intent directory where e-commerce founders compare customer intelligence tools",
+          "estimated_effort": "low",
+          "estimated_impact": "medium",
+          "score": 100,
+          "recommended_action": "Submit ExampleAI as an alternative for early-stage e-commerce teams",
+          "outreach_template": "Hi team,\n\nI'd like to suggest adding ExampleAI (example.ai) to your e-commerce intelligence tools directory.\n\nExampleAI helps e-commerce founders turn store and customer signals into weekly growth actions. Happy to provide any additional details needed for the listing.\n\nBest regards",
+          "approval_required": true,
+          "status": "new"
+        },
+        {
+          "id": "opp_002",
+          "type": "directory_listing",
+          "source_url": "https://example.com/awesome-ecommerce-tools",
+          "title": "Awesome E-commerce Intelligence Tools",
+          "description": "Curated list of e-commerce analytics, retention, and merchandising tools",
+          "why_relevant": "Curated resource for founders evaluating tools like ExampleAI",
+          "estimated_effort": "low",
+          "estimated_impact": "high",
+          "score": 100,
+          "recommended_action": "Submit PR to add ExampleAI to customer intelligence section",
+          "outreach_template": "## ExampleAI\n\nE-commerce intelligence engine for growth teams.\n\n- **Link:** https://example.ai\n- **Features:** Customer segmentation, campaign opportunity discovery, weekly GTM recommendations\n- **Use case:** E-commerce founders and growth teams\n\nHelps teams move from manual store analysis to approval-gated weekly growth actions.",
+          "approval_required": true,
+          "status": "new"
+        },
+        {
+          "id": "opp_009",
+          "type": "directory_listing",
+          "source_url": "https://example.com/startups/ecommerce-tools",
+          "title": "E-commerce startup tools ecosystem",
+          "description": "Startup ecosystem research for e-commerce tooling and partnerships",
+          "why_relevant": "Strong source for partnership and customer discovery targets",
+          "estimated_effort": "low",
+          "estimated_impact": "high",
+          "score": 100,
+          "recommended_action": "Build a targeted e-commerce tool prospect list and draft partnership outreach",
+          "outreach_template": "Hi {{name}},\n\nSaw you're building for e-commerce teams. We're building ExampleAI to make store intelligence and weekly GTM planning less manual. Would a short demo be useful?",
+          "approval_required": true,
+          "status": "new"
+        },
+        {
+          "id": "opp_003",
+          "type": "blog_mention",
+          "source_url": "https://example.com/best-ecommerce-intelligence-tools",
+          "title": "Best E-commerce Intelligence Tools for Founders",
+          "description": "Annual roundup of e-commerce intelligence and analytics tools",
+          "why_relevant": "Comparison article where ExampleAI's founder-focused positioning fits",
+          "estimated_effort": "medium",
+          "estimated_impact": "high",
+          "score": 95,
+          "recommended_action": "Pitch ExampleAI for the next e-commerce intelligence roundup",
+          "outreach_template": "Hi editorial team,\n\nI noticed your roundup of e-commerce intelligence tools. ExampleAI helps early-stage e-commerce founders turn store data into weekly acquisition actions, with human approval gates before outreach or spend. Would this be a fit for a future update?\n\nBest regards",
+          "approval_required": true,
+          "status": "new"
+        },
+        {
+          "id": "opp_004",
+          "type": "community_mention",
+          "source_url": "https://example.com/community/ecommerce-growth-tools",
+          "title": "E-commerce growth tools discussion",
+          "description": "Founder community thread about analytics and customer intelligence workflows",
+          "why_relevant": "Active conversation where ExampleAI could be mentioned as a lightweight intelligence layer",
+          "estimated_effort": "low",
+          "estimated_impact": "medium",
+          "score": 93,
+          "recommended_action": "Participate with a helpful, non-spammy ExampleAI mention",
+          "outreach_template": "For early-stage e-commerce intelligence, ExampleAI is exploring a lightweight approach: it turns store and customer signals into a weekly GTM sprint instead of another dashboard to babysit. Might be relevant if you're trying to prioritize growth actions from messy data.",
+          "approval_required": true,
+          "status": "new"
+        },
+        {
+          "id": "opp_008",
+          "type": "community_mention",
+          "source_url": "https://example.com/community/shopify-founders",
+          "title": "Shopify founders community discussion",
+          "description": "Community thread about prioritizing customer acquisition experiments",
+          "why_relevant": "Relevant place for educational content about customer intelligence workflows",
+          "estimated_effort": "low",
+          "estimated_impact": "medium",
+          "score": 93,
+          "recommended_action": "Draft educational post with ExampleAI as a soft example",
+          "outreach_template": "Educational draft only: here's how e-commerce founders can turn messy store signals into weekly growth actions. ExampleAI is one lightweight approach to this workflow.",
+          "approval_required": true,
+          "status": "new"
+        },
+        {
+          "id": "opp_006",
+          "type": "newsletter_pitch",
+          "source_url": "https://example.com/ecommerce-newsletter",
+          "title": "E-commerce Growth Newsletter",
+          "description": "Newsletter covering growth tools, retention, and merchandising workflows",
+          "why_relevant": "Audience includes e-commerce founders and operators",
+          "estimated_effort": "medium",
+          "estimated_impact": "high",
+          "score": 90,
+          "recommended_action": "Pitch ExampleAI as a lightweight customer intelligence workflow",
+          "outreach_template": "Hi team,\n\nExampleAI is an e-commerce intelligence engine for founders who want clearer weekly growth actions from store and customer signals. Would this fit an upcoming tools or founder workflow roundup?",
+          "approval_required": true,
+          "status": "new"
+        },
+        {
+          "id": "opp_005",
+          "type": "resource_page",
+          "source_url": "https://example.com/ecommerce-resources/tools",
+          "title": "E-commerce Founder Tools Resource Page",
+          "description": "Resource page listing tools for analytics, retention, and merchandising",
+          "why_relevant": "Good-fit resource page for ExampleAI positioning",
+          "estimated_effort": "medium",
+          "estimated_impact": "medium",
+          "score": 87,
+          "recommended_action": "Request addition to tools list with brief description",
+          "outreach_template": "Hello,\n\nI found your e-commerce tools resource page and thought ExampleAI might be a useful addition. ExampleAI is an e-commerce intelligence engine for growth teams that helps founders turn store signals into weekly GTM actions. Would you consider adding it?\n\nThanks!",
+          "approval_required": true,
+          "status": "new"
+        },
+        {
+          "id": "opp_010",
+          "type": "resource_page",
+          "source_url": "https://example.com/customer-intelligence-projects",
+          "title": "Customer Intelligence Related Projects",
+          "description": "Resource page for customer intelligence and e-commerce analytics projects",
+          "why_relevant": "ExampleAI can be positioned as a founder-friendly applied layer for growth planning",
+          "estimated_effort": "medium",
+          "estimated_impact": "medium",
+          "score": 87,
+          "recommended_action": "Request inclusion as a related customer intelligence project",
+          "outreach_template": "Hi team,\n\nWould ExampleAI be appropriate for the related projects page? It is an e-commerce intelligence engine that helps founders convert store and customer signals into weekly growth actions.",
+          "approval_required": true,
+          "status": "new"
+        },
+        {
+          "id": "opp_007",
+          "type": "podcast_pitch",
+          "source_url": "https://example.com/growth-podcast",
+          "title": "Growth Operators Podcast",
+          "description": "Podcast covering early-stage growth operations and e-commerce tooling",
+          "why_relevant": "Listeners include founders looking for practical customer acquisition workflows",
+          "estimated_effort": "medium",
+          "estimated_impact": "medium",
+          "score": 80,
+          "recommended_action": "Pitch a founder workflow interview",
+          "outreach_template": "Hi team,\n\nI'm working on ExampleAI, an e-commerce intelligence engine for growth teams. The story is about replacing manual store analysis with weekly, approval-gated GTM actions. Could this fit an upcoming founder workflow episode?",
+          "approval_required": true,
+          "status": "new"
+        }
+      ],
+      "demo_mode": true
+    },
+    "outbound_queue": {
+      "generated_at": "2026-07-01T05:02:47.131491",
+      "total_leads": 10,
+      "high_priority": 0,
+      "medium_priority": 0,
+      "low_priority": 10,
+      "avg_score": 20.6,
+      "leads": [
+        {
+          "name": "Aisha Morgan",
+          "title": "Founder",
+          "company": "StackCart",
+          "bio": "Runs a small e-commerce infrastructure startup focused on customer retention workflows.",
+          "source": "X post engagement",
+          "url": "https://example.com/profiles/aisha-morgan",
+          "engagement_context": "Liked a thread about AI-native customer intelligence for online stores.",
+          "icp_fit_score": 34,
+          "personalized_message": "Hi Aisha Morgan,\n\nI came across your work at StackCart and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+          "message_drafts": {
+            "dm": "Hi Aisha Morgan,\n\nI came across your work at StackCart and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "email": "Hi Aisha Morgan,\n\nI came across your work at StackCart and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "reply": "Hi Aisha Morgan,\n\nI came across your work at StackCart and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+          },
+          "approval_required": true,
+          "requires_human_approval": true,
+          "status": "draft",
+          "priority": "low"
+        },
+        {
+          "name": "Maya Chen",
+          "title": "Head of Growth",
+          "company": "ShopFlow Analytics",
+          "bio": "Leads growth for an e-commerce analytics startup serving independent store operators.",
+          "source": "Newsletter subscriber",
+          "url": "https://example.com/profiles/maya-chen",
+          "engagement_context": "Subscribed after reading about AI-assisted merchandising and retention workflows.",
+          "icp_fit_score": 32,
+          "personalized_message": "Hi Maya Chen,\n\nI came across your work at ShopFlow Analytics and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+          "message_drafts": {
+            "dm": "Hi Maya Chen,\n\nI came across your work at ShopFlow Analytics and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "email": "Hi Maya Chen,\n\nI came across your work at ShopFlow Analytics and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "reply": "Hi Maya Chen,\n\nI came across your work at ShopFlow Analytics and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+          },
+          "approval_required": true,
+          "requires_human_approval": true,
+          "status": "draft",
+          "priority": "low"
+        },
+        {
+          "name": "Alex Rivera",
+          "title": "Founder",
+          "company": "CartPilot Labs",
+          "bio": "Runs a fast-growing Shopify app team and is looking for better customer intelligence workflows.",
+          "source": "LinkedIn engagement on e-commerce AI post",
+          "url": "https://example.com/profiles/alex-rivera",
+          "engagement_context": "Commented that early-stage e-commerce teams need clearer customer segment signals.",
+          "icp_fit_score": 31,
+          "personalized_message": "Hi Alex Rivera,\n\nI came across your work at CartPilot Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+          "message_drafts": {
+            "dm": "Hi Alex Rivera,\n\nI came across your work at CartPilot Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "email": "Hi Alex Rivera,\n\nI came across your work at CartPilot Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "reply": "Hi Alex Rivera,\n\nI came across your work at CartPilot Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+          },
+          "approval_required": true,
+          "requires_human_approval": true,
+          "status": "draft",
+          "priority": "low"
+        },
+        {
+          "name": "Jordan Park",
+          "title": "Founder",
+          "company": "GrowthDock",
+          "bio": "Builds tools for online merchants and frequently tests new customer acquisition channels.",
+          "source": "Product Hunt engagement",
+          "url": "https://example.com/profiles/jordan-park",
+          "engagement_context": "Commented on a launch about replacing manual store analysis with better automation.",
+          "icp_fit_score": 23,
+          "personalized_message": "Hi Jordan Park,\n\nI came across your work at GrowthDock and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+          "message_drafts": {
+            "dm": "Hi Jordan Park,\n\nI came across your work at GrowthDock and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "email": "Hi Jordan Park,\n\nI came across your work at GrowthDock and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "reply": "Hi Jordan Park,\n\nI came across your work at GrowthDock and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+          },
+          "approval_required": true,
+          "requires_human_approval": true,
+          "status": "draft",
+          "priority": "low"
+        },
+        {
+          "name": "Priya Shah",
+          "title": "Product Lead",
+          "company": "RetailOps Demo",
+          "bio": "Owns product-led growth experiments for a small e-commerce operations platform.",
+          "source": "Webinar attendee",
+          "url": "https://example.com/profiles/priya-shah",
+          "engagement_context": "Asked how AI can turn storefront data into weekly growth actions.",
+          "icp_fit_score": 21,
+          "personalized_message": "Hi Priya Shah,\n\nI came across your work at RetailOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+          "message_drafts": {
+            "dm": "Hi Priya Shah,\n\nI came across your work at RetailOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "email": "Hi Priya Shah,\n\nI came across your work at RetailOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "reply": "Hi Priya Shah,\n\nI came across your work at RetailOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+          },
+          "approval_required": true,
+          "requires_human_approval": true,
+          "status": "draft",
+          "priority": "low"
+        },
+        {
+          "name": "Sam Taylor",
+          "title": "Founder",
+          "company": "StoreWorks",
+          "bio": "Building tooling for store operators who want lightweight customer intelligence.",
+          "source": "Founder community",
+          "url": "https://example.com/profiles/sam-taylor",
+          "engagement_context": "Asked for recommendations on customer segment discovery tools.",
+          "icp_fit_score": 18,
+          "personalized_message": "Hi Sam Taylor,\n\nI came across your work at StoreWorks and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+          "message_drafts": {
+            "dm": "Hi Sam Taylor,\n\nI came across your work at StoreWorks and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "email": "Hi Sam Taylor,\n\nI came across your work at StoreWorks and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "reply": "Hi Sam Taylor,\n\nI came across your work at StoreWorks and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+          },
+          "approval_required": true,
+          "requires_human_approval": true,
+          "status": "draft",
+          "priority": "low"
+        },
+        {
+          "name": "Elena Brooks",
+          "title": "Growth Engineer",
+          "company": "Commerce Data Collective",
+          "bio": "Builds internal dashboards and growth loops for e-commerce teams.",
+          "source": "GitHub activity",
+          "url": "https://example.com/profiles/elena-brooks",
+          "engagement_context": "Starred several e-commerce intelligence repositories.",
+          "icp_fit_score": 16,
+          "personalized_message": "Hi Elena Brooks,\n\nI came across your work at Commerce Data Collective and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+          "message_drafts": {
+            "dm": "Hi Elena Brooks,\n\nI came across your work at Commerce Data Collective and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "email": "Hi Elena Brooks,\n\nI came across your work at Commerce Data Collective and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "reply": "Hi Elena Brooks,\n\nI came across your work at Commerce Data Collective and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+          },
+          "approval_required": true,
+          "requires_human_approval": true,
+          "status": "draft",
+          "priority": "low"
+        },
+        {
+          "name": "Kenji Sato",
+          "title": "Growth Operations Lead",
+          "company": "Checkout Pathways",
+          "bio": "Runs checkout optimization and lifecycle experiments for online stores.",
+          "source": "Conference speaker list",
+          "url": "https://example.com/profiles/kenji-sato",
+          "engagement_context": "Talk title mentioned the limits of current growth planning tools.",
+          "icp_fit_score": 13,
+          "personalized_message": "Hi Kenji Sato,\n\nI came across your work at Checkout Pathways and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+          "message_drafts": {
+            "dm": "Hi Kenji Sato,\n\nI came across your work at Checkout Pathways and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "email": "Hi Kenji Sato,\n\nI came across your work at Checkout Pathways and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "reply": "Hi Kenji Sato,\n\nI came across your work at Checkout Pathways and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+          },
+          "approval_required": true,
+          "requires_human_approval": true,
+          "status": "draft",
+          "priority": "low"
+        },
+        {
+          "name": "Riley Stone",
+          "title": "Marketing Lead",
+          "company": "LaunchOps Demo",
+          "bio": "Runs launch and creator experiments for early-stage e-commerce products.",
+          "source": "Launch community",
+          "url": "https://example.com/profiles/riley-stone",
+          "engagement_context": "Engaged with posts about weekly GTM sprint planning.",
+          "icp_fit_score": 13,
+          "personalized_message": "Hi Riley Stone,\n\nI came across your work at LaunchOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+          "message_drafts": {
+            "dm": "Hi Riley Stone,\n\nI came across your work at LaunchOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "email": "Hi Riley Stone,\n\nI came across your work at LaunchOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "reply": "Hi Riley Stone,\n\nI came across your work at LaunchOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+          },
+          "approval_required": true,
+          "requires_human_approval": true,
+          "status": "draft",
+          "priority": "low"
+        },
+        {
+          "name": "Noah Kim",
+          "title": "CEO",
+          "company": "Catalog Labs",
+          "bio": "Founder working on catalog enrichment and customer insight tooling for DTC brands.",
+          "source": "Community discussion",
+          "url": "https://example.com/profiles/noah-kim",
+          "engagement_context": "Posted about needing simpler ways to prioritize campaigns from store data.",
+          "icp_fit_score": 5,
+          "personalized_message": "Hi Noah Kim,\n\nI came across your work at Catalog Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+          "message_drafts": {
+            "dm": "Hi Noah Kim,\n\nI came across your work at Catalog Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "email": "Hi Noah Kim,\n\nI came across your work at Catalog Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+            "reply": "Hi Noah Kim,\n\nI came across your work at Catalog Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+          },
+          "approval_required": true,
+          "requires_human_approval": true,
+          "status": "draft",
+          "priority": "low"
+        }
+      ],
+      "demo_mode": true
+    },
+    "creator_campaign": {
+      "generated_at": "2026-07-01T05:02:47.161743",
+      "total_proposals": 1,
+      "total_budget": 375,
+      "avg_relevance_score": 75.0,
+      "campaign_proposals": [
+        {
+          "creator": "StoreGrowthDemo",
+          "platform": "YouTube",
+          "followers": 45000,
+          "relevance_score": 75,
+          "campaign_type": "tool_review",
+          "campaign_name": "Software Tool Review Campaign",
+          "description": "Detailed review of the product with demo and commentary",
+          "deliverables": [
+            "5-10 minute video review",
+            "written post/thread",
+            "demo walkthrough"
+          ],
+          "timeline": "2 weeks",
+          "pricing": {
+            "base_fee": 250,
+            "performance_bonus": 125,
+            "total_budget": 375,
+            "payment_terms": "50% upfront, 50% on delivery + bonus on performance"
+          },
+          "performance_metrics": [
+            "views",
+            "clicks",
+            "signups"
+          ],
+          "campaign_brief": "# Campaign Brief: Software Tool Review Campaign\n\n## Product Overview\n**Product:** ExampleAI (https://example.ai)\n**Description:** E-commerce intelligence engine for growth teams\n**Key Benefit:** Turns store and customer signals into weekly GTM actions\n**Target Audience:** e-commerce founders in e-commerce intelligence\n\n## Campaign Concept\nDetailed review of the product with demo and commentary\n\n## Deliverables\n- 5-10 minute video review\n- written post/thread\n- demo walkthrough\n\n## Key Messages\n- ExampleAI solves manual store analysis\n- Turns store and customer signals into weekly GTM actions\n- Built specifically for e-commerce founders in e-commerce intelligence\n- Modern alternative to legacy solutions\n\n## Content Guidelines\n- Keep focus on practical value and real-world use cases\n- Show actual product interface and workflows\n- Include your honest opinion and any limitations you notice\n- Encourage audience questions and engagement\n- Use provided discount code: CREATOR20 (20% off)\n\n## Timeline\n2 weeks from agreement to delivery\n\n## Success Metrics\n- views\n- clicks\n- signups\n\n## Assets Provided\n- Product demo account/access\n- High-res screenshots and logos\n- Key messaging document\n- Technical documentation as needed\n\n## Creative Freedom\nYou have full creative control over content style and format. This brief provides direction, but we trust your expertise on what resonates with your audience.\n",
+          "approval_required": true,
+          "status": "proposal"
+        }
+      ],
+      "spend_requests": [
+        {
+          "id": "spend_001",
+          "campaign_id": "creator_campaign_001",
+          "creator": "StoreGrowthDemo",
+          "amount_usd": 125,
+          "purpose": "Creator campaign upfront payment - Software Tool Review Campaign",
+          "description": "50% upfront payment for StoreGrowthDemo tool_review campaign",
+          "expected_outcome": "5-10 minute video review, written post/thread, demo walkthrough",
+          "performance_bonus_potential": 125,
+          "total_campaign_budget": 375,
+          "approval_status": "pending",
+          "requires_approval": true,
+          "stripe_mode": "test",
+          "payment_terms": "50% upfront, 50% on delivery + bonus on performance",
+          "created_at": "2026-07-01T05:02:47.161706",
+          "budget_impact": {
+            "weekly_budget": 500,
+            "max_single_spend": 100,
+            "exceeds_single_limit": true,
+            "percentage_of_weekly": 25.0
+          }
+        }
+      ],
+      "demo_mode": true
+    },
+    "mpp_spend_cards": {
+      "generated_at": "2026-07-01T05:02:47.190358",
+      "protocol": "stripe_mpp",
+      "integration_story": "Flywheel uses Stripe MPP as the transaction layer for approved GTM procurement.",
+      "workflow": [
+        "Flywheel discovers a paid GTM resource.",
+        "The provider returns an MPP-style 402 payment challenge.",
+        "Flywheel turns it into a founder approval card in Slack or Telegram.",
+        "After approval, Flywheel pays programmatically in test mode and unlocks the resource.",
+        "The Stripe receipt returns to the sprint ledger."
+      ],
+      "total_spend_cards": 4,
+      "total_pending_amount_usd": 187,
+      "spend_cards": [
+        {
+          "id": "mpp_creator_001",
+          "protocol": "stripe_mpp",
+          "status": "awaiting_founder_approval",
+          "approval_command": "approve mpp_creator_001",
+          "reject_command": "reject mpp_creator_001",
+          "resource_type": "creator_test",
+          "resource_name": "StoreGrowthDemo launch-week test",
+          "provider": "Example Creator Market",
+          "http_endpoint": "https://mpp.example.ai/resources/creator-test",
+          "amount_usd": 125,
+          "amount_cents": 12500,
+          "currency": "usd",
+          "reason": "unlock a creator test for the highest-scoring launch audience",
+          "expected_outcome": "5-10 minute video review, written post/thread, demo walkthrough",
+          "source_sprint_section": "creator_campaign",
+          "payment_challenge": {
+            "http_status": 402,
+            "www_authenticate": "Payment",
+            "method": "stripe.mpp.charge",
+            "resource": "https://mpp.example.ai/resources/creator-test",
+            "amount_cents": 12500,
+            "currency": "usd",
+            "test_mode": true
+          },
+          "founder_guardrails": {
+            "weekly_budget_usd": 500,
+            "requires_human_approval": true,
+            "autonomous_spend_limit_usd": 0,
+            "percentage_of_weekly_budget": 25.0
+          },
+          "chat_card": {
+            "title": "MPP spend request: StoreGrowthDemo launch-week test",
+            "body": "Pay $125 via Stripe MPP for unlock a creator test for the highest-scoring launch audience",
+            "primary_action": "approve mpp_creator_001",
+            "secondary_action": "reject mpp_creator_001"
+          }
+        },
+        {
+          "id": "mpp_data_001",
+          "protocol": "stripe_mpp",
+          "status": "awaiting_founder_approval",
+          "approval_command": "approve mpp_data_001",
+          "reject_command": "reject mpp_data_001",
+          "resource_type": "competitor_demand_data",
+          "resource_name": "Competitor demand data pull",
+          "provider": "Example Demand Data API",
+          "http_endpoint": "https://mpp.example.ai/resources/competitor-demand-report",
+          "amount_usd": 12,
+          "amount_cents": 1200,
+          "currency": "usd",
+          "reason": "unlock source data behind CartPilot alternatives directory",
+          "expected_outcome": "paid competitor placement paths, source URLs, and outreach priority scores",
+          "source_sprint_section": "backlink_opportunities",
+          "payment_challenge": {
+            "http_status": 402,
+            "www_authenticate": "Payment",
+            "method": "stripe.mpp.charge",
+            "resource": "https://mpp.example.ai/resources/competitor-demand-report",
+            "amount_cents": 1200,
+            "currency": "usd",
+            "test_mode": true
+          },
+          "founder_guardrails": {
+            "weekly_budget_usd": 500,
+            "requires_human_approval": true,
+            "autonomous_spend_limit_usd": 0,
+            "percentage_of_weekly_budget": 2.4
+          },
+          "chat_card": {
+            "title": "MPP spend request: Competitor demand data pull",
+            "body": "Pay $12 via Stripe MPP for unlock source data behind CartPilot alternatives directory",
+            "primary_action": "approve mpp_data_001",
+            "secondary_action": "reject mpp_data_001"
+          }
+        },
+        {
+          "id": "mpp_launch_001",
+          "protocol": "stripe_mpp",
+          "status": "awaiting_founder_approval",
+          "approval_command": "approve mpp_launch_001",
+          "reject_command": "reject mpp_launch_001",
+          "resource_type": "launch_placement",
+          "resource_name": "BetaList paid placement",
+          "provider": "Example Launch Directory",
+          "http_endpoint": "https://mpp.example.ai/resources/launch-placement",
+          "amount_usd": 49,
+          "amount_cents": 4900,
+          "currency": "usd",
+          "reason": "reserve a paid launch placement after founder approves the channel angle",
+          "expected_outcome": "launch placement slot, submission receipt, and tracking link",
+          "source_sprint_section": "launch_plan",
+          "payment_challenge": {
+            "http_status": 402,
+            "www_authenticate": "Payment",
+            "method": "stripe.mpp.charge",
+            "resource": "https://mpp.example.ai/resources/launch-placement",
+            "amount_cents": 4900,
+            "currency": "usd",
+            "test_mode": true
+          },
+          "founder_guardrails": {
+            "weekly_budget_usd": 500,
+            "requires_human_approval": true,
+            "autonomous_spend_limit_usd": 0,
+            "percentage_of_weekly_budget": 9.8
+          },
+          "chat_card": {
+            "title": "MPP spend request: BetaList paid placement",
+            "body": "Pay $49 via Stripe MPP for reserve a paid launch placement after founder approves the channel angle",
+            "primary_action": "approve mpp_launch_001",
+            "secondary_action": "reject mpp_launch_001"
+          }
+        },
+        {
+          "id": "mpp_execution_001",
+          "protocol": "stripe_mpp",
+          "status": "awaiting_founder_approval",
+          "approval_command": "approve mpp_execution_001",
+          "reject_command": "reject mpp_execution_001",
+          "resource_type": "execution_infrastructure",
+          "resource_name": "Browser execution session",
+          "provider": "Example Browser Session Provider",
+          "http_endpoint": "https://mpp.example.ai/resources/browser-session",
+          "amount_usd": 1,
+          "amount_cents": 100,
+          "currency": "usd",
+          "reason": "run a paid execution session for approved launch submission checks",
+          "expected_outcome": "one browser automation session with receipt attached to the sprint ledger",
+          "source_sprint_section": "execution_infrastructure",
+          "payment_challenge": {
+            "http_status": 402,
+            "www_authenticate": "Payment",
+            "method": "stripe.mpp.charge",
+            "resource": "https://mpp.example.ai/resources/browser-session",
+            "amount_cents": 100,
+            "currency": "usd",
+            "test_mode": true
+          },
+          "founder_guardrails": {
+            "weekly_budget_usd": 500,
+            "requires_human_approval": true,
+            "autonomous_spend_limit_usd": 0,
+            "percentage_of_weekly_budget": 0.2
+          },
+          "chat_card": {
+            "title": "MPP spend request: Browser execution session",
+            "body": "Pay $1 via Stripe MPP for run a paid execution session for approved launch submission checks",
+            "primary_action": "approve mpp_execution_001",
+            "secondary_action": "reject mpp_execution_001"
+          }
+        }
+      ],
+      "demo_mode": true
+    },
+    "mpp_receipts": {
+      "generated_at": "2026-07-01T05:02:47.190358",
+      "protocol": "stripe_mpp",
+      "mode": "test",
+      "total_receipts": 4,
+      "receipts": [
+        {
+          "receipt_id": "mpp_receipt_001",
+          "spend_card_id": "mpp_creator_001",
+          "protocol": "stripe_mpp",
+          "mode": "test",
+          "status": "simulated_after_founder_approval",
+          "payment_intent": "pi_test_mpp_000001",
+          "stripe_receipt_url": "https://dashboard.stripe.com/test/payments/pi_test_mpp_000001",
+          "resource_unlocked": "https://mpp.example.ai/resources/creator-test",
+          "amount_usd": 125,
+          "currency": "usd",
+          "ledger_note": "Demo receipt only. No live Stripe call and no money moved."
+        },
+        {
+          "receipt_id": "mpp_receipt_002",
+          "spend_card_id": "mpp_data_001",
+          "protocol": "stripe_mpp",
+          "mode": "test",
+          "status": "simulated_after_founder_approval",
+          "payment_intent": "pi_test_mpp_000002",
+          "stripe_receipt_url": "https://dashboard.stripe.com/test/payments/pi_test_mpp_000002",
+          "resource_unlocked": "https://mpp.example.ai/resources/competitor-demand-report",
+          "amount_usd": 12,
+          "currency": "usd",
+          "ledger_note": "Demo receipt only. No live Stripe call and no money moved."
+        },
+        {
+          "receipt_id": "mpp_receipt_003",
+          "spend_card_id": "mpp_launch_001",
+          "protocol": "stripe_mpp",
+          "mode": "test",
+          "status": "simulated_after_founder_approval",
+          "payment_intent": "pi_test_mpp_000003",
+          "stripe_receipt_url": "https://dashboard.stripe.com/test/payments/pi_test_mpp_000003",
+          "resource_unlocked": "https://mpp.example.ai/resources/launch-placement",
+          "amount_usd": 49,
+          "currency": "usd",
+          "ledger_note": "Demo receipt only. No live Stripe call and no money moved."
+        },
+        {
+          "receipt_id": "mpp_receipt_004",
+          "spend_card_id": "mpp_execution_001",
+          "protocol": "stripe_mpp",
+          "mode": "test",
+          "status": "simulated_after_founder_approval",
+          "payment_intent": "pi_test_mpp_000004",
+          "stripe_receipt_url": "https://dashboard.stripe.com/test/payments/pi_test_mpp_000004",
+          "resource_unlocked": "https://mpp.example.ai/resources/browser-session",
+          "amount_usd": 1,
+          "currency": "usd",
+          "ledger_note": "Demo receipt only. No live Stripe call and no money moved."
+        }
+      ],
+      "demo_mode": true
+    },
+    "trend_content": {
+      "generated_at": "2026-07-01T05:02:47.221009",
+      "total_trends": 1,
+      "total_content_pieces": 5,
+      "avg_viral_potential": 78.0,
+      "relevant_trends": [
+        {
+          "trend": "E-commerce industry growth",
+          "platform": "Twitter/X",
+          "volume": "high",
+          "relevance": "renewed interest in e-commerce analytics and growth automation",
+          "example_post": "E-commerce industry is booming but the software is stuck in 1990. Who's building modern tools for e-commerce?",
+          "viral_potential": 78,
+          "keywords": [
+            "e-commerce industry",
+            "e-commerce",
+            "modern tools",
+            "technology gap"
+          ],
+          "relevance_score": 100,
+          "product_angle": "The e-commerce industry needs modern tools - ExampleAI is what e-commerce intelligence looks like in 2024"
+        }
+      ],
+      "content_drafts": [
+        {
+          "trend": "E-commerce industry growth",
+          "platform": "Twitter/X Thread",
+          "format": "twitter_thread",
+          "content": "\ud83e\uddf5 Thread: E-commerce industry growth is reshaping our industry\n\n1/ E-commerce industry is booming but the software is stuck in 1990. Who's building modern tools for e-commerce?\n\n2/ This is exactly what we're seeing in e-commerce intelligence. Legacy solutions are struggling to keep up.\n\n3/ The e-commerce industry needs modern tools - ExampleAI is what e-commerce intelligence looks like in 2024\n\n4/ Early results: Turns store and customer signals into weekly GTM actions\n\n5/ The shift is happening faster than most realize. Tools like ExampleAI are just the beginning.\n\n6/ If you're dealing with this transition, worth checking out: https://example.ai\n\nWhat's your take on this trend? \ud83d\udc47",
+          "trend_relevance": 100,
+          "viral_potential": 78,
+          "product_angle": "The e-commerce industry needs modern tools - ExampleAI is what e-commerce intelligence looks like in 2024",
+          "estimated_reach": {
+            "organic_impressions": 780,
+            "engagement_rate": "2-5%",
+            "potential_viral_reach": 7800
+          },
+          "approval_required": true,
+          "status": "draft",
+          "posting_guidelines": "Post thread during peak hours (12-3pm or 7-9pm EST). Use relevant hashtags. Engage with replies within first hour."
+        },
+        {
+          "trend": "E-commerce industry growth",
+          "platform": "LinkedIn Professional Post",
+          "format": "linkedin_post",
+          "content": "The E-commerce industry growth trend is accelerating, and it's creating both challenges and opportunities in e-commerce intelligence.\n\nI've been watching this play out firsthand. renewed interest in e-commerce analytics and growth automation\n\nHere's what I'm seeing:\n\u2022 Legacy tools are showing their age\n\u2022 Teams are demanding better UX and performance\n\u2022 AI-native solutions are setting new expectations\n\nThe e-commerce industry needs modern tools - ExampleAI is what e-commerce intelligence looks like in 2024. We've seen turns store and customer signals into weekly gtm actions, which validates this approach.\n\nThe question isn't whether this trend will continue - it's how quickly organizations will adapt.\n\nFor those navigating this transition: https://example.ai\n\nWhat patterns are you seeing in your industry? #TechTrends #Innovation",
+          "trend_relevance": 100,
+          "viral_potential": 78,
+          "product_angle": "The e-commerce industry needs modern tools - ExampleAI is what e-commerce intelligence looks like in 2024",
+          "estimated_reach": {
+            "organic_impressions": 468,
+            "engagement_rate": "3-8%",
+            "potential_viral_reach": 4680
+          },
+          "approval_required": true,
+          "status": "draft",
+          "posting_guidelines": "Post Tuesday-Thursday 9am-12pm EST. Use professional tone. Include industry hashtags. Respond to comments promptly."
+        },
+        {
+          "trend": "E-commerce industry growth",
+          "platform": "Reddit Community Comment",
+          "format": "reddit_comment",
+          "content": "This is so true. I've been dealing with e-commerce industry growth in my work and it's a real shift.\n\nWe actually built ExampleAI (https://example.ai) specifically because of this trend. E-commerce intelligence engine for growth teams\n\nThe results have been interesting - turns store and customer signals into weekly gtm actions. But more importantly, it's changed how our team approaches e-commerce intelligence.\n\nthe e-commerce industry needs modern tools - this is what e-commerce intelligence looks like in 2024.\n\nNot trying to sell anything here, just sharing what we learned building in this e-commerce. Happy to answer questions if anyone's curious about the technical details.",
+          "trend_relevance": 100,
+          "viral_potential": 78,
+          "product_angle": "The e-commerce industry needs modern tools - ExampleAI is what e-commerce intelligence looks like in 2024",
+          "estimated_reach": {
+            "organic_impressions": 312,
+            "engagement_rate": "5-15%",
+            "potential_viral_reach": 0
+          },
+          "approval_required": true,
+          "status": "draft",
+          "posting_guidelines": "Follow community rules. Provide value first, mention product naturally. Don't appear promotional. Engage authentically."
+        },
+        {
+          "trend": "E-commerce industry growth",
+          "platform": "TikTok Video Script",
+          "format": "tiktok_script",
+          "content": "[Hook - 3 seconds]\n\"POV: E-commerce industry growth is happening in your industry\"\n\n[Problem Demo - 10 seconds]\n*Shows old/slow workflow*\n\"This is how everyone still does e-commerce intelligence\"\n\n[Solution Demo - 15 seconds]\n*Shows ExampleAI interface*\n\"But this is what's possible now: turns store and customer signals into weekly gtm actions\"\n\n[Results - 10 seconds]\n*Shows before/after comparison*\n\"ExampleAI = the future of e-commerce intelligence\"\n\n[CTA]\n\"Link in bio to try it yourself\"\n\nText overlay: \"E-commerce industry growth is real\" \u2192 \"ExampleAI\" \u2192 \"Turns store and customer signals into weekly GTM actions\" \u2192 \"https://example.ai\"",
+          "trend_relevance": 100,
+          "viral_potential": 78,
+          "product_angle": "The e-commerce industry needs modern tools - ExampleAI is what e-commerce intelligence looks like in 2024",
+          "estimated_reach": {
+            "organic_impressions": 1560,
+            "engagement_rate": "8-20%",
+            "potential_viral_reach": 0
+          },
+          "approval_required": true,
+          "status": "draft",
+          "posting_guidelines": "Post 6-10am or 7-9pm EST. Use trending sounds when possible. Include captions for accessibility. Engage with comments quickly."
+        },
+        {
+          "trend": "E-commerce industry growth",
+          "platform": "YouTube Shorts Script",
+          "format": "youtube_short",
+          "content": "[0-3s] Hook: \"E-commerce industry growth is changing everything in e-commerce intelligence\"\n\n[3-15s] Problem: \"Most tools weren't built for this new reality\"\n*Quick montage of old interfaces/workflows*\n\n[15-45s] Solution Demo: \"Meet ExampleAI - E-commerce intelligence engine for growth teams\"\n*Screen recording of key features*\n\"Turns store and customer signals into weekly GTM actions\"\n\n[45-60s] Results: \"This is what modern e-commerce intelligence look like\"\n*Before/after comparison*\n\n[End screen] \"Try it yourself: https://example.ai\"\n\nTitle: \"This Tool is Changing e-commerce intelligence\"\nTags: #TechTrends #Innovation #E-Commerce Intelligence",
+          "trend_relevance": 100,
+          "viral_potential": 78,
+          "product_angle": "The e-commerce industry needs modern tools - ExampleAI is what e-commerce intelligence looks like in 2024",
+          "estimated_reach": {
+            "organic_impressions": 1248,
+            "engagement_rate": "4-12%",
+            "potential_viral_reach": 15600
+          },
+          "approval_required": true,
+          "status": "draft",
+          "posting_guidelines": "Post consistently at same time. Use clear thumbnails. Optimize for mobile viewing. Cross-promote on other platforms."
+        }
+      ],
+      "demo_mode": true
+    }
+  },
+  "next_week_plan": {
+    "week": "Week of July 08, 2026",
+    "focus_areas": [
+      "Execute approved launch channels",
+      "Follow up on backlink outreach responses",
+      "Execute approved outbound messages",
+      "Finalize creator partnerships and content briefs",
+      "Publish approved trend-based content"
+    ],
+    "follow_up_actions": [
+      "Monitor launch performance and engagement",
+      "Submit to approved directories and listings",
+      "Follow up with non-responders after 1 week",
+      "Provide product access and assets to creators",
+      "Engage with comments and track performance"
+    ],
+    "optimization_opportunities": [
+      "A/B test different outbound message templates",
+      "Track which launch channels drive highest quality traffic",
+      "Measure creator campaign performance vs other channels",
+      "Identify trending topics for next week's content",
+      "Analyze competitor activity for new opportunities"
+    ],
+    "compound_learning": [
+      "Document what worked: successful channels, message templates, content formats",
+      "Update ICP profile based on responder characteristics",
+      "Refine creator selection criteria based on campaign performance",
+      "Build library of high-performing content templates",
+      "Establish performance benchmarks for future sprint comparison"
+    ]
+  },
+  "help_catalog": {
+    "trigger_commands": [
+      "help",
+      "what can you do?",
+      "commands",
+      "capabilities"
+    ],
+    "headline": "Flywheel is your GTM employee for weekly acquisition sprints.",
+    "capabilities": [
+      "Draft weekly GTM sprints from product, ICP, competitor, budget, and focus context.",
+      "Find launch channels and package launch copy/assets.",
+      "Identify backlink/listing opportunities from competitor/category research.",
+      "Score warm outbound targets and draft approval-gated messages.",
+      "Plan creator campaigns and approval-gated spend requests.",
+      "Turn paid GTM resources into Stripe MPP spend cards with founder approval commands and test receipts.",
+      "Generate trend-based content drafts for social distribution.",
+      "Walk users through a draft sprint section by section before finalization."
+    ],
+    "start_prompts": [
+      "Run a GTM sprint for <product>. ICP: <buyer>. Competitors: <names>. Budget: <$>. Focus: <channels>.",
+      "Draft a launch sprint for <product/url> targeting <ICP>.",
+      "Help me review this sprint step by step."
+    ],
+    "review_commands": [
+      "review launch",
+      "review backlinks",
+      "review outbound",
+      "review content",
+      "review mpp spend",
+      "review budget",
+      "start walkthrough",
+      "approve <section>",
+      "edit <section>: <change>",
+      "finalize sprint",
+      "show approvals"
+    ],
+    "safety_rules": [
+      "Draft approvals are plan approvals only, not execution approvals.",
+      "No outbound messages, social posts, or spend execute automatically.",
+      "Stripe MPP cards are payment approvals only after sprint finalization; autonomous spend is $0.",
+      "Execution approvals unlock only after `finalize sprint`."
+    ]
+  },
+  "thread_actions": [
+    {
+      "id": "help",
+      "label": "Show Flywheel capabilities and commands",
+      "thread_command": "help",
+      "status": "available",
+      "scope": "help",
+      "aliases": [
+        "what can you do?",
+        "commands",
+        "capabilities"
+      ],
+      "safety_note": "Explains what Flywheel can do and how to interact with it."
+    },
+    {
+      "id": "start-walkthrough",
+      "label": "Walk me through the draft step by step",
+      "thread_command": "start walkthrough",
+      "status": "available",
+      "scope": "guided_review",
+      "safety_note": "Switches from dashboard review to sequential section review."
+    },
+    {
+      "id": "finalize-sprint",
+      "label": "Finalize sprint after section review",
+      "thread_command": "finalize sprint",
+      "status": "blocked_until_sections_reviewed",
+      "scope": "plan_finalization",
+      "safety_note": "Finalizes the sprint plan only; it does not send, post, or spend."
+    },
+    {
+      "id": "revise",
+      "label": "Ask Flywheel to revise the draft sprint",
+      "thread_command": "revise <what to change>",
+      "status": "available",
+      "scope": "revision",
+      "safety_note": "Use in Slack to steer the GTM employee in-thread."
+    },
+    {
+      "id": "show-approvals",
+      "label": "Show review/finalization status",
+      "thread_command": "show approvals",
+      "status": "available",
+      "scope": "review_status",
+      "safety_note": "Lists remaining draft sections before finalization."
+    },
+    {
+      "id": "review-launch",
+      "label": "Review Launch channels",
+      "thread_command": "review launch",
+      "status": "draft",
+      "scope": "launch",
+      "approve_command": "approve launch",
+      "edit_command": "edit launch: <change>",
+      "safety_note": "Approves or edits this plan section; execution approvals unlock only after `finalize sprint`."
+    },
+    {
+      "id": "review-backlinks",
+      "label": "Review Backlink/listing opportunities",
+      "thread_command": "review backlinks",
+      "status": "draft",
+      "scope": "backlinks",
+      "approve_command": "approve backlinks",
+      "edit_command": "edit backlinks: <change>",
+      "safety_note": "Approves or edits this plan section; execution approvals unlock only after `finalize sprint`."
+    },
+    {
+      "id": "review-outbound",
+      "label": "Review Outbound targets",
+      "thread_command": "review outbound",
+      "status": "draft",
+      "scope": "outbound",
+      "approve_command": "approve outbound",
+      "edit_command": "edit outbound: <change>",
+      "safety_note": "Approves or edits this plan section; execution approvals unlock only after `finalize sprint`."
+    },
+    {
+      "id": "review-content",
+      "label": "Review Content plan",
+      "thread_command": "review content",
+      "status": "draft",
+      "scope": "content",
+      "approve_command": "approve content",
+      "edit_command": "edit content: <change>",
+      "safety_note": "Approves or edits this plan section; execution approvals unlock only after `finalize sprint`."
+    },
+    {
+      "id": "review-mpp-spend",
+      "label": "Review Stripe MPP spend cards",
+      "thread_command": "review mpp spend",
+      "status": "draft",
+      "scope": "mpp-spend",
+      "approve_command": "approve mpp spend",
+      "edit_command": "edit mpp spend: <change>",
+      "safety_note": "Approves or edits this plan section; execution approvals unlock only after `finalize sprint`."
+    },
+    {
+      "id": "review-budget",
+      "label": "Review Budget/spend gates",
+      "thread_command": "review budget",
+      "status": "draft",
+      "scope": "budget",
+      "approve_command": "approve budget",
+      "edit_command": "edit budget: <change>",
+      "safety_note": "Approves or edits this plan section; execution approvals unlock only after `finalize sprint`."
+    }
+  ],
+  "review_sections": [
+    {
+      "id": "launch",
+      "label": "Launch channels",
+      "status": "draft",
+      "review_command": "review launch",
+      "approve_command": "approve launch",
+      "edit_command": "edit launch: <change>",
+      "summary": "8 launch channels drafted"
+    },
+    {
+      "id": "backlinks",
+      "label": "Backlink/listing opportunities",
+      "status": "draft",
+      "review_command": "review backlinks",
+      "approve_command": "approve backlinks",
+      "edit_command": "edit backlinks: <change>",
+      "summary": "10 backlink/listing opportunities drafted"
+    },
+    {
+      "id": "outbound",
+      "label": "Outbound targets",
+      "status": "draft",
+      "review_command": "review outbound",
+      "approve_command": "approve outbound",
+      "edit_command": "edit outbound: <change>",
+      "summary": "10 warm leads / 20 outreach items require later execution approval"
+    },
+    {
+      "id": "content",
+      "label": "Content plan",
+      "status": "draft",
+      "review_command": "review content",
+      "approve_command": "approve content",
+      "edit_command": "edit content: <change>",
+      "summary": "5 content drafts"
+    },
+    {
+      "id": "mpp-spend",
+      "label": "Stripe MPP spend cards",
+      "status": "draft",
+      "review_command": "review mpp spend",
+      "approve_command": "approve mpp spend",
+      "edit_command": "edit mpp spend: <change>",
+      "summary": "4 MPP spend cards / $187 pending for paid GTM resources"
+    },
+    {
+      "id": "budget",
+      "label": "Budget/spend gates",
+      "status": "draft",
+      "review_command": "review budget",
+      "approve_command": "approve budget",
+      "edit_command": "edit budget: <change>",
+      "summary": "$125 proposed spend across 1 requests"
+    }
+  ],
+  "draft_review_flow": {
+    "default_mode": "dashboard",
+    "walkthrough_command": "start walkthrough",
+    "finalize_command": "finalize sprint",
+    "execution_locked_until_finalized": true,
+    "status": "draft_not_finalized"
+  },
+  "slack_callback_policy": {
+    "quiet_by_default": true,
+    "post_to_thread": [
+      "ack",
+      "help_message",
+      "draft_review_dashboard",
+      "optional_walkthrough",
+      "finalization_commands"
+    ],
+    "keep_audit_only": [
+      "script_progress",
+      "intermediate_generation",
+      "validation_details"
+    ]
+  },
+  "report_version": "1.3"
+}

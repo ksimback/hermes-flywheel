@@ -1,0 +1,25 @@
+# The model is intentionally left unconfigured because Hermes profiles are isolated.
+# After installing the profile, run `hermes -p flywheel-agent setup --portal` or
+# `hermes -p flywheel-agent model` to choose the provider for this profile.
+model: ""
+
+toolsets:
+  enabled:
+    - web           # Web search and extract for research
+    - browser       # Browser automation when needed
+    - terminal      # Scripts and command execution
+    - file          # File read/write for data management
+    - cronjob       # Weekly sprint scheduling
+    - skills        # Flywheel skill execution
+    - delegation    # Parallel task execution when helpful
+
+# Safety defaults for GTM operations
+agent:
+  auto_approve: false         # Never auto-approve outbound or spend
+  require_confirmation: true   # Always confirm before external actions
+
+# Memory settings for persistent customer acquisition context
+memory:
+  product_profiles: true      # Remember product context across sessions
+  sprint_history: true        # Track what worked in previous weeks
+  opportunity_scores: true    # Learn which channels convert best

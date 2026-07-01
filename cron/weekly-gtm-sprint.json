@@ -1,0 +1,9 @@
+{
+  "name": "weekly-gtm-sprint",
+  "schedule": "0 9 * * 1",
+  "prompt": "Run my weekly customer acquisition flywheel sprint. Generate this week's GTM action plan including launch opportunities, backlink targets, warm outbound queue, creator campaigns, and trend-based content. Present top recommendations and mark all outbound/spend items for human approval.",
+  "skills": ["flywheel-agent"],
+  "enabled": false,
+  "repeat": 999,
+  "deliver": "origin"
+}
