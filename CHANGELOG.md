@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1 — 2026-07-02
+
+### Polish
+- **Output-quality gate.** A new test scans the shipped demo markdown for the copy defects that make generated output look broken — unrendered template placeholders, leaked internal review notes, literal `None`/`undefined`, and the proof-point grammar splice — so a regression in founder-facing copy fails CI. Intentional mail-merge tokens (`{name}`, `[Your name]`) are allowed.
+- **"Verify your install" README section**: three no-key commands (`flywheel.py doctor`, `run --demo`, `pytest`) that confirm a fresh clone works end to end.
+
 ## 0.4.0 — 2026-07-02
 
 ### Live integrations (with honest degradation)
