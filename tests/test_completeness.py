@@ -42,6 +42,11 @@ REQUIRED_SCRIPTS = [
     "trend_scan.py",
     "sprint_report.py",
     "validate_outputs.py",
+    "sprint_ledger.py",
+    "approvals.py",
+    "research.py",
+    "stripe_client.py",
+    "flywheel.py",
 ]
 
 DOWNSTREAM_PIPELINE = [
