@@ -6,28 +6,43 @@ Compiles all GTM activities into a comprehensive weekly flywheel sprint report.
 
 import json
 import os
+import traceback
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 
-RUN_LEDGER_DIR = "demo/demo-output/runs"
+from _common import (
+    EXIT_ERROR,
+    EXIT_OK,
+    ROOT,
+    anchor,
+    build_parser,
+    configure_stdout,
+    load_profile,
+    out_path,
+    write_json,
+    write_text,
+)
 
-def load_product_profile(path: str = "data/product_profile.json") -> Dict[str, Any]:
-    """Load product profile from JSON file."""
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Product profile not found at {path}. Run flywheel_intake.py first.")
 
-    with open(path, 'r') as f:
-        return json.load(f)
-
-def load_json_safely(path: str) -> Optional[Dict[str, Any]]:
+def load_json_safely(path) -> Optional[Dict[str, Any]]:
     """Load JSON file safely, return None if not found."""
     try:
-        if os.path.exists(path):
-            with open(path, 'r') as f:
+        path = anchor(path)
+        if path.exists():
+            with path.open(encoding="utf-8") as f:
                 return json.load(f)
     except Exception as e:
         print(f"⚠️  Warning: Could not load {path}: {e}")
     return None
+
+
+def artifact_ref(path):
+    """Reference an artifact relative to the repo root when possible."""
+    path = anchor(path)
+    try:
+        return path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path)
 
 def generate_executive_summary(profile: Dict[str, Any], all_data: Dict[str, Any]) -> Dict[str, Any]:
     """Generate executive summary of the weekly sprint."""
@@ -49,6 +64,7 @@ def generate_executive_summary(profile: Dict[str, Any], all_data: Dict[str, Any]
     # Budget analysis
     budget = profile.get("budget", {})
     weekly_budget = budget.get("weekly_usd", 100)
+    max_single_spend = budget.get("max_single_spend_usd", 25)
 
     creator_budget = creator_campaign.get("total_budget", 0)
     creator_upfront = sum(req.get("amount_usd", 0) for req in creator_campaign.get("spend_requests", []))
@@ -115,10 +131,14 @@ def generate_executive_summary(profile: Dict[str, Any], all_data: Dict[str, Any]
     summary = {
         "sprint_week": datetime.now().strftime("Week of %B %d, %Y"),
         "product_name": profile.get("product_name", "Product"),
-        "total_actions": total_launch_channels + total_opportunities + total_leads + total_creator_proposals,
+        "total_actions": (
+            total_launch_channels + total_opportunities + total_leads
+            + total_creator_proposals + total_content_pieces + len(mpp_cards)
+        ),
         "total_content_pieces": total_content_pieces,
         "budget_analysis": {
             "weekly_budget": weekly_budget,
+            "max_single_spend_usd": max_single_spend,
             "creator_spend_proposed": creator_upfront,
             "mpp_pending_amount": mpp_pending_amount,
             "creator_total_budget": creator_budget,
@@ -205,7 +225,7 @@ def estimate_weekly_impact(all_data: Dict[str, Any]) -> Dict[str, Any]:
         "estimated_content_reach": total_estimated_reach,
         "estimated_creator_reach": estimated_creator_reach,
         "total_potential_reach": total_estimated_reach + estimated_creator_reach,
-        "confidence_level": "conservative"  # These are conservative estimates
+        "confidence_level": "illustrative"  # Planning illustrations, not forecasts
     }
 
 def generate_next_week_plan(profile: Dict[str, Any], all_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -424,11 +444,12 @@ def build_thread_actions(summary: Dict[str, Any]) -> List[Dict[str, Any]]:
     return actions
 
 
-def save_run_ledger(report: Dict[str, Any], output_path: str) -> str:
+def save_run_ledger(report: Dict[str, Any], args, output_path) -> str:
     """Save a lightweight run ledger for Slack/thread-native demos."""
-    os.makedirs(RUN_LEDGER_DIR, exist_ok=True)
     summary = report["sprint_summary"]
-    run_id = datetime.now().strftime("flywheel-%Y%m%d-%H%M%S")
+    # Microseconds + pid keep same-second (and concurrent) runs from
+    # overwriting each other's ledger entries.
+    run_id = datetime.now().strftime("flywheel-%Y%m%d-%H%M%S-%f") + f"-{os.getpid()}"
     ledger = {
         "run_id": run_id,
         "source": "demo_or_slack",
@@ -443,14 +464,14 @@ def save_run_ledger(report: Dict[str, Any], output_path: str) -> str:
             "audit_only": ["script_progress", "intermediate_generation", "validation_details"]
         },
         "artifacts": [
-            output_path,
-            output_path.replace(".json", ".md"),
-            "demo/demo-output/outbound_queue.md",
-            "demo/demo-output/creator_campaign.md",
-            "demo/demo-output/mpp_spend_cards.md",
-            "demo/demo-output/mpp_spend_cards.json",
-            "demo/demo-output/mpp_receipts.json",
-            "demo/demo-output/trend_content.md"
+            artifact_ref(output_path),
+            artifact_ref(output_path.with_suffix(".md")),
+            artifact_ref(out_path(args, "outbound_queue.md")),
+            artifact_ref(out_path(args, "creator_campaign.md")),
+            artifact_ref(out_path(args, "mpp_spend_cards.md")),
+            artifact_ref(out_path(args, "mpp_spend_cards.json")),
+            artifact_ref(out_path(args, "mpp_receipts.json")),
+            artifact_ref(out_path(args, "trend_content.md"))
         ],
         "approval_actions": build_thread_actions(summary),
         "audit_notes": [
@@ -460,19 +481,15 @@ def save_run_ledger(report: Dict[str, Any], output_path: str) -> str:
             "The final callback should summarize outcomes and ask for numbered approvals."
         ]
     }
-    ledger_path = os.path.join(RUN_LEDGER_DIR, f"{run_id}.json")
-    latest_path = os.path.join(RUN_LEDGER_DIR, "latest_run.json")
-    for path in (ledger_path, latest_path):
-        with open(path, "w") as f:
-            json.dump(ledger, f, indent=2)
+    write_json(out_path(args, f"runs/{run_id}.json"), ledger)
+    latest_path = write_json(out_path(args, "runs/latest_run.json"), ledger)
     print(f"✓ Run ledger saved to {latest_path}")
-    return latest_path
+    return str(latest_path)
 
 
-def save_sprint_report(summary: Dict[str, Any], all_data: Dict[str, Any], next_week: Dict[str, Any],
-                      output_path: str = "demo/demo-output/weekly_flywheel_sprint.json"):
+def save_sprint_report(summary: Dict[str, Any], all_data: Dict[str, Any], next_week: Dict[str, Any], args):
     """Save complete sprint report to JSON."""
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    output_path = out_path(args, "weekly_flywheel_sprint.json")
 
     report = {
         "generated_at": datetime.now().isoformat(),
@@ -497,19 +514,18 @@ def save_sprint_report(summary: Dict[str, Any], all_data: Dict[str, Any], next_w
         "report_version": "1.3"
     }
 
-    with open(output_path, 'w') as f:
-        json.dump(report, f, indent=2)
+    write_json(output_path, report)
 
     print(f"✓ Sprint report saved to {output_path}")
 
     # Also save markdown report
-    md_path = output_path.replace('.json', '.md')
+    md_path = output_path.with_suffix('.md')
     save_sprint_markdown(report, md_path)
-    save_run_ledger(report, output_path)
+    save_run_ledger(report, args, output_path)
 
     return output_path
 
-def save_sprint_markdown(report: Dict[str, Any], output_path: str):
+def save_sprint_markdown(report: Dict[str, Any], output_path):
     """Save human-readable sprint report markdown."""
 
     summary = report["sprint_summary"]
@@ -536,7 +552,10 @@ def save_sprint_markdown(report: Dict[str, Any], output_path: str):
 - 📧 **Warm Leads:** {summary['channel_breakdown']['warm_leads']}
 - 🎬 **Creator Partnerships:** {summary['channel_breakdown']['creator_partnerships']}
 
-### Estimated Impact (Conservative)
+### Estimated Impact (Illustrative)
+
+_Illustrative planning estimates, not forecasts._
+
 - **Weekly Traffic:** {summary['estimated_weekly_impact']['estimated_weekly_traffic']:,} visitors
 - **Content Reach:** {summary['estimated_weekly_impact']['estimated_content_reach']:,} impressions
 - **Creator Reach:** {summary['estimated_weekly_impact']['estimated_creator_reach']:,} followers
@@ -764,7 +783,7 @@ Flywheel treats Stripe MPP as the transaction layer for approved GTM procurement
 
 1. **🚦 ALL external actions require explicit approval** - no auto-send, no auto-spend
 2. **💳 Stripe MPP is approval-gated** - paid GTM resources become spend cards before payment authorization
-3. **💰 Budget tracking** - weekly limit ${summary['budget_analysis']['weekly_budget']}, single spend max ${summary.get('max_single_spend', 25)}
+3. **💰 Budget tracking** - weekly limit ${summary['budget_analysis']['weekly_budget']}, single spend max ${summary['budget_analysis'].get('max_single_spend_usd', 25)}
 4. **📊 Performance tracking** - measure what works for compound learning
 5. **🔄 Weekly cadence** - run this flywheel every Monday for consistent growth
 6. **🎯 Focus on execution** - plans only work when actions are taken
@@ -772,35 +791,43 @@ Flywheel treats Stripe MPP as the transaction layer for approved GTM procurement
 **This sprint represents one week of focused customer acquisition work. Approve, execute, measure, learn, repeat.**
 """
 
-    with open(output_path, 'w') as f:
-        f.write(md_content)
+    write_text(output_path, md_content)
 
     print(f"✓ Sprint markdown report saved to {output_path}")
 
 def main():
     """Main sprint report generation workflow."""
+    configure_stdout()
     print("📋 Flywheel Agent - Sprint Report Generator")
     print("Compiling weekly customer acquisition flywheel sprint...\n")
 
+    parser = build_parser("Compile all GTM activities into the weekly flywheel sprint report.", research=False)
+    args = parser.parse_args()
+
     try:
         # Load product profile
-        profile = load_product_profile()
+        profile = load_profile(args)
         print(f"✓ Loaded profile for {profile['product_name']}")
 
         # Load all generated data
         all_data = {
-            "launch_plan": load_json_safely("demo/demo-output/launch_plan.json"),
-            "backlink_opportunities": load_json_safely("demo/demo-output/backlink_opportunities.json"),
-            "outbound_queue": load_json_safely("demo/demo-output/outbound_queue.json"),
-            "creator_campaign": load_json_safely("demo/demo-output/creator_campaign.json"),
-            "mpp_spend_cards": load_json_safely("demo/demo-output/mpp_spend_cards.json"),
-            "mpp_receipts": load_json_safely("demo/demo-output/mpp_receipts.json"),
-            "trend_content": load_json_safely("demo/demo-output/trend_content.json")
+            "launch_plan": load_json_safely(out_path(args, "launch_plan.json")),
+            "backlink_opportunities": load_json_safely(out_path(args, "backlink_opportunities.json")),
+            "outbound_queue": load_json_safely(out_path(args, "outbound_queue.json")),
+            "creator_campaign": load_json_safely(out_path(args, "creator_campaign.json")),
+            "mpp_spend_cards": load_json_safely(out_path(args, "mpp_spend_cards.json")),
+            "mpp_receipts": load_json_safely(out_path(args, "mpp_receipts.json")),
+            "trend_content": load_json_safely(out_path(args, "trend_content.json"))
         }
 
         # Count loaded components
         loaded_components = len([k for k, v in all_data.items() if v is not None])
         print(f"✓ Loaded {loaded_components}/7 sprint components")
+
+        # Partial pipelines are the normal state after any exit-2 stage:
+        # normalize missing components to {} so the report degrades to a
+        # partial report instead of crashing on None.
+        all_data = {k: (v or {}) for k, v in all_data.items()}
 
         if loaded_components == 0:
             print("❌ No sprint components found. Run other scripts first:")
@@ -810,7 +837,7 @@ def main():
             print("   - lead_scorer.py")
             print("   - creator_campaign.py")
             print("   - trend_scan.py")
-            return 1
+            return EXIT_ERROR
 
         # Generate executive summary
         summary = generate_executive_summary(profile, all_data)
@@ -821,7 +848,7 @@ def main():
         print("✓ Generated next week plan")
 
         # Save complete report
-        output_path = save_sprint_report(summary, all_data, next_week)
+        output_path = save_sprint_report(summary, all_data, next_week, args)
 
         # Print summary
         approval_gates = summary.get("approval_gates", {})
@@ -843,16 +870,13 @@ def main():
             print("\n🎭 Running in DEMO MODE")
 
         print(f"\n✅ Draft sprint report complete! Review sections, edit if needed, then finalize the sprint before execution approvals.")
-        print(f"📄 Full report: {output_path.replace('.json', '.md')}")
-        return 0
+        print(f"📄 Full report: {output_path.with_suffix('.md')}")
+        return EXIT_OK
 
-    except FileNotFoundError as e:
-        print(f"❌ Error: {e}")
-        print("Run flywheel_intake.py first to create product profile.")
-        return 1
     except Exception as e:
+        traceback.print_exc()
         print(f"❌ Unexpected error: {e}")
-        return 1
+        return EXIT_ERROR
 
 if __name__ == "__main__":
     import sys

@@ -1,9 +1,10 @@
 # Warm Outbound Queue
 
-Generated: 2026-07-01T05:02:47.131491
+Generated: 2026-07-02T08:40:35.972723
 **Total Leads:** 10
 **Average ICP Fit:** 20.6/100
 **Demo Mode:** True
+**Data Source:** sample_fixture
 
 ## Priority Breakdown
 - 🔥 High Priority (80+ score): 0 leads
@@ -28,7 +29,7 @@ I came across your work at StackCart and thought you might be interested in Exam
 
 E-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.
 
-Early feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.
+Early feedback has been encouraging, with users telling us: "Turns store and customer signals into weekly GTM actions."
 
 Check it out if it seems relevant: https://example.ai
 
@@ -57,7 +58,7 @@ I came across your work at ShopFlow Analytics and thought you might be intereste
 
 E-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.
 
-Early feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.
+Early feedback has been encouraging, with users telling us: "Turns store and customer signals into weekly GTM actions."
 
 Check it out if it seems relevant: https://example.ai
 
@@ -86,7 +87,7 @@ I came across your work at CartPilot Labs and thought you might be interested in
 
 E-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.
 
-Early feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.
+Early feedback has been encouraging, with users telling us: "Turns store and customer signals into weekly GTM actions."
 
 Check it out if it seems relevant: https://example.ai
 
@@ -115,7 +116,7 @@ I came across your work at GrowthDock and thought you might be interested in Exa
 
 E-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.
 
-Early feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.
+Early feedback has been encouraging, with users telling us: "Turns store and customer signals into weekly GTM actions."
 
 Check it out if it seems relevant: https://example.ai
 
@@ -144,7 +145,7 @@ I came across your work at RetailOps Demo and thought you might be interested in
 
 E-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.
 
-Early feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.
+Early feedback has been encouraging, with users telling us: "Turns store and customer signals into weekly GTM actions."
 
 Check it out if it seems relevant: https://example.ai
 
@@ -173,7 +174,7 @@ I came across your work at StoreWorks and thought you might be interested in Exa
 
 E-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.
 
-Early feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.
+Early feedback has been encouraging, with users telling us: "Turns store and customer signals into weekly GTM actions."
 
 Check it out if it seems relevant: https://example.ai
 
@@ -202,7 +203,7 @@ I came across your work at Commerce Data Collective and thought you might be int
 
 E-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.
 
-Early feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.
+Early feedback has been encouraging, with users telling us: "Turns store and customer signals into weekly GTM actions."
 
 Check it out if it seems relevant: https://example.ai
 
@@ -231,7 +232,7 @@ I came across your work at Checkout Pathways and thought you might be interested
 
 E-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.
 
-Early feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.
+Early feedback has been encouraging, with users telling us: "Turns store and customer signals into weekly GTM actions."
 
 Check it out if it seems relevant: https://example.ai
 
@@ -260,7 +261,7 @@ I came across your work at LaunchOps Demo and thought you might be interested in
 
 E-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.
 
-Early feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.
+Early feedback has been encouraging, with users telling us: "Turns store and customer signals into weekly GTM actions."
 
 Check it out if it seems relevant: https://example.ai
 
@@ -289,7 +290,7 @@ I came across your work at Catalog Labs and thought you might be interested in E
 
 E-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.
 
-Early feedback has been positive, with users reporting Turns store and customer signals into weekly GTM actions.
+Early feedback has been encouraging, with users telling us: "Turns store and customer signals into weekly GTM actions."
 
 Check it out if it seems relevant: https://example.ai
 

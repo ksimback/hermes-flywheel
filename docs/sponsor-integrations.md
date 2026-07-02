@@ -10,9 +10,11 @@ Flywheel connects the three hackathon sponsor technologies into one product stor
 | NVIDIA Nemotron | GTM reasoning layer | Sprint planning language and NVIDIA API configuration path for model-backed reasoning |
 | Stripe MPP | Transaction layer for paid GTM resources | MPP spend cards, simulated 402 challenges, test receipts, sprint ledger artifacts |
 
-## Stripe MPP: GTM procurement layer
+## Stripe MPP: GTM procurement layer (simulated test mode)
 
 Stripe MPP is not treated as a generic payment logo. In Flywheel, MPP is the mechanism that turns a proposed paid GTM action into an approval-gated machine payment flow.
+
+The current MPP flow is **explicitly a simulation**: no live Stripe API is called, and every generated spend card and receipt carries the `"simulated": true` field. Stripe MCP (the `stripe-mcp-server` entry in `mcp.json`) is an optional future integration; `mcp.json` is a placeholder config and the server binary is not bundled with this repo.
 
 The intended loop is:
 
@@ -47,6 +49,7 @@ Flywheel keeps autonomous spend at `$0` in the demo. Every MPP card includes:
 - `reject_command`
 - `payment_challenge.http_status: 402`
 - `payment_challenge.test_mode: true`
+- `"simulated": true`
 - `founder_guardrails.autonomous_spend_limit_usd: 0`
 
 This makes MPP explicit without pretending live money moved during the demo.

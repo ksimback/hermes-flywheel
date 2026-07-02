@@ -1,6 +1,6 @@
 # Launch Plan: ExampleAI
 
-Generated: 2026-07-01T05:02:47.072378
+Generated: 2026-07-02T08:40:35.749533
 
 ## Executive Summary
 
@@ -170,7 +170,9 @@ Built for e-commerce founders who need better solutions for manual store analysi
 🚀 Introducing ExampleAI - E-commerce intelligence engine for growth teams
 
 ✨ What makes it special:
-['Turns store and customer signals into weekly GTM actions', 'Highlights audience segments and campaign opportunities', 'Keeps outreach and spend approval-gated']
+• Turns store and customer signals into weekly GTM actions
+• Highlights audience segments and campaign opportunities
+• Keeps outreach and spend approval-gated
 
 🎯 Perfect for e-commerce founders who need manual store analysis
 

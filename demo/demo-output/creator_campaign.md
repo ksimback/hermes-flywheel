@@ -1,10 +1,11 @@
 # Creator Campaign Strategy
 
-Generated: 2026-07-01T05:02:47.161743
+Generated: 2026-07-02T08:40:36.076611
 **Total Proposals:** 1
 **Total Budget:** $375
 **Average Relevance:** 75.0/100
 **Demo Mode:** True
+**Data Source:** sample_fixture
 
 ## Campaign Proposals (Relevance Order)
 
@@ -87,15 +88,15 @@ You have full creative control over content style and format. This brief provide
 
 | Creator | Upfront Payment | Performance Bonus | Total Budget | Exceeds Limit? |
 |---------|----------------|------------------|-------------|----------------|
-| StoreGrowthDemo | $125 | $125 | $375 | ⚠️ YES |
+| StoreGrowthDemo | $100 | $125 | $375 | ✅ NO |
 
-**Total Upfront Spend:** $125
+**Total Upfront Spend:** $100
 **Total Campaign Budget:** $375
 
 ## Budget Impact Analysis
 
-### StoreGrowthDemo Payment - ⚠️ EXCEEDS LIMIT
-- **Amount:** $125 (25.0% of weekly budget)
+### StoreGrowthDemo Payment - ✅ Within Limits
+- **Amount:** $100 (20.0% of weekly budget)
 - **Single Spend Limit:** $100
 - **Weekly Budget:** $500
 

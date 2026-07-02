@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hermes-flywheel"
+version = "0.2.0"
+description = "Flywheel Agent - a Hermes Agent profile that runs weekly customer acquisition sprints with approval gates."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+keywords = ["gtm", "growth", "customer-acquisition", "hermes", "agent"]
+
+[project.urls]
+Homepage = "https://hermesflywheel.com"
+Repository = "https://github.com/ksimback/hermes-flywheel"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[tool.setuptools]
+# Flat repo layout with no importable package; scripts run from
+# skills/flywheel-agent/scripts/. Disable auto-discovery so
+# `pip install -e .[dev]` works.
+packages = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

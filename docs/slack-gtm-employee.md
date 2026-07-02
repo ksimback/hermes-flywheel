@@ -149,6 +149,8 @@ Reply `execute 1`, `execute approved launch`, or `show execution gates`.
 | Plan finalized | Unlock execution approval gates |
 | Errors | Post concise blocker + next step |
 
+Quiet means no play-by-play of internal steps — it never means hiding data provenance. If a run is a demo on sample fixtures, or live research is blocked, Flywheel says so plainly in the thread.
+
 ## Review Commands
 
 Use these commands in the same Slack thread:

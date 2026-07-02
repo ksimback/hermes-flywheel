@@ -17,12 +17,19 @@ demo/demo-output/runs/flywheel-*.json
 demo/demo-output/test_*.json
 data/product_profile.json
 
+# Founder-local lead lists auto-detected by lead_scorer.py (never commit)
+data/leads.csv
+data/prospects.csv
+
 # Runtime/cache artifacts
 __pycache__/
 *.py[cod]
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Local planning/session notes (not part of the distribution)
+tasks/
 
 # Local editor/OS noise
 .DS_Store

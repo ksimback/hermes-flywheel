@@ -1,16 +1,55 @@
 #!/usr/bin/env python3
 """
 Backlink Hunter Script
-Finds competitor backlinks and listing opportunities via web search.
+Ranks competitor backlink and listing opportunities.
+
+Opportunity discovery is research: for real runs the calling agent performs
+web research and supplies findings via --input. The bundled sample fixture is
+only used in explicit demo mode.
 """
 
-import json
-import os
-import re
+import sys
+import traceback
 from datetime import datetime
 from typing import Dict, List, Any
 
-# Sample backlink opportunities for demo mode
+from _common import (
+    EXIT_ERROR,
+    EXIT_OK,
+    artifact_demo_mode,
+    build_parser,
+    configure_stdout,
+    load_profile,
+    md_safe,
+    out_path,
+    resolve_research,
+    write_json,
+    write_text,
+)
+
+OPPORTUNITY_SCHEMA_HINT = (
+    "JSON with key 'opportunities': list of {id, type, source_url, title, "
+    "description, why_relevant, estimated_effort, estimated_impact, "
+    "recommended_action, outreach_template}"
+)
+
+# Defaults applied to agent-supplied items so scoring/formatting never KeyErrors.
+OPPORTUNITY_DEFAULTS = {
+    "type": "unknown",
+    "source_url": "",
+    "title": "Untitled opportunity",
+    "description": "",
+    "why_relevant": "",
+    "estimated_effort": "medium",
+    "estimated_impact": "medium",
+    "recommended_action": "Review opportunity and decide on outreach",
+    "outreach_template": "",
+    "approval_required": True,
+    "status": "new",
+}
+
+# Sample backlink opportunities for explicit demo mode only.
+# Scores are intentionally absent: score_opportunities() computes them.
 SAMPLE_OPPORTUNITIES = [{'id': 'opp_001',
   'type': 'backlink_listing',
   'source_url': 'https://example.com/ecommerce-tools/cartpilot-alternatives',
@@ -20,7 +59,6 @@ SAMPLE_OPPORTUNITIES = [{'id': 'opp_001',
                   'tools',
   'estimated_effort': 'low',
   'estimated_impact': 'medium',
-  'score': 78,
   'recommended_action': 'Submit ExampleAI as an alternative for early-stage e-commerce teams',
   'outreach_template': 'Hi team,\n'
                        '\n'
@@ -42,7 +80,6 @@ SAMPLE_OPPORTUNITIES = [{'id': 'opp_001',
   'why_relevant': 'Curated resource for founders evaluating tools like ExampleAI',
   'estimated_effort': 'low',
   'estimated_impact': 'high',
-  'score': 85,
   'recommended_action': 'Submit PR to add ExampleAI to customer intelligence section',
   'outreach_template': '## ExampleAI\n'
                        '\n'
@@ -65,7 +102,6 @@ SAMPLE_OPPORTUNITIES = [{'id': 'opp_001',
   'why_relevant': "Comparison article where ExampleAI's founder-focused positioning fits",
   'estimated_effort': 'medium',
   'estimated_impact': 'high',
-  'score': 82,
   'recommended_action': 'Pitch ExampleAI for the next e-commerce intelligence roundup',
   'outreach_template': 'Hi editorial team,\n'
                        '\n'
@@ -86,7 +122,6 @@ SAMPLE_OPPORTUNITIES = [{'id': 'opp_001',
                   'intelligence layer',
   'estimated_effort': 'low',
   'estimated_impact': 'medium',
-  'score': 71,
   'recommended_action': 'Participate with a helpful, non-spammy ExampleAI mention',
   'outreach_template': 'For early-stage e-commerce intelligence, ExampleAI is exploring a '
                        'lightweight approach: it turns store and customer signals into a weekly '
@@ -102,7 +137,6 @@ SAMPLE_OPPORTUNITIES = [{'id': 'opp_001',
   'why_relevant': 'Good-fit resource page for ExampleAI positioning',
   'estimated_effort': 'medium',
   'estimated_impact': 'medium',
-  'score': 76,
   'recommended_action': 'Request addition to tools list with brief description',
   'outreach_template': 'Hello,\n'
                        '\n'
@@ -122,7 +156,6 @@ SAMPLE_OPPORTUNITIES = [{'id': 'opp_001',
   'why_relevant': 'Audience includes e-commerce founders and operators',
   'estimated_effort': 'medium',
   'estimated_impact': 'high',
-  'score': 80,
   'recommended_action': 'Pitch ExampleAI as a lightweight customer intelligence workflow',
   'outreach_template': 'Hi team,\n'
                        '\n'
@@ -139,7 +172,6 @@ SAMPLE_OPPORTUNITIES = [{'id': 'opp_001',
   'why_relevant': 'Listeners include founders looking for practical customer acquisition workflows',
   'estimated_effort': 'medium',
   'estimated_impact': 'medium',
-  'score': 74,
   'recommended_action': 'Pitch a founder workflow interview',
   'outreach_template': 'Hi team,\n'
                        '\n'
@@ -157,7 +189,6 @@ SAMPLE_OPPORTUNITIES = [{'id': 'opp_001',
   'why_relevant': 'Relevant place for educational content about customer intelligence workflows',
   'estimated_effort': 'low',
   'estimated_impact': 'medium',
-  'score': 69,
   'recommended_action': 'Draft educational post with ExampleAI as a soft example',
   'outreach_template': "Educational draft only: here's how e-commerce founders can turn messy "
                        'store signals into weekly growth actions. ExampleAI is one lightweight '
@@ -172,7 +203,6 @@ SAMPLE_OPPORTUNITIES = [{'id': 'opp_001',
   'why_relevant': 'Strong source for partnership and customer discovery targets',
   'estimated_effort': 'low',
   'estimated_impact': 'high',
-  'score': 83,
   'recommended_action': 'Build a targeted e-commerce tool prospect list and draft partnership '
                         'outreach',
   'outreach_template': 'Hi {{name}},\n'
@@ -191,7 +221,6 @@ SAMPLE_OPPORTUNITIES = [{'id': 'opp_001',
                   'planning',
   'estimated_effort': 'medium',
   'estimated_impact': 'medium',
-  'score': 73,
   'recommended_action': 'Request inclusion as a related customer intelligence project',
   'outreach_template': 'Hi team,\n'
                        '\n'
@@ -201,75 +230,41 @@ SAMPLE_OPPORTUNITIES = [{'id': 'opp_001',
   'approval_required': True,
   'status': 'new'}]
 
-def load_product_profile(path: str = "data/product_profile.json") -> Dict[str, Any]:
-    """Load product profile from JSON file."""
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Product profile not found at {path}. Run flywheel_intake.py first.")
 
-    with open(path, 'r') as f:
-        return json.load(f)
+def prepare_opportunities(items: List[Dict[str, Any]], profile: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """Normalize opportunities and personalize outreach templates.
 
-def generate_search_queries(profile: Dict[str, Any]) -> List[str]:
-    """Generate web search queries to find backlink opportunities."""
-
-    competitors = profile.get("competitors", [])
-    category = profile.get("category", "")
-
-    queries = []
-
-    # Direct competitor queries
-    for competitor in competitors:
-        # Extract domain name from URL
-        domain = re.sub(r'https?://(www\.)?', '', competitor).split('/')[0]
-        company_name = domain.split('.')[0]
-
-        queries.extend([
-            f'"{domain}" alternatives',
-            f'"{company_name}" competitors',
-            f'"{domain}" directory listing',
-            f'"{company_name}" vs comparison',
-            f'"{domain}" review mention',
-            f'best {category} tools "{company_name}"'
-        ])
-
-    # Category-based queries
-    if category:
-        queries.extend([
-            f'awesome {category} tools github',
-            f'best {category} software directory',
-            f'{category} tools comparison',
-            f'{category} software alternatives'
-        ])
-
-    return queries[:15]  # Limit to top 15 queries
-
-def simulate_web_search(queries: List[str], profile: Dict[str, Any]) -> List[Dict[str, Any]]:
+    Works for both fixture items (which reference ExampleAI placeholders) and
+    agent-supplied research items (missing optional keys get safe defaults).
     """
-    Simulate web search results for backlink opportunities.
-    In production, this would use real web search APIs.
-    """
+    product_name = profile.get("product_name", "YourProduct")
+    url = profile.get("url", "")
+    domain = url.replace("https://", "").replace("http://", "").strip("/") if url else ""
 
-    # For demo mode, return sample opportunities with customization
-    opportunities = []
+    prepared = []
+    for index, raw in enumerate(items, 1):
+        opp = dict(raw)
+        for key, default in OPPORTUNITY_DEFAULTS.items():
+            opp.setdefault(key, default)
+        # Approval gates are clamped, never defaulted: research JSON must not
+        # be able to flow through with approval_required: false.
+        opp["approval_required"] = True
+        if not opp.get("id"):
+            opp["id"] = f"opp_{index:03d}"
 
-    for i, opp in enumerate(SAMPLE_OPPORTUNITIES):
-        # Customize opportunity for the specific product
-        customized_opp = opp.copy()
-        product_name = profile.get("product_name", "YourProduct")
-        url = profile.get("url", "https://yourproduct.com")
-        one_liner = profile.get("one_liner", "Revolutionary software solution")
+        # Personalize placeholder product references with the actual product.
+        template = opp.get("outreach_template") or ""
+        if template:
+            if product_name:
+                template = template.replace("ExampleAI", product_name)
+            if domain:
+                template = template.replace("example.ai", domain)
+            opp["outreach_template"] = template
 
-        # Customize templates with actual product info
-        if "outreach_template" in customized_opp:
-            template = customized_opp["outreach_template"]
-            template = template.replace("ExampleAI", product_name)
-            template = template.replace("example.ai", url.replace("https://", "").replace("http://", ""))
-            template = template.replace("AI-powered e-commerce intelligence toolkit", one_liner)
-            customized_opp["outreach_template"] = template
+        prepared.append(opp)
 
-        opportunities.append(customized_opp)
+    return prepared
 
-    return opportunities
 
 def score_opportunities(opportunities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Score and rank opportunities by potential impact."""
@@ -304,29 +299,28 @@ def score_opportunities(opportunities: List[Dict[str, Any]]) -> List[Dict[str, A
     opportunities.sort(key=lambda x: x["score"], reverse=True)
     return opportunities
 
-def save_opportunities(opportunities: List[Dict[str, Any]], output_path: str = "demo/demo-output/backlink_opportunities.json"):
-    """Save opportunities to JSON file."""
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+def save_opportunities(opportunities: List[Dict[str, Any]], args, profile: Dict[str, Any], data_source: str):
+    """Save opportunities JSON and markdown under the configured output dir."""
 
     data = {
         "generated_at": datetime.now().isoformat(),
         "total_opportunities": len(opportunities),
         "opportunities": opportunities,
-        "demo_mode": True
+        "demo_mode": artifact_demo_mode(profile, data_source),
+        "data_source": data_source
     }
 
-    with open(output_path, 'w') as f:
-        json.dump(data, f, indent=2)
-
-    print(f"✓ Backlink opportunities saved to {output_path}")
+    json_path = write_json(out_path(args, "backlink_opportunities.json"), data)
+    print(f"✓ Backlink opportunities saved to {json_path}")
 
     # Also save markdown summary
-    md_path = output_path.replace('.json', '.md')
-    save_opportunities_markdown(data, md_path)
+    save_opportunities_markdown(data, out_path(args, "backlink_opportunities.md"))
 
-    return output_path
+    return json_path
 
-def save_opportunities_markdown(data: Dict[str, Any], output_path: str):
+
+def save_opportunities_markdown(data: Dict[str, Any], output_path):
     """Save human-readable opportunities markdown."""
 
     opportunities = data["opportunities"]
@@ -342,18 +336,18 @@ Generated: {data['generated_at']}
 """
 
     for i, opp in enumerate(opportunities, 1):
-        md_content += f"""### {i}. {opp['title']} (Score: {opp['score']})
+        md_content += f"""### {i}. {md_safe(opp['title'])} (Score: {opp['score']})
 
-**Type:** {opp['type']} | **Effort:** {opp['estimated_effort']} | **Impact:** {opp['estimated_impact']}
-**URL:** {opp['source_url']}
+**Type:** {md_safe(opp['type'])} | **Effort:** {md_safe(opp['estimated_effort'])} | **Impact:** {md_safe(opp['estimated_impact'])}
+**URL:** {md_safe(opp['source_url'])}
 
-**Why Relevant:** {opp['why_relevant']}
+**Why Relevant:** {md_safe(opp['why_relevant'])}
 
-**Recommended Action:** {opp['recommended_action']}
+**Recommended Action:** {md_safe(opp['recommended_action'])}
 
 **Outreach Template:**
 ```
-{opp['outreach_template']}
+{md_safe(opp['outreach_template'])}
 ```
 
 **Approval Required:** ✅ YES
@@ -369,9 +363,9 @@ Generated: {data['generated_at']}
     type_counts = {}
 
     for opp in opportunities:
-        effort = opp.get('estimated_effort', 'unknown')
-        impact = opp.get('estimated_impact', 'unknown')
-        opp_type = opp.get('type', 'unknown')
+        effort = str(opp.get('estimated_effort', 'unknown'))
+        impact = str(opp.get('estimated_impact', 'unknown'))
+        opp_type = str(opp.get('type', 'unknown'))
 
         effort_counts[effort] = effort_counts.get(effort, 0) + 1
         impact_counts[impact] = impact_counts.get(impact, 0) + 1
@@ -399,34 +393,40 @@ Generated: {data['generated_at']}
 **SAFETY REMINDER:** All outreach requires explicit human approval before sending.
 """
 
-    with open(output_path, 'w') as f:
-        f.write(md_content)
-
+    write_text(output_path, md_content)
     print(f"✓ Opportunities markdown saved to {output_path}")
+
 
 def main():
     """Main backlink hunter workflow."""
+    configure_stdout()
+
     print("🔗 Flywheel Agent - Backlink Hunter")
     print("Finding competitor backlinks and listing opportunities...\n")
 
     try:
+        parser = build_parser("Rank backlink and listing opportunities for the product.")
+        args = parser.parse_args()
+
         # Load product profile
-        profile = load_product_profile()
+        profile = load_profile(args)
         print(f"✓ Loaded profile for {profile['product_name']}")
 
-        # Generate search queries
-        queries = generate_search_queries(profile)
-        print(f"✓ Generated {len(queries)} search queries")
+        # Agent research via --input, or the sample fixture in explicit demo
+        # mode. Real runs without research exit with EXIT_MISSING_INPUT.
+        items, data_source = resolve_research(
+            args, profile, "opportunities", OPPORTUNITY_SCHEMA_HINT,
+            fixture=SAMPLE_OPPORTUNITIES,
+        )
 
-        # Simulate web search (in production, would use real APIs)
-        opportunities = simulate_web_search(queries, profile)
+        opportunities = prepare_opportunities(items, profile)
         print(f"✓ Found {len(opportunities)} potential opportunities")
 
         # Score and rank opportunities
         scored_opportunities = score_opportunities(opportunities)
 
         # Save results
-        output_path = save_opportunities(scored_opportunities)
+        save_opportunities(scored_opportunities, args, profile, data_source)
 
         # Print summary
         print(f"\n📊 Backlink Hunt Summary:")
@@ -435,20 +435,17 @@ def main():
         print(f"   High Impact: {len([o for o in scored_opportunities if o.get('estimated_impact') == 'high'])}")
         print(f"   Low Effort: {len([o for o in scored_opportunities if o.get('estimated_effort') == 'low'])}")
 
-        if profile.get("demo_mode"):
+        if data_source == "sample_fixture":
             print("\n🎭 Running in DEMO MODE - using sample opportunity data")
 
         print(f"\n✅ Backlink hunt complete! Review and approve outreach before sending.")
-        return 0
+        return EXIT_OK
 
-    except FileNotFoundError as e:
-        print(f"❌ Error: {e}")
-        print("Run flywheel_intake.py first to create product profile.")
-        return 1
     except Exception as e:
+        traceback.print_exc()
         print(f"❌ Unexpected error: {e}")
-        return 1
+        return EXIT_ERROR
+
 
 if __name__ == "__main__":
-    import sys
     sys.exit(main())

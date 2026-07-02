@@ -2,19 +2,53 @@
 """
 Validation Script
 Checks flywheel outputs for completeness, safety, and approval gates.
+
+Compatibility note: newer generators stamp artifacts with "simulated" and
+"data_source" fields. Those markers are validated when present, but their
+absence only produces a warning so older committed artifacts still pass.
 """
 
 import json
-import os
-from typing import Dict, List, Any, Tuple
+import math
+import re
+import traceback
+from typing import Any, Dict, List, Tuple
 
-def check_file_exists(path: str, description: str) -> Tuple[bool, str]:
+from _common import (
+    EXIT_ERROR,
+    EXIT_OK,
+    anchor,
+    build_parser,
+    configure_stdout,
+    out_path,
+)
+
+# Credential-shaped patterns, scanned line by line. Fixture domains such as
+# example.com must never suppress detection.
+SECRET_PATTERNS = [
+    # Hyphenated segments (sk-proj-..., sk-ant-api03-...) must still match.
+    ("openai-style key", re.compile(r"sk-[A-Za-z0-9_\-]{20,}")),
+    ("slack token", re.compile(r"xox[abeprs]-[A-Za-z0-9\-]{10,}")),
+    ("aws access key", re.compile(r"AKIA[0-9A-Z]{16}")),
+    ("github token", re.compile(r"(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{22,}")),
+    ("private key block", re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----")),
+    # Quote optional so unquoted env-style assignments are caught too.
+    ("generic credential assignment", re.compile(r"(?i)(api[_-]?key|secret|token)\s*[:=]\s*['\"]?[A-Za-z0-9_\-]{16,}")),
+]
+
+
+def read_json_file(path) -> Dict[str, Any]:
+    with anchor(path).open(encoding="utf-8") as f:
+        return json.load(f)
+
+
+def check_file_exists(path, description: str) -> Tuple[bool, str]:
     """Check if file exists and return status."""
-    if os.path.exists(path):
+    path = anchor(path)
+    if path.exists():
         try:
-            if path.endswith('.json'):
-                with open(path, 'r') as f:
-                    json.load(f)  # Validate JSON
+            if path.suffix == ".json":
+                read_json_file(path)  # Validate JSON
             return True, f"✅ {description}"
         except json.JSONDecodeError:
             return False, f"❌ {description} - Invalid JSON"
@@ -23,13 +57,29 @@ def check_file_exists(path: str, description: str) -> Tuple[bool, str]:
     else:
         return False, f"❌ {description} - File not found"
 
-def validate_product_profile(path: str = "data/product_profile.json") -> List[str]:
+
+def check_simulated_marker(payload: Dict[str, Any], label: str, warnings: List[str]) -> List[str]:
+    """Require simulated=true when the marker is present; warn when absent.
+
+    Older committed artifacts predate the "simulated" honesty marker, so a
+    missing field is warn-only. A present-but-untrue value is a hard failure.
+    """
+    issues = []
+    if "simulated" in payload:
+        if payload.get("simulated") is not True:
+            issues.append(f"{label} sets 'simulated' but not to true - simulated artifacts must be honest")
+    else:
+        warnings.append(f"{label} missing 'simulated': true marker (old-format artifact - regenerate to add it)")
+    # "data_source" is an accepted informational field; nothing to enforce.
+    return issues
+
+
+def validate_product_profile(path) -> List[str]:
     """Validate product profile completeness."""
     issues = []
 
     try:
-        with open(path, 'r') as f:
-            profile = json.load(f)
+        profile = read_json_file(path)
 
         required_fields = [
             "product_name", "url", "one_liner", "category",
@@ -71,13 +121,13 @@ def validate_product_profile(path: str = "data/product_profile.json") -> List[st
 
     return issues
 
-def validate_launch_plan(path: str = "demo/demo-output/launch_plan.json") -> List[str]:
+
+def validate_launch_plan(path) -> List[str]:
     """Validate launch plan completeness and safety."""
     issues = []
 
     try:
-        with open(path, 'r') as f:
-            plan = json.load(f)
+        plan = read_json_file(path)
 
         channels = plan.get("launch_channels", [])
         if len(channels) < 6:
@@ -107,13 +157,13 @@ def validate_launch_plan(path: str = "demo/demo-output/launch_plan.json") -> Lis
 
     return issues
 
-def validate_backlink_opportunities(path: str = "demo/demo-output/backlink_opportunities.json") -> List[str]:
+
+def validate_backlink_opportunities(path) -> List[str]:
     """Validate backlink opportunities completeness and safety."""
     issues = []
 
     try:
-        with open(path, 'r') as f:
-            data = json.load(f)
+        data = read_json_file(path)
 
         opportunities = data.get("opportunities", [])
         if len(opportunities) < 5:
@@ -143,13 +193,13 @@ def validate_backlink_opportunities(path: str = "demo/demo-output/backlink_oppor
 
     return issues
 
-def validate_outbound_queue(path: str = "demo/demo-output/outbound_queue.json") -> List[str]:
+
+def validate_outbound_queue(path) -> List[str]:
     """Validate outbound queue safety and completeness."""
     issues = []
 
     try:
-        with open(path, 'r') as f:
-            data = json.load(f)
+        data = read_json_file(path)
 
         leads = data.get("leads", [])
         if len(leads) == 0:
@@ -182,13 +232,13 @@ def validate_outbound_queue(path: str = "demo/demo-output/outbound_queue.json") 
 
     return issues
 
-def validate_creator_campaign(path: str = "demo/demo-output/creator_campaign.json") -> List[str]:
+
+def validate_creator_campaign(path) -> List[str]:
     """Validate creator campaign spend safety and completeness."""
     issues = []
 
     try:
-        with open(path, 'r') as f:
-            data = json.load(f)
+        data = read_json_file(path)
 
         proposals = data.get("campaign_proposals", [])
         spend_requests = data.get("spend_requests", [])
@@ -233,14 +283,17 @@ def validate_creator_campaign(path: str = "demo/demo-output/creator_campaign.jso
 
     return issues
 
-def validate_mpp_spend_cards(path: str = "demo/demo-output/mpp_spend_cards.json", receipts_path: str = "demo/demo-output/mpp_receipts.json") -> List[str]:
-    """Validate Stripe MPP spend cards and demo receipts."""
+
+def validate_mpp_spend_cards(path, receipts_path, warnings: List[str], max_single_spend_usd=0) -> List[str]:
+    """Validate Stripe MPP spend cards and simulated receipts."""
     issues = []
     try:
-        with open(path, "r") as f:
-            data = json.load(f)
-        with open(receipts_path, "r") as f:
-            receipts_data = json.load(f)
+        data = read_json_file(path)
+        receipts_data = read_json_file(receipts_path)
+
+        # Simulated-honesty markers (warn-only when absent, required-true when present)
+        issues.extend(check_simulated_marker(data, "MPP spend cards file", warnings))
+        issues.extend(check_simulated_marker(receipts_data, "MPP receipts file", warnings))
 
         cards = data.get("spend_cards", [])
         receipts = receipts_data.get("receipts", [])
@@ -255,12 +308,26 @@ def validate_mpp_spend_cards(path: str = "demo/demo-output/mpp_spend_cards.json"
             for field in required:
                 if field not in card:
                     issues.append(f"MPP spend card {card.get('id', 'unknown')} missing {field}")
+            # Amount sanity: a spend card must carry a positive finite amount.
+            amount = card.get("amount_usd")
+            if (not isinstance(amount, (int, float)) or isinstance(amount, bool)
+                    or not math.isfinite(amount) or amount <= 0):
+                issues.append(f"MPP spend card {card.get('id', 'unknown')} amount_usd must be a positive finite number, got {amount!r}")
+            elif max_single_spend_usd and amount > max_single_spend_usd:
+                warnings.append(
+                    f"MPP spend card {card.get('id', 'unknown')} amount ${amount} exceeds "
+                    f"profile max_single_spend_usd ${max_single_spend_usd}"
+                )
             if card.get("protocol") != "stripe_mpp":
                 issues.append(f"MPP spend card {card.get('id')} should use stripe_mpp protocol")
             if card.get("status") != "awaiting_founder_approval":
                 issues.append(f"MPP spend card {card.get('id')} should await founder approval")
             if card.get("founder_guardrails", {}).get("autonomous_spend_limit_usd") != 0:
                 issues.append(f"MPP spend card {card.get('id')} should keep autonomous spend at $0")
+            if not card.get("founder_guardrails", {}).get("requires_human_approval", False):
+                issues.append(f"MPP spend card {card.get('id')} should require human approval")
+            if not str(card.get("approval_command", "")).startswith("approve mpp_"):
+                issues.append(f"MPP spend card {card.get('id')} missing 'approve mpp_' approval command")
             challenge = card.get("payment_challenge", {})
             if challenge.get("http_status") != 402 or challenge.get("test_mode") is not True:
                 issues.append(f"MPP spend card {card.get('id')} should include test-mode 402 challenge")
@@ -272,6 +339,7 @@ def validate_mpp_spend_cards(path: str = "demo/demo-output/mpp_spend_cards.json"
                 issues.append(f"Receipt {receipt.get('receipt_id', 'unknown')} should be test-mode stripe_mpp")
             if not receipt.get("payment_intent", "").startswith("pi_test_mpp_"):
                 issues.append(f"Receipt {receipt.get('receipt_id', 'unknown')} missing test payment intent")
+            issues.extend(check_simulated_marker(receipt, f"Receipt {receipt.get('receipt_id', 'unknown')}", warnings))
     except FileNotFoundError:
         issues.append("MPP spend card or receipt file not found")
     except json.JSONDecodeError:
@@ -281,13 +349,12 @@ def validate_mpp_spend_cards(path: str = "demo/demo-output/mpp_spend_cards.json"
     return issues
 
 
-def validate_trend_content(path: str = "demo/demo-output/trend_content.json") -> List[str]:
+def validate_trend_content(path) -> List[str]:
     """Validate trend content safety and completeness."""
     issues = []
 
     try:
-        with open(path, 'r') as f:
-            data = json.load(f)
+        data = read_json_file(path)
 
         content_drafts = data.get("content_drafts", [])
         if len(content_drafts) == 0:
@@ -315,13 +382,13 @@ def validate_trend_content(path: str = "demo/demo-output/trend_content.json") ->
 
     return issues
 
-def validate_sprint_report(path: str = "demo/demo-output/weekly_flywheel_sprint.json") -> List[str]:
+
+def validate_sprint_report(path) -> List[str]:
     """Validate final sprint report completeness."""
     issues = []
 
     try:
-        with open(path, 'r') as f:
-            report = json.load(f)
+        report = read_json_file(path)
 
         summary = report.get("sprint_summary", {})
 
@@ -353,66 +420,86 @@ def validate_sprint_report(path: str = "demo/demo-output/weekly_flywheel_sprint.
 
     return issues
 
-def check_safety_compliance() -> List[str]:
+
+def scan_file_for_secrets(path) -> List[str]:
+    """Scan one file line by line for credential-shaped strings."""
+    findings = []
+    try:
+        content = path.read_text(encoding="utf-8")
+    except Exception as e:
+        findings.append(f"Could not scan {path.name} for secrets: {e}")
+        return findings
+    for line_no, line in enumerate(content.splitlines(), 1):
+        for label, pattern in SECRET_PATTERNS:
+            if pattern.search(line):
+                findings.append(f"Potential secret ({label}) in {path.name}:{line_no}")
+    return findings
+
+
+def check_safety_compliance(args) -> List[str]:
     """Check overall safety compliance across all outputs."""
     safety_issues = []
 
-    # Check for secrets in markdown files
-    md_files = [
-        "demo/demo-output/launch_plan.md",
-        "demo/demo-output/backlink_opportunities.md",
-        "demo/demo-output/outbound_queue.md",
-        "demo/demo-output/creator_campaign.md",
-        "demo/demo-output/mpp_spend_cards.md",
-        "demo/demo-output/trend_content.md",
-        "demo/demo-output/weekly_flywheel_sprint.md"
-    ]
+    # Scan every markdown and JSON artifact in the output dir (including the
+    # run ledgers) plus the profile itself for credential shapes.
+    # Fixture domains (example.com etc.) do NOT suppress detection.
+    output_dir = anchor(args.output_dir)
+    if output_dir.exists():
+        scan_targets = (
+            sorted(output_dir.glob("*.md"))
+            + sorted(output_dir.glob("*.json"))
+            + sorted(output_dir.glob("runs/*.json"))
+        )
+        for artifact in scan_targets:
+            safety_issues.extend(scan_file_for_secrets(artifact))
 
-    secret_patterns = ["api_key", "secret_key", "token", "password", "authorization:"]
-
-    for md_file in md_files:
-        if os.path.exists(md_file):
-            try:
-                with open(md_file, 'r') as f:
-                    content = f.read().lower()
-                    for pattern in secret_patterns:
-                        if pattern in content and "example" not in content:
-                            safety_issues.append(f"Potential secret in {md_file}: {pattern}")
-            except Exception:
-                pass  # Skip if can't read file
+    profile_path = anchor(args.profile)
+    if profile_path.exists():
+        safety_issues.extend(scan_file_for_secrets(profile_path))
 
     # Check directory structure
     required_dirs = [
-        "data",
-        "demo/demo-output",
-        "skills/flywheel-agent/scripts"
+        anchor("data"),
+        output_dir,
+        anchor("skills/flywheel-agent/scripts"),
     ]
 
     for dir_path in required_dirs:
-        if not os.path.exists(dir_path):
+        if not dir_path.exists():
             safety_issues.append(f"Missing required directory: {dir_path}")
 
     return safety_issues
 
-def main():
-    """Main validation workflow."""
-    print("🔍 Flywheel Agent - Output Validator")
-    print("Checking completeness, safety, and approval gates...\n")
 
+def run_validations(args) -> int:
+    """Run the full validation workflow, return an exit code."""
     all_issues = []
-    validation_results = []
+    # Warn-only findings (e.g. old-format artifacts missing new markers).
+    # Threaded through explicitly so repeated runs stay re-entrant.
+    warnings: List[str] = []
+
+    profile_path = anchor(args.profile)
+
+    # Profile-derived guardrails used by artifact sanity checks.
+    max_single_spend_usd = 0
+    try:
+        profile_budget = read_json_file(profile_path).get("budget", {}) or {}
+        if isinstance(profile_budget.get("max_single_spend_usd"), (int, float)):
+            max_single_spend_usd = profile_budget["max_single_spend_usd"]
+    except Exception:
+        pass  # Missing/invalid profile is reported by the checks below.
 
     # File existence checks
     file_checks = [
-        ("data/product_profile.json", "Product Profile"),
-        ("demo/demo-output/launch_plan.json", "Launch Plan"),
-        ("demo/demo-output/backlink_opportunities.json", "Backlink Opportunities"),
-        ("demo/demo-output/outbound_queue.json", "Outbound Queue"),
-        ("demo/demo-output/creator_campaign.json", "Creator Campaign"),
-        ("demo/demo-output/mpp_spend_cards.json", "Stripe MPP Spend Cards"),
-        ("demo/demo-output/mpp_receipts.json", "Stripe MPP Receipts"),
-        ("demo/demo-output/trend_content.json", "Trend Content"),
-        ("demo/demo-output/weekly_flywheel_sprint.json", "Sprint Report")
+        (profile_path, "Product Profile"),
+        (out_path(args, "launch_plan.json"), "Launch Plan"),
+        (out_path(args, "backlink_opportunities.json"), "Backlink Opportunities"),
+        (out_path(args, "outbound_queue.json"), "Outbound Queue"),
+        (out_path(args, "creator_campaign.json"), "Creator Campaign"),
+        (out_path(args, "mpp_spend_cards.json"), "Stripe MPP Spend Cards"),
+        (out_path(args, "mpp_receipts.json"), "Stripe MPP Receipts"),
+        (out_path(args, "trend_content.json"), "Trend Content"),
+        (out_path(args, "weekly_flywheel_sprint.json"), "Sprint Report")
     ]
 
     print("📁 File Existence Check:")
@@ -426,14 +513,16 @@ def main():
 
     # Content validation
     validations = [
-        ("Product Profile", validate_product_profile),
-        ("Launch Plan", validate_launch_plan),
-        ("Backlink Opportunities", validate_backlink_opportunities),
-        ("Outbound Queue", validate_outbound_queue),
-        ("Creator Campaign", validate_creator_campaign),
-        ("Stripe MPP Spend Cards", validate_mpp_spend_cards),
-        ("Trend Content", validate_trend_content),
-        ("Sprint Report", validate_sprint_report)
+        ("Product Profile", lambda: validate_product_profile(profile_path)),
+        ("Launch Plan", lambda: validate_launch_plan(out_path(args, "launch_plan.json"))),
+        ("Backlink Opportunities", lambda: validate_backlink_opportunities(out_path(args, "backlink_opportunities.json"))),
+        ("Outbound Queue", lambda: validate_outbound_queue(out_path(args, "outbound_queue.json"))),
+        ("Creator Campaign", lambda: validate_creator_campaign(out_path(args, "creator_campaign.json"))),
+        ("Stripe MPP Spend Cards", lambda: validate_mpp_spend_cards(
+            out_path(args, "mpp_spend_cards.json"), out_path(args, "mpp_receipts.json"),
+            warnings, max_single_spend_usd)),
+        ("Trend Content", lambda: validate_trend_content(out_path(args, "trend_content.json"))),
+        ("Sprint Report", lambda: validate_sprint_report(out_path(args, "weekly_flywheel_sprint.json")))
     ]
 
     for name, validator in validations:
@@ -450,12 +539,18 @@ def main():
 
     # Safety compliance check
     print("\n🔒 Safety Compliance Check:")
-    safety_issues = check_safety_compliance()
+    safety_issues = check_safety_compliance(args)
     if safety_issues:
         print(f"   ❌ Safety: {len(safety_issues)} issues")
         all_issues.extend([f"Safety: {issue}" for issue in safety_issues])
     else:
         print("   ✅ Safety: Compliant")
+
+    # Warn-only findings (never fail the run)
+    if warnings:
+        print(f"\n⚠️  Warnings ({len(warnings)}, non-blocking):")
+        for i, warning in enumerate(warnings, 1):
+            print(f"   {i}. {warning}")
 
     # Summary
     print(f"\n📊 Validation Summary:")
@@ -472,7 +567,7 @@ def main():
         print("   3. Verify no secrets are included in output files")
         print("   4. Ensure all spend requests are in test mode")
 
-        return 1
+        return EXIT_ERROR
     else:
         print(f"\n✅ All validations passed!")
         print("   - All required files exist and are valid JSON")
@@ -482,7 +577,25 @@ def main():
         print("   - No secrets detected in outputs")
 
         print(f"\n🚀 Flywheel Agent is ready for demo!")
-        return 0
+        return EXIT_OK
+
+
+def main():
+    """Main validation workflow."""
+    configure_stdout()
+    print("🔍 Flywheel Agent - Output Validator")
+    print("Checking completeness, safety, and approval gates...\n")
+
+    parser = build_parser("Validate flywheel outputs for completeness, safety, and approval gates.", research=False)
+    args = parser.parse_args()
+
+    try:
+        return run_validations(args)
+    except Exception as e:
+        traceback.print_exc()
+        print(f"❌ Validation run failed: {e}")
+        return EXIT_ERROR
+
 
 if __name__ == "__main__":
     import sys

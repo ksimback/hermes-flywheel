@@ -1,8 +1,8 @@
 ---
 name: flywheel-agent
 description: Run a weekly customer acquisition flywheel sprint for founders.
-version: 0.1.0
-platforms: [linux, macos]
+version: 0.2.0
+platforms: [linux, macos, windows]
 tags: [gtm, growth, stripe, nvidia, hermes, startup]
 ---
 
@@ -36,50 +36,95 @@ Ask for missing fields only if they cannot be inferred:
 
 ## Core Procedure
 
-Run these scripts only after you have real product context. Do **not** run the no-argument demo path for a real user request.
+You (the agent) do the research; the scripts do the deterministic work (scoring, formatting, approval gates, ledger). Run the scripts as tools from **any directory** — all paths anchor to the repo root, so there is no need to `cd` anywhere. Do **not** use `--demo` for a real user request.
+
+### CLI contract (all pipeline scripts)
+
+Every script accepts:
+
+- `--profile <path>` — product profile JSON (default `data/product_profile.json`)
+- `--output-dir <path>` — where artifacts go (default `demo/demo-output`)
+- `--input <path>` — structured research JSON that you supply (see schemas below)
+- `--demo` — explicitly allow the bundled ExampleAI sample fixtures (explicit demos only)
+
+Exit codes:
+
+| Code | Meaning |
+|---|---|
+| 0 | Success |
+| 1 | Error |
+| 2 | Research input required — a live run of `backlink_hunter.py`, `lead_scorer.py`, `creator_campaign.py`, or `trend_scan.py` was invoked without `--input`. Provide `--input <research.json>`, or pass `--demo` only if the user explicitly asked for a demo. |
+
+### `--input` schemas (JSON object with one key holding a list)
+
+| Script | Schema |
+|---|---|
+| `backlink_hunter.py` | `{"opportunities": [{id, type, source_url, title, description, why_relevant, estimated_effort, estimated_impact, recommended_action, outreach_template}]}` |
+| `lead_scorer.py` | `{"leads": [{name, title, company, bio, source, url, engagement_context}]}` (also accepts `--leads-csv` / `data/leads.csv`) |
+| `creator_campaign.py` | `{"creators": [...]}` — same keys as the script's `SAMPLE_CREATORS` entries |
+| `trend_scan.py` | `{"trends": [...]}` — same keys as the script's `SAMPLE_TRENDS` entries |
 
 ### 1. Intake & Profile Creation
+
+Intake comes from founder-provided chat context (product, ICP, competitors, budget, focus):
+
 ```bash
-cd skills/flywheel-agent/scripts
-python flywheel_intake.py "Product: [name] ([url]) ICP: [buyer] Competitors: [2-5 names] Budget: [$ weekly] Focus: [priority]"
+python skills/flywheel-agent/scripts/flywheel_intake.py "Product: [name] ([url]) ICP: [buyer] Competitors: [2-5 names] Budget: [$ weekly] Focus: [priority]"
 ```
-Creates or updates `data/product_profile.json` with normalized product context. For recorded demos/tests only, use `python flywheel_intake.py --demo`.
+
+Creates or updates `data/product_profile.json` with normalized product context. Marketing-safe `proof_points` stay empty for real founders until research validates them; internal `review_notes` are kept separate. For explicit demos only: `python skills/flywheel-agent/scripts/flywheel_intake.py --demo`.
 
 ### 2. Launch Strategy Generation
 ```bash
-python launch_plan.py
+python skills/flywheel-agent/scripts/launch_plan.py
 ```
 Generates launch-max plan for Product Hunt, HN, directories, communities.
 
 ### 3. Backlink & Listing Discovery
+
+Research where competitors are listed/mentioned using your own web/browser toolsets, normalize the findings to the `opportunities` schema, then:
+
 ```bash
-python backlink_hunter.py
+python skills/flywheel-agent/scripts/backlink_hunter.py --input /path/to/backlink_research.json
 ```
-Finds competitor backlinks and listing opportunities via web search.
+
+Scores and formats the opportunities you found. Without `--input` (and without `--demo`) it exits 2 with an actionable message.
 
 ### 4. Lead Scoring & Warm Outbound
+
+Gather real leads (engagement, signups, community activity), normalize to the `leads` schema, then:
+
 ```bash
-python lead_scorer.py
+python skills/flywheel-agent/scripts/lead_scorer.py --input /path/to/leads.json
 ```
-Scores leads and drafts personalized messages (if leads CSV provided).
+
+Scores leads and drafts personalized approval-gated messages. Also accepts `--leads-csv` or `data/leads.csv`.
 
 ### 5. Creator Campaign Planning
+
+Research niche creators relevant to the ICP, normalize to the `creators` schema, then:
+
 ```bash
-python creator_campaign.py
+python skills/flywheel-agent/scripts/creator_campaign.py --input /path/to/creators.json
 ```
+
 Plans influencer partnerships with performance incentives and spend requests.
 
 ### 6. Trend Analysis & Content
+
+Scan current trends with your web toolset, normalize to the `trends` schema, then:
+
 ```bash
-python trend_scan.py
+python skills/flywheel-agent/scripts/trend_scan.py --input /path/to/trends.json
 ```
+
 Generates trend-based content and weekly social media drafts.
 
 ### 7. Sprint Report Compilation
 ```bash
-python sprint_report.py
+python skills/flywheel-agent/scripts/sprint_report.py
 ```
-Compiles everything into `output/weekly_flywheel_sprint.md`.
+Compiles everything into `demo/demo-output/weekly_flywheel_sprint.md` (or the configured `--output-dir`).
 
 ## Slack / Telegram / Thread-Native Mode
 
@@ -87,8 +132,8 @@ When the sprint is triggered from Slack or Telegram:
 
 - Acknowledge in the source thread/chat.
 - Keep routine progress quiet unless there is a blocker.
-- Never expose internal implementation notes such as reading scripts, checking files, running intake, demo-mode warnings, sample-data caveats, fixture names, or fallback datasets in the user-facing reply.
-- For live product prompts, use the founder-provided product, ICP, competitors, budget, and focus as the only product context. Do not compare it to or warn about any demo fixture.
+- Never expose internal implementation notes (step-by-step narration of reading scripts, checking files, running intake) in the user-facing reply — that belongs in the audit trail. This is about noise, not provenance: always be honest about where data came from.
+- For live product prompts, use the founder-provided product, ICP, competitors, budget, and focus as the product context, plus research you actually performed. Never present sample data as real research. If required research cannot be performed, say so plainly and ask for the inputs you need.
 - Return a **draft review dashboard** by default, not a final/execution-ready sprint.
 - Offer `start walkthrough` when the user wants a sequential section-by-section review.
 - Use `review launch`, `review backlinks`, `review outbound`, `review content`, `review mpp spend`, `review budget`, `approve <section>`, `edit <section>: <change>`, `finalize sprint`, `revise <change>`, and `show approvals` as source-thread control phrases.
@@ -125,7 +170,7 @@ Safety: I won’t send, post, or spend without explicit approval.
 After running the full sequence:
 
 ```bash
-python validate_outputs.py
+python skills/flywheel-agent/scripts/validate_outputs.py
 ```
 
 Expected outputs:
@@ -180,8 +225,9 @@ The final sprint report includes:
 - Never present fixture output as if it were tailored to the user's product
 
 **Common Pitfalls:**
-- Web search rate limits → fall back to cached research
-- Missing live API/search access → explain the blocker or use explicit `--demo`; do not silently use fixture data
+- Web search rate limits → fall back to cached research from earlier in the same sprint, or tell the user research is delayed
+- Running a research-stage script without `--input` → it exits 2 with an actionable message; supply `--input <research.json>` (or `--demo` only for explicit demos)
+- Missing live API/search access → tell the user what's blocked and what input is needed; never fill the gap with fixture data
 - Competitor URLs broken → validate before processing
 - Budget not specified → default to safe values ($100/week, $25/action)
 - No approval confirmation → always require explicit "yes" for spend/send

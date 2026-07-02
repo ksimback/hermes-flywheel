@@ -2,12 +2,29 @@
 """
 Launch Plan Generator
 Creates comprehensive launch strategy across multiple channels.
+
+The plan is derived entirely from the product profile (channel templates are
+strategy scaffolding, not research), so it runs for real profiles as well as
+demos - no research input gate.
 """
 
-import json
-import os
-from datetime import datetime, timedelta
+import sys
+import traceback
+from datetime import datetime
 from typing import Dict, List, Any
+
+from _common import (
+    EXIT_ERROR,
+    EXIT_OK,
+    build_parser,
+    configure_stdout,
+    get_pain_points,
+    get_proof_points,
+    load_profile,
+    out_path,
+    write_json,
+    write_text,
+)
 
 LAUNCH_CHANNELS = {
     "product_hunt": {
@@ -84,13 +101,17 @@ LAUNCH_CHANNELS = {
     }
 }
 
-def load_product_profile(path: str = "data/product_profile.json") -> Dict[str, Any]:
-    """Load product profile from JSON file."""
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Product profile not found at {path}. Run flywheel_intake.py first.")
 
-    with open(path, 'r') as f:
-        return json.load(f)
+class _ProofPointList(list):
+    """Proof points that render as bullet lines when formatted into copy.
+
+    Supports both `{proof_points}` (bulleted block) and `{proof_points[0]}`
+    (single point) placeholders in channel templates.
+    """
+
+    def __format__(self, format_spec):
+        return "\n".join("• {0}".format(point) for point in self)
+
 
 def generate_channel_plan(profile: Dict[str, Any], channel_key: str, channel_config: Dict[str, Any]) -> Dict[str, Any]:
     """Generate launch plan for a specific channel."""
@@ -101,9 +122,12 @@ def generate_channel_plan(profile: Dict[str, Any], channel_key: str, channel_con
     icp = profile.get("icp", {})
     icp_buyer = icp.get("buyer", "professional")
     icp_buyer_plural = icp_buyer if icp_buyer.endswith("s") else f"{icp_buyer}s"
-    pain_points = icp.get("pain_points", ["generic problem"])
+    pain_points = get_pain_points(profile)
     main_pain_point = pain_points[0] if pain_points else "workflow inefficiency"
-    proof_points = profile.get("positioning", {}).get("proof_points", ["Significant improvement over alternatives"])
+
+    # Real profiles may have no verified proof points yet; fall back to the
+    # one-liner so copy never renders an empty bullet or "None".
+    proof_points = _ProofPointList(get_proof_points(profile) or [one_liner])
 
     # Generate copy from template
     copy_template = channel_config.get("copy_template", "Check out {product_name}!")
@@ -120,7 +144,7 @@ def generate_channel_plan(profile: Dict[str, Any], channel_key: str, channel_con
             category=profile.get("category", "software"),
             community_name="[Community Name]"
         )
-    except KeyError as e:
+    except (KeyError, IndexError):
         # Fallback if template variables missing
         generated_copy = f"Introducing {product_name} - {one_liner}\n\nBuilt for {icp_buyer_plural} who need better solutions for {main_pain_point}."
 
@@ -137,6 +161,7 @@ def generate_channel_plan(profile: Dict[str, Any], channel_key: str, channel_con
         "status": "draft",
         "priority_score": calculate_channel_priority(profile, channel_config)
     }
+
 
 def calculate_channel_priority(profile: Dict[str, Any], channel_config: Dict[str, Any]) -> int:
     """Calculate priority score for channel (1-100)."""
@@ -159,6 +184,7 @@ def calculate_channel_priority(profile: Dict[str, Any], channel_config: Dict[str
 
     return min(100, base_score)
 
+
 def generate_launch_plan(profile: Dict[str, Any]) -> Dict[str, Any]:
     """Generate complete launch plan across all channels."""
 
@@ -169,7 +195,8 @@ def generate_launch_plan(profile: Dict[str, Any]) -> Dict[str, Any]:
         "timeline": {},
         "asset_requirements": set(),
         "total_estimated_effort": 0,
-        "demo_mode": profile.get("demo_mode", False)
+        "demo_mode": profile.get("demo_mode", False),
+        "data_source": "profile_derived"
     }
 
     # Generate plan for each channel
@@ -191,6 +218,7 @@ def generate_launch_plan(profile: Dict[str, Any]) -> Dict[str, Any]:
     plan["timeline"] = generate_launch_timeline(plan["launch_channels"])
 
     return plan
+
 
 def generate_launch_timeline(channels: List[Dict[str, Any]]) -> Dict[str, Any]:
     """Generate recommended launch timeline."""
@@ -230,22 +258,19 @@ def generate_launch_timeline(channels: List[Dict[str, Any]]) -> Dict[str, Any]:
 
     return timeline
 
-def save_launch_plan(plan: Dict[str, Any], output_path: str = "demo/demo-output/launch_plan.json"):
-    """Save launch plan to JSON file."""
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-    with open(output_path, 'w') as f:
-        json.dump(plan, f, indent=2)
+def save_launch_plan(plan: Dict[str, Any], args) -> str:
+    """Save launch plan JSON and markdown under the configured output dir."""
+    json_path = write_json(out_path(args, "launch_plan.json"), plan)
+    print(f"✓ Launch plan saved to {json_path}")
 
-    print(f"✓ Launch plan saved to {output_path}")
-
-    # Also save markdown summary
-    md_path = output_path.replace('.json', '.md')
+    md_path = out_path(args, "launch_plan.md")
     save_launch_plan_markdown(plan, md_path)
 
-    return output_path
+    return json_path
 
-def save_launch_plan_markdown(plan: Dict[str, Any], output_path: str):
+
+def save_launch_plan_markdown(plan: Dict[str, Any], output_path):
     """Save human-readable launch plan markdown."""
 
     md_content = f"""# Launch Plan: {plan['product_name']}
@@ -309,26 +334,30 @@ Generated: {plan['generated_at']}
 **SAFETY REMINDER:** All launches require explicit human approval before execution.
 """
 
-    with open(output_path, 'w') as f:
-        f.write(md_content)
-
+    write_text(output_path, md_content)
     print(f"✓ Launch plan markdown saved to {output_path}")
+
 
 def main():
     """Main launch plan generation workflow."""
+    configure_stdout()
+
     print("🚀 Flywheel Agent - Launch Plan Generator")
     print("Creating comprehensive launch strategy...\n")
 
     try:
+        parser = build_parser("Generate a multi-channel launch plan from the product profile.", research=False)
+        args = parser.parse_args()
+
         # Load product profile
-        profile = load_product_profile()
+        profile = load_profile(args)
         print(f"✓ Loaded profile for {profile['product_name']}")
 
         # Generate launch plan
         plan = generate_launch_plan(profile)
 
         # Save plan
-        output_path = save_launch_plan(plan)
+        save_launch_plan(plan, args)
 
         # Print summary
         print(f"\n📊 Launch Plan Summary:")
@@ -340,16 +369,13 @@ def main():
             print("\n🎭 Running in DEMO MODE")
 
         print(f"\n✅ Launch plan complete! Review and approve channels before execution.")
-        return 0
+        return EXIT_OK
 
-    except FileNotFoundError as e:
-        print(f"❌ Error: {e}")
-        print("Run flywheel_intake.py first to create product profile.")
-        return 1
     except Exception as e:
+        traceback.print_exc()
         print(f"❌ Unexpected error: {e}")
-        return 1
+        return EXIT_ERROR
+
 
 if __name__ == "__main__":
-    import sys
     sys.exit(main())
