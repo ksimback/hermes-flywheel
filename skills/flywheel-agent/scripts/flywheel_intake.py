@@ -9,12 +9,13 @@ never accidentally get ExampleAI outputs for their own product.
 """
 
 import argparse
-import json
-import os
 import re
 import sys
+import traceback
 from datetime import datetime
 from typing import Dict, List, Any, Optional
+
+from _common import EXIT_ERROR, EXIT_OK, configure_stdout, read_text, write_json
 
 
 def create_demo_profile() -> Dict[str, Any]:
@@ -63,6 +64,7 @@ def create_demo_profile() -> Dict[str, Any]:
         },
         "generated_at": datetime.now().isoformat(),
         "demo_mode": True,
+        "data_source": "demo_fixture",
         "fixture": "exampleai-demo"
     }
 
@@ -96,7 +98,10 @@ def _extract_url(raw_input: str) -> str:
     match = re.search(r"https?://[^\s)]+", raw_input)
     if match:
         return match.group(0).rstrip(".,")
-    domain = re.search(r"\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\b", raw_input, re.I)
+    # Bare-domain fallback requires a plausible TLD (final label alphabetic,
+    # length >= 2) so amounts like "$1.5k" or versions like "v2.0" never
+    # become URLs that leak into outbound copy.
+    domain = re.search(r"\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.[a-z]{2,}\b", raw_input, re.I)
     if domain:
         return f"https://{domain.group(0).rstrip('.,')}"
     return ""
@@ -106,14 +111,24 @@ def _extract_budget(raw_input: str) -> Dict[str, Any]:
     budget_text = _value_for_label(raw_input, ["budget", "weekly budget", "spend"])
     amount = None
     if budget_text:
-        match = re.search(r"\$?\s*([0-9][0-9,]*)", budget_text)
+        match = re.search(r"\$?\s*([0-9][0-9,]*(?:\.[0-9]+)?)\s*([km])?\b", budget_text, re.I)
         if match:
-            amount = int(match.group(1).replace(",", ""))
+            amount = float(match.group(1).replace(",", ""))
+            suffix = (match.group(2) or "").lower()
+            if suffix == "k":
+                amount *= 1_000
+            elif suffix == "m":
+                amount *= 1_000_000
+            amount = int(amount)
     if amount is None:
         amount = 100
+    max_single = max(10, min(100, amount // 4 if amount else 25))
+    if amount > 0:
+        # A single spend can never exceed the weekly budget itself.
+        max_single = min(max_single, amount)
     return {
         "weekly_usd": amount,
-        "max_single_spend_usd": max(10, min(100, amount // 4 if amount else 25)),
+        "max_single_spend_usd": max_single,
         "requires_approval": True,
         "stripe_mode": "test"
     }
@@ -122,10 +137,17 @@ def _extract_budget(raw_input: str) -> Dict[str, Any]:
 def _extract_product_name(raw_input: str) -> str:
     labeled = _value_for_label(raw_input, ["product", "name"])
     if labeled:
+        # Keep the full labeled name ("Product: My Cool Tool" -> "My Cool
+        # Tool"), parens stripped, capped at 5 words.
         candidate = re.sub(r"\s*\([^)]*\)", "", labeled).strip()
-        return candidate.split()[0].strip("@:,.") if candidate else "Product"
+        if candidate:
+            return " ".join(candidate.split()[:5]).strip("@:,.")
+        return "Product"
     for pattern in [
-        r"(?i)for\s+([A-Z][\w.-]*(?:\s+[A-Z][\w.-]*){0,2})",
+        # Case-sensitive capture groups: the capitalization heuristic is the
+        # whole point (a global (?i) here would swallow trailing lowercase
+        # words like "for RealCo today").
+        r"[Ff]or\s+([A-Z][\w.-]*(?:\s+[A-Z][\w.-]*){0,2})",
     ]:
         match = re.search(pattern, raw_input)
         if match:
@@ -142,6 +164,9 @@ def normalize_input(raw_input: str) -> Dict[str, Any]:
     raw_input = raw_input.strip()
     if not raw_input:
         raise ValueError("No product context provided. Pass product details via stdin/argument, or use --demo for the ExampleAI fixture.")
+    # Cap input size before regex work: the label extraction regex gets
+    # expensive on unbounded chat transcripts.
+    raw_input = raw_input[:20000]
 
     product_name = _extract_product_name(raw_input)
     url = _extract_url(raw_input)
@@ -171,7 +196,11 @@ def normalize_input(raw_input: str) -> Dict[str, Any]:
         "competitors": competitors,
         "positioning": {
             "primary_claim": one_liner,
-            "proof_points": [
+            # No unverified proof points for real profiles: downstream scripts
+            # splice proof_points directly into outbound copy, so internal
+            # disclaimers must never live here. They belong in review_notes.
+            "proof_points": [],
+            "review_notes": [
                 "Founder-provided context; verify proof points before publishing",
                 "Use live research to sharpen differentiation",
                 "Keep claims conservative until validated"
@@ -181,19 +210,16 @@ def normalize_input(raw_input: str) -> Dict[str, Any]:
         "budget": _extract_budget(raw_input),
         "generated_at": datetime.now().isoformat(),
         "demo_mode": False,
-        "source": "user_input"
+        "source": "user_input",
+        "data_source": "founder_input"
     }
 
 
 def save_product_profile(profile: Dict[str, Any], output_path: str = "data/product_profile.json"):
-    """Save product profile to JSON file."""
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-
-    with open(output_path, 'w') as f:
-        json.dump(profile, f, indent=2)
-
-    print(f"✓ Product profile saved to {output_path}")
-    return output_path
+    """Save product profile to JSON file (UTF-8, anchored to the repo root)."""
+    saved_path = write_json(output_path, profile)
+    print(f"✓ Product profile saved to {saved_path}")
+    return saved_path
 
 
 def validate_profile(profile: Dict[str, Any]) -> List[str]:
@@ -215,6 +241,11 @@ def validate_profile(profile: Dict[str, Any]) -> List[str]:
         budget = profile["budget"]
         if "weekly_usd" not in budget:
             errors.append("Budget missing weekly_usd")
+        elif not isinstance(budget["weekly_usd"], (int, float)) or budget["weekly_usd"] <= 0:
+            errors.append(
+                "Weekly budget must be greater than $0. "
+                "Provide a positive budget, e.g. 'Budget: $100 weekly'."
+            )
         if "max_single_spend_usd" not in budget:
             errors.append("Budget missing max_single_spend_usd")
 
@@ -232,6 +263,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
 
 def main():
     """Main intake workflow."""
+    configure_stdout()
+
     parser = build_arg_parser()
     args = parser.parse_args()
 
@@ -243,8 +276,7 @@ def main():
             profile = create_demo_profile()
         else:
             if args.input_file:
-                with open(args.input_file, "r") as f:
-                    raw_input = f.read()
+                raw_input = read_text(args.input_file)
             elif args.product_context:
                 raw_input = " ".join(args.product_context)
             elif not sys.stdin.isatty():
@@ -252,21 +284,22 @@ def main():
             else:
                 raw_input = ""
             profile = normalize_input(raw_input)
+
+        errors = validate_profile(profile)
+        if errors:
+            print("❌ Profile validation errors:")
+            for error in errors:
+                print(f"   - {error}")
+            return EXIT_ERROR
+
+        output_path = save_product_profile(profile, args.output)
     except Exception as exc:
+        traceback.print_exc()
         print(f"❌ Intake error: {exc}")
         print("   Provide real product context, for example:")
         print("   python flywheel_intake.py 'Product: ExampleAI (https://example.ai) ICP: e-commerce founders Budget: $50 Focus: relaunch awareness'")
         print("   Or run an explicit fixture demo with: python flywheel_intake.py --demo")
-        return 1
-
-    errors = validate_profile(profile)
-    if errors:
-        print("❌ Profile validation errors:")
-        for error in errors:
-            print(f"   - {error}")
-        return 1
-
-    output_path = save_product_profile(profile, args.output)
+        return EXIT_ERROR
 
     print("\n📊 Product Profile Summary:")
     print(f"   Product: {profile['product_name']}")
@@ -282,7 +315,7 @@ def main():
         print("\n✅ Using founder-provided product context — no demo fixture data applied")
 
     print(f"\n✅ Intake complete! Profile ready for GTM operations: {output_path}")
-    return 0
+    return EXIT_OK
 
 
 if __name__ == "__main__":

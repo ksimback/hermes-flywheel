@@ -2,12 +2,38 @@
 """
 Trend Scanner Script
 Generates trend-based content and social media drafts for weekly campaigns.
+
+Trend sources: agent research via --input (key: "trends"), or the bundled
+sample fixture when demo mode is explicit. Otherwise exits with
+EXIT_MISSING_INPUT and an actionable message.
 """
 
-import json
-import os
-from datetime import datetime, timedelta
-from typing import Dict, List, Any
+import copy
+import sys
+import traceback
+from datetime import datetime
+from typing import Any, Dict, List
+
+from _common import (
+    EXIT_ERROR,
+    EXIT_OK,
+    artifact_demo_mode,
+    build_parser,
+    configure_stdout,
+    get_proof_points,
+    load_profile,
+    md_safe,
+    out_path,
+    resolve_research,
+    safe_number,
+    write_json,
+    write_text,
+)
+
+TRENDS_SCHEMA_HINT = (
+    "JSON with key 'trends': list of "
+    "{trend, platform, volume, relevance, example_post, viral_potential, keywords}"
+)
 
 # Sample trends for demo mode
 SAMPLE_TRENDS = [
@@ -91,28 +117,58 @@ CONTENT_FORMATS = {
     }
 }
 
-def load_product_profile(path: str = "data/product_profile.json") -> Dict[str, Any]:
-    """Load product profile from JSON file."""
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Product profile not found at {path}. Run flywheel_intake.py first.")
 
-    with open(path, 'r') as f:
-        return json.load(f)
+def normalize_trend(trend: Dict[str, Any]) -> Dict[str, Any]:
+    """Copy a trend dict and fill in any fields the templates rely on.
 
-def identify_relevant_trends(profile: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Identify trends relevant to the product and ICP."""
+    Research values may carry the wrong types (e.g. a string
+    viral_potential); coerce so scoring and templating degrade instead of
+    crashing.
+    """
+    trend = copy.deepcopy(trend)
+    trend["trend"] = str(trend.get("trend") or "Untitled trend")
+    trend["platform"] = str(trend.get("platform") or "Social")
+    trend["volume"] = str(trend.get("volume") or "medium")
+    trend["relevance"] = str(trend.get("relevance") or "")
+    trend["keywords"] = [str(k) for k in (trend.get("keywords") or [])]
+    trend["viral_potential"] = int(safe_number(trend.get("viral_potential", 50), 50))
+    if not trend.get("example_post"):
+        trend["example_post"] = f"{trend['trend']} is picking up momentum right now."
+    else:
+        trend["example_post"] = str(trend["example_post"])
+    return trend
 
-    category = profile.get("category", "").lower()
+
+def get_main_proof(profile: Dict[str, Any]) -> str:
+    """First proof point, falling back gracefully when the list is empty.
+
+    Real founder profiles may have no proof points yet (disclaimers live in
+    positioning.review_notes, which must never reach content copy).
+    """
+    proof_points = get_proof_points(profile)
+    if proof_points:
+        return proof_points[0]
+    one_liner = str(profile.get("one_liner", "") or "").strip()
+    return one_liner or "a noticeably better workflow"
+
+
+def identify_relevant_trends(trends: List[Dict[str, Any]], profile: Dict[str, Any],
+                             data_source: str) -> List[Dict[str, Any]]:
+    """Score trends for relevance to the product and ICP."""
+
     icp = profile.get("icp", {})
-    keywords = [kw.lower() for kw in icp.get("keywords", [])]
-    pain_points = [pp.lower() for pp in icp.get("pain_points", [])]
+    keywords = [kw.lower() for kw in icp.get("keywords", []) or []]
+    pain_points = [pp.lower() for pp in icp.get("pain_points", []) or []]
+
+    # Agent-researched trends were already vetted upstream; only the broad
+    # sample fixture gets filtered by the relevance threshold.
+    min_score = 50 if data_source == "sample_fixture" else 0
 
     relevant_trends = []
-
-    # Score each trend for relevance
-    for trend in SAMPLE_TRENDS:
+    for trend in trends:
+        trend = normalize_trend(trend)
         score = calculate_trend_relevance(trend, profile, keywords, pain_points)
-        if score >= 50:  # Minimum relevance threshold
+        if score >= min_score:
             trend["relevance_score"] = score
             trend["product_angle"] = generate_product_angle(trend, profile)
             relevant_trends.append(trend)
@@ -122,13 +178,14 @@ def identify_relevant_trends(profile: Dict[str, Any]) -> List[Dict[str, Any]]:
 
     return relevant_trends
 
+
 def calculate_trend_relevance(trend: Dict[str, Any], profile: Dict[str, Any],
-                            keywords: List[str], pain_points: List[str]) -> int:
+                              keywords: List[str], pain_points: List[str]) -> int:
     """Calculate how relevant a trend is to the product (0-100)."""
 
     score = 0
 
-    trend_text = f"{trend['trend']} {trend['relevance']} {' '.join(trend['keywords'])}".lower()
+    trend_text = f"{trend.get('trend', '')} {trend.get('relevance', '')} {' '.join(trend.get('keywords', []))}".lower()
     category = profile.get("category", "").lower()
 
     # Direct keyword matches
@@ -142,7 +199,7 @@ def calculate_trend_relevance(trend: Dict[str, Any], profile: Dict[str, Any],
             score += 10
 
     # Category matches
-    if category in trend_text or any(word in trend_text for word in category.split()):
+    if category and (category in trend_text or any(word in trend_text for word in category.split())):
         score += 20
 
     # Tool/software relevance
@@ -158,7 +215,7 @@ def calculate_trend_relevance(trend: Dict[str, Any], profile: Dict[str, Any],
         score += 25
 
     # Viral potential bonus
-    viral_potential = trend.get("viral_potential", 50)
+    viral_potential = safe_number(trend.get("viral_potential", 50), 50)
     if viral_potential > 80:
         score += 10
     elif viral_potential > 70:
@@ -166,40 +223,39 @@ def calculate_trend_relevance(trend: Dict[str, Any], profile: Dict[str, Any],
 
     return min(100, score)
 
+
 def generate_product_angle(trend: Dict[str, Any], profile: Dict[str, Any]) -> str:
     """Generate how to angle the product within this trend."""
 
     product_name = profile.get("product_name", "Product")
     category = profile.get("category", "software")
-    positioning = profile.get("positioning", {})
-    main_claim = positioning.get("primary_claim", "Modern solution")
+    positioning = profile.get("positioning", {}) or {}
+    main_claim = positioning.get("primary_claim") or profile.get("one_liner") or "a modern solution"
+    current_year = datetime.now().year
 
-    trend_topic = trend["trend"]
+    trend_topic = trend.get("trend", "")
 
     # Generate contextual angle
     if "ai" in trend_topic.lower():
         angle = f"{product_name} represents the AI-native approach to {category} - {main_claim}"
-    elif "traditional" in trend_topic.lower() or "old" in trend["example_post"].lower():
+    elif "traditional" in trend_topic.lower() or "old" in trend.get("example_post", "").lower():
         angle = f"While everyone talks about legacy {category} tools, {product_name} shows what modern alternatives look like"
     elif "open source" in trend_topic.lower():
         angle = f"{product_name} proves you don't need enterprise budgets for professional {category} results"
     elif "remote" in trend_topic.lower():
         angle = f"Remote {category} teams need tools built for distributed workflows - {product_name} delivers"
     elif "e-commerce" in trend_topic.lower() and "e-commerce" in category:
-        angle = f"The e-commerce industry needs modern tools - {product_name} is what e-commerce intelligence looks like in 2024"
+        angle = f"The e-commerce industry needs modern tools - {product_name} is what e-commerce intelligence looks like in {current_year}"
     else:
         angle = f"{product_name} exemplifies the trend toward {main_claim.lower()} in {category}"
 
     return angle
 
+
 def generate_content_drafts(trends: List[Dict[str, Any]], profile: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Generate content drafts for each relevant trend."""
 
     content_drafts = []
-
-    product_name = profile.get("product_name", "Product")
-    url = profile.get("url", "")
-    one_liner = profile.get("one_liner", "Revolutionary solution")
 
     for trend in trends:
         # Generate content for multiple formats
@@ -232,17 +288,16 @@ def generate_content_drafts(trends: List[Dict[str, Any]], profile: Dict[str, Any
 
     return content_drafts[:15]  # Top 15 content pieces
 
+
 def generate_format_specific_content(trend: Dict[str, Any], profile: Dict[str, Any],
-                                   format_key: str, format_config: Dict[str, Any]) -> str:
+                                     format_key: str, format_config: Dict[str, Any]) -> str:
     """Generate content specific to platform format."""
 
     product_name = profile.get("product_name", "Product")
     url = profile.get("url", "")
     one_liner = profile.get("one_liner", "Revolutionary solution")
 
-    positioning = profile.get("positioning", {})
-    proof_points = positioning.get("proof_points", ["Significant improvement"])
-    main_proof = proof_points[0] if proof_points else "Better performance"
+    main_proof = get_main_proof(profile)
 
     trend_topic = trend["trend"]
     product_angle = trend["product_angle"]
@@ -291,7 +346,7 @@ The results have been interesting - {main_proof.lower()}. But more importantly, 
 
 {product_angle.replace(product_name + ' ', 'This ').lower()}.
 
-Not trying to sell anything here, just sharing what we learned building in this e-commerce. Happy to answer questions if anyone's curious about the technical details."""
+Not trying to sell anything here, just sharing what we learned building in this space. Happy to answer questions if anyone's curious about the technical details."""
 
     elif format_key == "tiktok_script":
         content = f"""[Hook - 3 seconds]
@@ -338,10 +393,11 @@ Tags: #TechTrends #Innovation #{profile.get('category', 'Software').title()}"""
 
     return content.strip()
 
+
 def estimate_content_reach(format_key: str, trend: Dict[str, Any]) -> Dict[str, Any]:
     """Estimate potential reach for content format."""
 
-    viral_potential = trend.get("viral_potential", 50)
+    viral_potential = safe_number(trend.get("viral_potential", 50), 50)
     base_multiplier = viral_potential / 50  # Scale based on viral potential
 
     reach_estimates = {
@@ -378,6 +434,7 @@ def estimate_content_reach(format_key: str, trend: Dict[str, Any]) -> Dict[str, 
         "potential_viral_reach": 0
     })
 
+
 def get_posting_guidelines(format_key: str) -> str:
     """Get platform-specific posting guidelines."""
 
@@ -391,10 +448,12 @@ def get_posting_guidelines(format_key: str) -> str:
 
     return guidelines.get(format_key, "Follow platform best practices and community guidelines.")
 
-def save_trend_content(content_drafts: List[Dict[str, Any]], trends: List[Dict[str, Any]],
-                      output_path: str = "demo/demo-output/trend_content.json"):
-    """Save trend-based content to JSON file."""
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+def save_trend_content(args, content_drafts: List[Dict[str, Any]], trends: List[Dict[str, Any]],
+                       profile: Dict[str, Any], data_source: str):
+    """Save trend-based content to JSON + markdown."""
+
+    json_path = out_path(args, "trend_content.json")
 
     data = {
         "generated_at": datetime.now().isoformat(),
@@ -403,21 +462,21 @@ def save_trend_content(content_drafts: List[Dict[str, Any]], trends: List[Dict[s
         "avg_viral_potential": sum(t["viral_potential"] for t in trends) / len(trends) if trends else 0,
         "relevant_trends": trends,
         "content_drafts": content_drafts,
-        "demo_mode": True
+        "demo_mode": artifact_demo_mode(profile, data_source),
+        "data_source": data_source,
     }
 
-    with open(output_path, 'w') as f:
-        json.dump(data, f, indent=2)
-
-    print(f"✓ Trend content saved to {output_path}")
+    write_json(json_path, data)
+    print(f"✓ Trend content saved to {json_path}")
 
     # Also save markdown summary
-    md_path = output_path.replace('.json', '.md')
+    md_path = out_path(args, "trend_content.md")
     save_content_markdown(data, md_path)
 
-    return output_path
+    return json_path
 
-def save_content_markdown(data: Dict[str, Any], output_path: str):
+
+def save_content_markdown(data: Dict[str, Any], output_path):
     """Save human-readable trend content markdown."""
 
     trends = data["relevant_trends"]
@@ -430,33 +489,34 @@ Generated: {data['generated_at']}
 **Content Pieces:** {data['total_content_pieces']}
 **Avg Viral Potential:** {data['avg_viral_potential']:.1f}/100
 **Demo Mode:** {data.get('demo_mode', False)}
+**Data Source:** {data.get('data_source', 'unknown')}
 
 ## Trending Topics (Relevance Order)
 
 """
 
     for i, trend in enumerate(trends, 1):
-        md_content += f"""### {i}. {trend['trend']} (Score: {trend['relevance_score']}/100)
+        md_content += f"""### {i}. {md_safe(trend['trend'])} (Score: {trend['relevance_score']}/100)
 
-**Platform:** {trend['platform']} | **Volume:** {trend['volume']} | **Viral Potential:** {trend['viral_potential']}/100
+**Platform:** {md_safe(trend['platform'])} | **Volume:** {md_safe(trend['volume'])} | **Viral Potential:** {trend['viral_potential']}/100
 
-**Relevance:** {trend['relevance']}
-**Product Angle:** {trend['product_angle']}
+**Relevance:** {md_safe(trend['relevance'])}
+**Product Angle:** {md_safe(trend['product_angle'])}
 
-**Example Post:** "{trend['example_post']}"
+**Example Post:** "{md_safe(trend['example_post'])}"
 
 ---
 
 """
 
-    md_content += f"""## Content Drafts (Priority Order)
+    md_content += """## Content Drafts (Priority Order)
 
 """
 
     for i, draft in enumerate(content_drafts, 1):
         reach = draft["estimated_reach"]
 
-        md_content += f"""### {i}. {draft['platform']} - {draft['trend']}
+        md_content += f"""### {i}. {draft['platform']} - {md_safe(draft['trend'])}
 
 **Format:** {draft['format']} | **Relevance:** {draft['trend_relevance']}/100 | **Viral Potential:** {draft['viral_potential']}/100
 
@@ -464,7 +524,7 @@ Generated: {data['generated_at']}
 
 **Content:**
 ```
-{draft['content']}
+{md_safe(draft['content'])}
 ```
 
 **Posting Guidelines:** {draft['posting_guidelines']}
@@ -518,35 +578,44 @@ Generated: {data['generated_at']}
 **SAFETY REMINDER:** All social media posts require explicit approval before publishing.
 """
 
-    with open(output_path, 'w') as f:
-        f.write(md_content)
+    write_text(output_path, md_content)
 
     print(f"✓ Content markdown saved to {output_path}")
 
+
 def main():
     """Main trend scanning workflow."""
+    configure_stdout()
     print("📈 Flywheel Agent - Trend Scanner")
     print("Generating trend-based content for weekly campaigns...\n")
 
+    parser = build_parser("Generate trend-based, approval-gated content drafts.")
+    args = parser.parse_args()
+
     try:
         # Load product profile
-        profile = load_product_profile()
-        print(f"✓ Loaded profile for {profile['product_name']}")
+        profile = load_profile(args)
+        print(f"✓ Loaded profile for {profile.get('product_name', 'unknown product')}")
+
+        # Resolve trend research (--input research > demo fixture > exit 2)
+        candidate_trends, data_source = resolve_research(
+            args, profile, "trends", TRENDS_SCHEMA_HINT, fixture=SAMPLE_TRENDS
+        )
 
         # Identify relevant trends
-        trends = identify_relevant_trends(profile)
-        print(f"✓ Found {len(trends)} relevant trends")
+        trends = identify_relevant_trends(candidate_trends, profile, data_source)
+        print(f"✓ Found {len(trends)} relevant trends ({data_source})")
 
         if not trends:
             print("⚠️  No relevant trends found for this product category.")
-            return 1
+            return EXIT_ERROR
 
         # Generate content drafts
         content_drafts = generate_content_drafts(trends, profile)
         print(f"✓ Generated {len(content_drafts)} content pieces")
 
         # Save trend content
-        output_path = save_trend_content(content_drafts, trends)
+        save_trend_content(args, content_drafts, trends, profile, data_source)
 
         # Print summary
         total_reach = sum(d["estimated_reach"]["organic_impressions"] for d in content_drafts)
@@ -558,20 +627,17 @@ def main():
         print(f"   Avg Viral Potential: {avg_viral:.1f}/100")
         print(f"   Top Trend: {trends[0]['trend']} ({trends[0]['relevance_score']}/100)")
 
-        if profile.get("demo_mode"):
+        if data_source == "sample_fixture":
             print("\n🎭 Running in DEMO MODE - using sample trend data")
 
         print(f"\n✅ Trend scanning complete! Review and approve content before posting.")
-        return 0
+        return EXIT_OK
 
-    except FileNotFoundError as e:
-        print(f"❌ Error: {e}")
-        print("Run flywheel_intake.py first to create product profile.")
-        return 1
     except Exception as e:
+        traceback.print_exc()
         print(f"❌ Unexpected error: {e}")
-        return 1
+        return EXIT_ERROR
+
 
 if __name__ == "__main__":
-    import sys
     sys.exit(main())

@@ -2,13 +2,49 @@
 """
 Lead Scorer Script
 Scores leads and generates personalized outbound messages with approval gates.
+
+Lead sources, in priority order:
+1. --input <json>       agent research (key: "leads")
+2. --leads-csv <csv>    founder-provided CSV (auto-detects data/leads.csv,
+                        then data/prospects.csv)
+3. bundled sample fixture, only when demo mode is explicit
+Otherwise the script exits with EXIT_MISSING_INPUT and an actionable message.
 """
 
-import json
-import os
+import copy
 import csv
+import sys
+import traceback
 from datetime import datetime
-from typing import Dict, List, Any, Optional
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+from _common import (
+    EXIT_ERROR,
+    EXIT_MISSING_INPUT,
+    EXIT_OK,
+    anchor,
+    artifact_demo_mode,
+    build_parser,
+    configure_stdout,
+    exit_missing_input,
+    fixture_allowed,
+    get_pain_points,
+    get_proof_points,
+    load_profile,
+    md_safe,
+    out_path,
+    resolve_research,
+    write_json,
+    write_text,
+)
+
+LEADS_SCHEMA_HINT = (
+    "JSON with key 'leads': list of "
+    "{name, title, company, bio, source, url, engagement_context}"
+)
+
+AUTO_CSV_CANDIDATES = ["data/leads.csv", "data/prospects.csv"]
 
 # Sample leads for demo mode
 SAMPLE_LEADS = [
@@ -105,46 +141,56 @@ SAMPLE_LEADS = [
 ]
 
 
-def load_product_profile(path: str = "data/product_profile.json") -> Dict[str, Any]:
-    """Load product profile from JSON file."""
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Product profile not found at {path}. Run flywheel_intake.py first.")
-
-    with open(path, 'r') as f:
-        return json.load(f)
-
-def load_leads_from_csv(csv_path: str) -> List[Dict[str, Any]]:
-    """Load leads from CSV file if provided."""
-    if not os.path.exists(csv_path):
-        return []
-
+def load_leads_from_csv(csv_path) -> List[Dict[str, Any]]:
+    """Load leads from a CSV file (UTF-8)."""
     leads = []
-    with open(csv_path, 'r') as f:
+    with anchor(csv_path).open(encoding="utf-8", newline="") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            leads.append(dict(row))
-
+            # Ragged rows produce None keys/values from DictReader; normalize
+            # so downstream scoring and JSON serialization never crash.
+            leads.append({(k or ""): ("" if v is None else v) for k, v in row.items()})
     return leads
 
-def get_leads_data(profile: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Get leads data from CSV or use sample data."""
 
-    # Check for CSV files in common locations
-    csv_paths = [
-        "data/leads.csv",
-        "data/prospects.csv",
-        "leads.csv",
-        "prospects.csv"
-    ]
+def find_leads_csv(args) -> Optional[Path]:
+    """Resolve a founder-provided leads CSV, if any."""
+    if getattr(args, "leads_csv", None):
+        csv_path = anchor(args.leads_csv)
+        if not csv_path.exists():
+            print(f"❌ Leads CSV not found: {csv_path}")
+            print("   Check the --leads-csv path, or omit it to use --input research.")
+            sys.exit(EXIT_MISSING_INPUT)
+        return csv_path
+    for candidate in AUTO_CSV_CANDIDATES:
+        candidate_path = anchor(candidate)
+        if candidate_path.exists():
+            return candidate_path
+    return None
 
-    for csv_path in csv_paths:
-        if os.path.exists(csv_path):
+
+def resolve_leads(args, profile):
+    """Return (leads, data_source) following the documented priority order."""
+    if getattr(args, "input_path", None):
+        return resolve_research(args, profile, "leads", LEADS_SCHEMA_HINT)
+
+    csv_path = find_leads_csv(args)
+    if csv_path is not None:
+        leads = load_leads_from_csv(csv_path)
+        if leads:
             print(f"✓ Found leads CSV at {csv_path}")
-            return load_leads_from_csv(csv_path)
+            return leads, "founder_csv"
+        print(f"⚠️  Leads CSV at {csv_path} has no rows; looking for other sources.")
 
-    # Use sample data for demo
-    print("ℹ️  No leads CSV found, using sample data")
-    return SAMPLE_LEADS
+    if fixture_allowed(args, profile):
+        print("ℹ️  Demo mode - using bundled sample leads")
+        return copy.deepcopy(SAMPLE_LEADS), "sample_fixture"
+
+    extra_lines = []
+    if anchor("data/leads.example.csv").exists():
+        extra_lines.append("Or copy data/leads.example.csv to data/leads.csv or pass --leads-csv <path>.")
+    exit_missing_input("leads", LEADS_SCHEMA_HINT, extra_lines)
+
 
 def calculate_icp_fit_score(lead: Dict[str, Any], profile: Dict[str, Any]) -> int:
     """Calculate how well a lead fits the ICP (0-100)."""
@@ -152,26 +198,26 @@ def calculate_icp_fit_score(lead: Dict[str, Any], profile: Dict[str, Any]) -> in
     score = 0
     icp = profile.get("icp", {})
 
-    # Get lead data
-    title = lead.get("title", "").lower()
-    company = lead.get("company", "").lower()
-    bio = lead.get("bio", "").lower()
+    # Get lead data (research values may be non-strings; degrade, don't crash)
+    title = str(lead.get("title") or "").lower()
+    company = str(lead.get("company") or "").lower()
+    bio = str(lead.get("bio") or "").lower()
 
     # ICP buyer match
     icp_buyer = icp.get("buyer", "").lower()
-    if icp_buyer in title or icp_buyer in bio:
+    if icp_buyer and (icp_buyer in title or icp_buyer in bio):
         score += 25
 
     # Pain point keyword matching
-    pain_points = icp.get("pain_points", [])
-    keywords = icp.get("keywords", [])
+    pain_points = icp.get("pain_points", []) or []
+    keywords = icp.get("keywords", []) or []
 
-    all_keywords = pain_points + keywords
-    text_to_check = f"{title} {bio} {lead.get('engagement_context', '')}".lower()
+    all_keywords = list(pain_points) + list(keywords)
+    text_to_check = f"{title} {bio} {str(lead.get('engagement_context') or '')}".lower()
 
     keyword_matches = 0
     for keyword in all_keywords:
-        if keyword.lower() in text_to_check:
+        if str(keyword).lower() in text_to_check:
             keyword_matches += 1
 
     # Score based on keyword matches (up to 40 points)
@@ -192,7 +238,7 @@ def calculate_icp_fit_score(lead: Dict[str, Any], profile: Dict[str, Any]) -> in
             break
 
     # Engagement quality bonus
-    engagement = lead.get("engagement_context", "").lower()
+    engagement = str(lead.get("engagement_context") or "").lower()
     positive_signals = ["exactly", "need", "interested", "looking", "building", "better"]
 
     for signal in positive_signals:
@@ -201,77 +247,97 @@ def calculate_icp_fit_score(lead: Dict[str, Any], profile: Dict[str, Any]) -> in
 
     return min(100, score)
 
+
+def build_proof_sentence(profile: Dict[str, Any]) -> str:
+    """One natural sentence of social proof for outbound copy.
+
+    Uses the first positioning proof point (quoted so it reads naturally).
+    Returns an empty string when no proof points exist - callers decide
+    whether to fall back to the one-liner or drop the paragraph. Never
+    pulls from positioning.review_notes (internal disclaimers).
+    """
+    proof_points = get_proof_points(profile)
+    if proof_points:
+        proof = proof_points[0].rstrip(".")
+        return f'Early feedback has been encouraging, with users telling us: "{proof}."'
+    return ""
+
+
 def generate_personalized_message(lead: Dict[str, Any], profile: Dict[str, Any], score: int) -> str:
     """Generate personalized outbound message for lead."""
 
-    name = lead.get("name", "there")
-    company = lead.get("company", "your company")
-    title = lead.get("title", "")
-    engagement = lead.get("engagement_context", "")
-    source = lead.get("source", "")
+    name = str(lead.get("name") or "there")
+    company = str(lead.get("company") or "your company")
+    title = str(lead.get("title") or "")
+    engagement = str(lead.get("engagement_context") or "")
+    source = str(lead.get("source") or "")
 
     product_name = profile.get("product_name", "our product")
-    one_liner = profile.get("one_liner", "innovative solution")
+    one_liner = str(profile.get("one_liner", "") or "").strip().rstrip(".")
     url = profile.get("url", "")
 
-    # Get main pain point and proof point
+    # Get main pain point
     icp = profile.get("icp", {})
-    pain_points = icp.get("pain_points", ["workflow inefficiencies"])
+    pain_points = get_pain_points(profile)
     main_pain = pain_points[0] if pain_points else "workflow challenges"
-    buyer = icp.get('buyer', 'professionals')
-    buyer_plural = buyer if buyer.endswith('s') else f"{buyer}s"
+    buyer = icp.get("buyer") or "professionals"
+    buyer_plural = buyer if buyer.endswith("s") else f"{buyer}s"
+    category = profile.get("category", "industry")
 
-    positioning = profile.get("positioning", {})
-    proof_points = positioning.get("proof_points", ["significant improvements"])
-    main_proof = proof_points[0] if proof_points else "better performance"
+    # Social proof paragraph (quoted proof point, or one-liner fallback)
+    proof_sentence = build_proof_sentence(profile)
+    one_liner_sentence = f"In one line: {one_liner}." if one_liner else ""
+
+    # What the lead did that put them on our radar. URLs contain ":" too,
+    # and "I noticed your https..." reads broken - fall back for those.
+    engagement_ref = "recent activity"
+    if ":" in engagement:
+        prefix = engagement.split(":")[0].strip()
+        if prefix and "http" not in prefix.lower():
+            engagement_ref = prefix
 
     # Generate message based on engagement context and score
     if score >= 80:
         # High-fit personalized message
-        message = f"""Hi {name},
-
-I noticed your {engagement.split(':')[0] if ':' in engagement else 'engagement'} about {main_pain} - it really resonated with what we're seeing across the {profile.get('category', 'industry')}.
-
-As a {title} at {company}, you might be interested in {product_name} ({url}). We built it specifically for professionals dealing with {main_pain}.
-
-{main_proof} - which could be a game changer for {company}'s {profile.get('category', 'operations')}.
-
-Would love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!
-
-Best,
-[Your name]"""
+        proof_para = proof_sentence or one_liner_sentence
+        if proof_para:
+            proof_para += f" That could be a game changer for {company}'s {category} work."
+        paragraphs = [
+            f"Hi {name},",
+            f"I noticed your {engagement_ref} about {main_pain} - it really resonated with what we're seeing across the {category}.",
+            f"As a {title} at {company}, you might be interested in {product_name} ({url}). We built it specifically for professionals dealing with {main_pain}.",
+            proof_para,
+            "Would love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!",
+            "Best,\n[Your name]",
+        ]
 
     elif score >= 60:
         # Medium-fit targeted message
-        message = f"""Hi {name},
-
-Saw your activity around {source.split()[0] if source else 'e-commerce tools'} and thought {product_name} might be relevant for your work at {company}.
-
-{one_liner} - specifically designed for {buyer_plural} who need better solutions for {main_pain}.
-
-{main_proof}, which could help with the challenges you mentioned.
-
-Worth a quick look: {url}
-
-Best,
-[Your name]"""
+        proof_para = proof_sentence
+        if proof_para:
+            proof_para += " It could help with the challenges you mentioned."
+        paragraphs = [
+            f"Hi {name},",
+            f"Saw your activity around {source.split()[0] if source else 'the space'} and thought {product_name} might be relevant for your work at {company}.",
+            f"{one_liner or product_name} - specifically designed for {buyer_plural} who need better solutions for {main_pain}.",
+            proof_para,
+            f"Worth a quick look: {url}",
+            "Best,\n[Your name]",
+        ]
 
     else:
         # Lower-fit generic message
-        message = f"""Hi {name},
+        paragraphs = [
+            f"Hi {name},",
+            f"I came across your work at {company} and thought you might be interested in {product_name}.",
+            f"{one_liner or product_name} - we built it to help {buyer_plural} overcome {main_pain}.",
+            proof_sentence,
+            f"Check it out if it seems relevant: {url}",
+            "Best,\n[Your name]",
+        ]
 
-I came across your work at {company} and thought you might be interested in {product_name}.
+    return "\n\n".join(p for p in paragraphs if p).strip()
 
-{one_liner} - we built it to help {buyer_plural} overcome {main_pain}.
-
-Early feedback has been positive, with users reporting {main_proof}.
-
-Check it out if it seems relevant: {url}
-
-Best,
-[Your name]"""
-
-    return message.strip()
 
 def score_and_personalize_leads(leads: List[Dict[str, Any]], profile: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Score all leads and generate personalized messages."""
@@ -308,9 +374,11 @@ def score_and_personalize_leads(leads: List[Dict[str, Any]], profile: Dict[str, 
 
     return scored_leads
 
-def save_lead_queue(scored_leads: List[Dict[str, Any]], output_path: str = "demo/demo-output/outbound_queue.json"):
-    """Save scored leads and outbound queue to JSON."""
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+def save_lead_queue(args, scored_leads: List[Dict[str, Any]], profile: Dict[str, Any], data_source: str):
+    """Save scored leads and outbound queue to JSON + markdown."""
+
+    json_path = out_path(args, "outbound_queue.json")
 
     data = {
         "generated_at": datetime.now().isoformat(),
@@ -320,21 +388,21 @@ def save_lead_queue(scored_leads: List[Dict[str, Any]], output_path: str = "demo
         "low_priority": len([l for l in scored_leads if l["priority"] == "low"]),
         "avg_score": sum(l["icp_fit_score"] for l in scored_leads) / len(scored_leads) if scored_leads else 0,
         "leads": scored_leads,
-        "demo_mode": True
+        "demo_mode": artifact_demo_mode(profile, data_source),
+        "data_source": data_source,
     }
 
-    with open(output_path, 'w') as f:
-        json.dump(data, f, indent=2)
-
-    print(f"✓ Outbound queue saved to {output_path}")
+    write_json(json_path, data)
+    print(f"✓ Outbound queue saved to {json_path}")
 
     # Also save markdown summary
-    md_path = output_path.replace('.json', '.md')
+    md_path = out_path(args, "outbound_queue.md")
     save_queue_markdown(data, md_path)
 
-    return output_path
+    return json_path
 
-def save_queue_markdown(data: Dict[str, Any], output_path: str):
+
+def save_queue_markdown(data: Dict[str, Any], output_path):
     """Save human-readable outbound queue markdown."""
 
     leads = data["leads"]
@@ -345,6 +413,7 @@ Generated: {data['generated_at']}
 **Total Leads:** {data['total_leads']}
 **Average ICP Fit:** {data['avg_score']:.1f}/100
 **Demo Mode:** {data.get('demo_mode', False)}
+**Data Source:** {data.get('data_source', 'unknown')}
 
 ## Priority Breakdown
 - 🔥 High Priority (80+ score): {data['high_priority']} leads
@@ -358,17 +427,17 @@ Generated: {data['generated_at']}
     for i, lead in enumerate(leads, 1):
         priority_emoji = "🔥" if lead["priority"] == "high" else "🟡" if lead["priority"] == "medium" else "🔵"
 
-        md_content += f"""### {i}. {lead['name']} - {lead['title']} {priority_emoji}
+        md_content += f"""### {i}. {md_safe(lead.get('name', 'Unknown'))} - {md_safe(lead.get('title', 'N/A'))} {priority_emoji}
 
-**Company:** {lead['company']} | **ICP Fit Score:** {lead['icp_fit_score']}/100 | **Priority:** {lead['priority'].title()}
-**Source:** {lead['source']}
-**Profile:** {lead.get('url', 'N/A')}
+**Company:** {md_safe(lead.get('company', 'N/A'))} | **ICP Fit Score:** {lead['icp_fit_score']}/100 | **Priority:** {lead['priority'].title()}
+**Source:** {md_safe(lead.get('source', 'N/A'))}
+**Profile:** {md_safe(lead.get('url', 'N/A'))}
 
-**Engagement Context:** {lead['engagement_context']}
+**Engagement Context:** {md_safe(lead.get('engagement_context', 'N/A'))}
 
 **Personalized Message:**
 ```
-{lead['personalized_message']}
+{md_safe(lead['personalized_message'])}
 ```
 
 **Approval Required:** ✅ YES
@@ -378,7 +447,7 @@ Generated: {data['generated_at']}
 
 """
 
-    md_content += f"""## Outreach Guidelines
+    md_content += """## Outreach Guidelines
 
 ### Message Timing
 - **High Priority:** Reach out within 1-2 days
@@ -403,56 +472,65 @@ Generated: {data['generated_at']}
 **SAFETY REMINDER:** All outbound requires explicit human approval before sending.
 """
 
-    with open(output_path, 'w') as f:
-        f.write(md_content)
+    write_text(output_path, md_content)
 
     print(f"✓ Queue markdown saved to {output_path}")
 
+
 def main():
     """Main lead scoring workflow."""
+    configure_stdout()
     print("🎯 Flywheel Agent - Lead Scorer")
     print("Scoring leads and generating warm outbound queue...\n")
 
+    parser = build_parser("Score leads and draft approval-gated outbound messages.")
+    parser.add_argument(
+        "--leads-csv",
+        dest="leads_csv",
+        help=(
+            "Path to a founder-provided leads CSV "
+            "(auto-detects data/leads.csv, then data/prospects.csv)."
+        ),
+    )
+    args = parser.parse_args()
+
     try:
         # Load product profile
-        profile = load_product_profile()
-        print(f"✓ Loaded profile for {profile['product_name']}")
+        profile = load_profile(args)
+        print(f"✓ Loaded profile for {profile.get('product_name', 'unknown product')}")
 
-        # Get leads data
-        leads = get_leads_data(profile)
-        print(f"✓ Loaded {len(leads)} leads")
+        # Get leads data (--input research > founder CSV > demo fixture > exit 2)
+        leads, data_source = resolve_leads(args, profile)
+        print(f"✓ Loaded {len(leads)} leads ({data_source})")
 
         if not leads:
-            print("⚠️  No leads found. Add leads.csv or prospects.csv to score leads.")
-            return 1
+            print("⚠️  No leads found. Add data/leads.csv or pass --input research to score leads.")
+            return EXIT_ERROR
 
         # Score and personalize leads
         scored_leads = score_and_personalize_leads(leads, profile)
 
         # Save outbound queue
-        output_path = save_lead_queue(scored_leads)
+        save_lead_queue(args, scored_leads, profile, data_source)
 
         # Print summary
         print(f"\n📊 Lead Scoring Summary:")
         print(f"   Total Leads: {len(scored_leads)}")
         print(f"   High Priority: {len([l for l in scored_leads if l['priority'] == 'high'])}")
         print(f"   Average Score: {sum(l['icp_fit_score'] for l in scored_leads) / len(scored_leads):.1f}/100")
-        print(f"   Top Lead: {scored_leads[0]['name']} ({scored_leads[0]['icp_fit_score']}/100)")
+        print(f"   Top Lead: {scored_leads[0].get('name', 'Unknown')} ({scored_leads[0]['icp_fit_score']}/100)")
 
-        if profile.get("demo_mode"):
+        if data_source == "sample_fixture":
             print("\n🎭 Running in DEMO MODE - using sample lead data")
 
         print(f"\n✅ Lead scoring complete! Review and approve messages before sending.")
-        return 0
+        return EXIT_OK
 
-    except FileNotFoundError as e:
-        print(f"❌ Error: {e}")
-        print("Run flywheel_intake.py first to create product profile.")
-        return 1
     except Exception as e:
+        traceback.print_exc()
         print(f"❌ Unexpected error: {e}")
-        return 1
+        return EXIT_ERROR
+
 
 if __name__ == "__main__":
-    import sys
     sys.exit(main())
