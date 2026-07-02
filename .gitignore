@@ -21,6 +21,10 @@ data/product_profile.json
 data/leads.csv
 data/prospects.csv
 
+# Founder-local sprint approval state + cross-sprint learning history
+data/sprint_state.json
+data/sprint_history.jsonl
+
 # Runtime/cache artifacts
 __pycache__/
 *.py[cod]
