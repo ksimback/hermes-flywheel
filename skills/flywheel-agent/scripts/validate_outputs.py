@@ -22,6 +22,7 @@ from _common import (
     configure_stdout,
     out_path,
 )
+import sprint_ledger as ledger
 
 # Credential-shaped patterns, scanned line by line. Fixture domains such as
 # example.com must never suppress detection.
@@ -471,6 +472,65 @@ def check_safety_compliance(args) -> List[str]:
     return safety_issues
 
 
+def check_approval_state(args) -> List[str]:
+    """Check the approval state machine's invariants.
+
+    When a sprint has been compiled, this enforces:
+    - A draft sprint has NO approved or executed items (execution locked until
+      `finalize sprint`).
+    - Every executed item was reached with the sprint finalized.
+    - Every approved/executed item's transition log is consistent (executed
+      implies a prior approve) -- naive tampering that flips one field is
+      caught.
+    - Item ids are unique (a duplicate would leave an item un-actionable).
+
+    Scope, honestly: the state file is founder-local and unauthenticated, so
+    these checks are defense-in-depth against agent bugs and casual edits, not
+    a cryptographic guarantee. An adversary who can write arbitrary JSON here
+    can forge a fully consistent state. The real guarantee is the legitimate
+    CLI path (approvals.py), which cannot execute an unapproved item or act on
+    a draft sprint. No state file (e.g. the committed demo) is not a failure.
+    """
+    issues = []
+    state = ledger.load_state(ledger.state_dir_for(args))
+    if state is None:
+        return issues
+
+    finalized = state.get("sprint_state") == ledger.SPRINT_FINALIZED
+    items = state.get("items", [])
+
+    approved = [it for it in items if it.get("status") == ledger.APPROVED]
+    executed = [it for it in items if it.get("status") == ledger.EXECUTED]
+
+    if not finalized and (approved or executed):
+        issues.append(
+            f"Draft sprint has {len(approved)} approved and {len(executed)} executed "
+            f"item(s); execution must stay locked until the sprint is finalized."
+        )
+
+    valid_statuses = {ledger.PENDING, ledger.APPROVED, ledger.REJECTED, ledger.EXECUTED}
+    seen_ids = set()
+    for it in items:
+        iid = it.get("id")
+        if iid in seen_ids:
+            issues.append(f"Duplicate item id: {iid}")
+        seen_ids.add(iid)
+
+        if it.get("status") not in valid_statuses:
+            issues.append(f"Item {iid} has invalid status: {it.get('status')}")
+            continue
+
+        # Transition-log consistency: an item claiming approved/executed with
+        # no matching logged transition is inconsistent (tamper evidence).
+        if not ledger.item_log_consistent(it):
+            issues.append(
+                f"Item {iid} is {it.get('status')} but its transition log does not "
+                f"support that (no recorded approval); state may have been edited directly."
+            )
+
+    return issues
+
+
 def run_validations(args) -> int:
     """Run the full validation workflow, return an exit code."""
     all_issues = []
@@ -545,6 +605,15 @@ def run_validations(args) -> int:
         all_issues.extend([f"Safety: {issue}" for issue in safety_issues])
     else:
         print("   ✅ Safety: Compliant")
+
+    # Approval state machine invariant (execution locked until finalized)
+    print("\n🚦 Approval Gate Enforcement:")
+    approval_issues = check_approval_state(args)
+    if approval_issues:
+        print(f"   ❌ Approval gate: {len(approval_issues)} issues")
+        all_issues.extend([f"Approval gate: {issue}" for issue in approval_issues])
+    else:
+        print("   ✅ Approval gate: Execution properly locked to finalization")
 
     # Warn-only findings (never fail the run)
     if warnings:
