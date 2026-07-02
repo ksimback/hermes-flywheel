@@ -1,5 +1,9 @@
 # Sponsor Integration Proof
 
+> This material originated as a hackathon submission (hence the sponsor-by-sponsor framing below). The underlying pipeline is now a maintained standalone tool — the CLI works independently of any of this; this doc just documents how each sponsor technology maps onto the codebase.
+
+**What is Hermes?** Hermes is a separate, external agent runtime built by Nous Research (hermes-agent.nousresearch.com). It is not part of this repository. You only need it for the chat/Slack/Telegram experience. The standalone CLI runs the full GTM pipeline without Hermes — see README "A. Standalone CLI".
+
 Flywheel connects the three hackathon sponsor technologies into one product story: a GTM employee that plans, reasons, and transacts inside the founder's existing chat surface.
 
 ## Summary
@@ -7,16 +11,23 @@ Flywheel connects the three hackathon sponsor technologies into one product stor
 | Sponsor | Flywheel role | Proof in repo |
 |---|---|---|
 | Hermes Agent by Nous Research | Runtime and chat-native employee layer | Hermes profile distribution, Slack/Telegram commands, draft dashboard, approval gates |
-| NVIDIA Nemotron | GTM reasoning layer | Sprint planning language and NVIDIA API configuration path for model-backed reasoning |
+| NVIDIA Nemotron | GTM reasoning layer | Model-config knob at the Hermes-runtime layer only (see note below) |
 | Stripe MPP | Transaction layer for paid GTM resources | MPP spend cards, simulated 402 challenges, test receipts, sprint ledger artifacts |
+
+**NVIDIA/Nemotron note:** this is a Hermes-runtime model-config knob, not a code path in the Python pipeline. `config.yaml` ships with `model: ""` (intentionally unset — you choose the provider via `hermes -p flywheel-agent model`), and `distribution.yaml` just declares the `NVIDIA_API_KEY` env var as optional. There is no NVIDIA-specific code anywhere in the deterministic scripts; "proof in repo" for this row is config-level only.
 
 ## Stripe MPP: GTM procurement layer (real test mode + simulation fallback)
 
 Stripe MPP is not treated as a generic payment logo. In Flywheel, MPP is the mechanism that turns a proposed paid GTM action into an approval-gated machine payment flow.
 
-By default (no key, or no `sk_test_...` key), the MPP flow is **explicitly a simulation**: no live Stripe API is called, and every generated spend card and receipt carries the `"simulated": true` field.
+The honesty guarantee, in short:
 
-When `STRIPE_API_KEY` is set to a genuine Stripe **test** key (`sk_test_...`), `mpp_spend_planner.py` (via `skills/flywheel-agent/scripts/stripe_client.py`) creates real, unconfirmed test-mode `PaymentIntent`s for each spend card — so the founder sees genuine authorization objects in their own Stripe test dashboard instead of fabricated ids. Those intents are created with no payment method attached and `capture_method: manual`, so no charge is ever authorized or captured regardless; the resulting receipt is marked `"simulated": false, "stripe_test_mode": true` rather than a bare `"simulated": false`, so honesty about provenance is preserved even for a real object. Live keys (`sk_live_...`) are refused outright by `stripe_client.get_test_key()` — this integration will never touch live money. If any Stripe call errors, that card falls back to a simulated receipt so the pipeline never breaks. Stripe MCP (the `stripe-mcp-server` entry in `mcp.json`) remains a separate, optional future integration; `mcp.json` is a placeholder config and the server binary is not bundled with this repo.
+- **No key, or no `sk_test_...` key:** the MPP flow is explicitly a simulation. No live Stripe API is called, and every generated spend card and receipt carries `"simulated": true`.
+- **Genuine Stripe test key (`sk_test_...`) set:** `mpp_spend_planner.py` (via `skills/flywheel-agent/scripts/stripe_client.py`) creates real, unconfirmed test-mode `PaymentIntent`s for each spend card, so the founder sees genuine authorization objects in their own Stripe test dashboard instead of fabricated ids. Those intents have no payment method attached and `capture_method: manual`, so no charge is ever authorized or captured either way. The resulting receipt is marked `"simulated": false, "stripe_test_mode": true` (never a bare `"simulated": false`), so provenance stays honest even for a real object.
+- **Live keys (`sk_live_...`):** refused outright by `stripe_client.get_test_key()`. This integration will never touch live money.
+- **Any Stripe call errors:** that card falls back to a simulated receipt, so the pipeline never breaks.
+
+**The `stripe-mcp-server` entry in `mcp.json` is NOT bundled with this repo.** It's a placeholder for a separate, optional future integration — the server binary doesn't exist here and isn't required. The built-in Stripe path (`stripe_client.py`, used by `mpp_spend_planner.py`) is plain stdlib HTTP calls to Stripe's REST API and needs no MCP server at all.
 
 The intended loop is:
 
