@@ -1,8 +1,9 @@
 {
-  "generated_at": "2026-07-02T10:50:01.234267",
+  "generated_at": "2026-07-02T11:37:18.105568",
   "protocol": "stripe_mpp",
   "mode": "test",
   "simulated": true,
+  "stripe_test_mode": false,
   "total_receipts": 4,
   "receipts": [
     {

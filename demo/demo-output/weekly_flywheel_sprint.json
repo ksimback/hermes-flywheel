@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-02T10:50:01.603490",
-  "run_id": "flywheel-20260702-105001-600397-59212",
+  "generated_at": "2026-07-02T11:37:18.334772",
+  "run_id": "flywheel-20260702-113718-329527-33260",
   "sprint_summary": {
     "sprint_week": "Week of July 02, 2026",
     "product_name": "ExampleAI",
@@ -81,7 +81,7 @@
   "detailed_data": {
     "launch_plan": {
       "product_name": "ExampleAI",
-      "generated_at": "2026-07-02T10:50:00.711311",
+      "generated_at": "2026-07-02T11:37:17.570272",
       "launch_channels": [
         {
           "channel": "betalist",
@@ -300,38 +300,38 @@
         }
       },
       "asset_requirements": [
-        "HN account with karma",
-        "IH account",
-        "GIF demo",
-        "beta/early access",
         "value-first posts",
-        "screenshots",
-        "founder story",
-        "hunter network",
-        "professional profile",
-        "developer tool angle",
-        "project showcase",
-        "authentic participation",
-        "technical screenshots",
-        "GitHub link",
-        "maker account",
-        "product screenshots",
-        "metrics/traction",
-        "community research",
-        "launch timing",
-        "niche identification",
-        "relevant subreddits",
-        "signup page",
-        "network",
         "relationship building",
-        "technical angle"
+        "community research",
+        "network",
+        "professional profile",
+        "niche identification",
+        "developer tool angle",
+        "technical screenshots",
+        "screenshots",
+        "hunter network",
+        "HN account with karma",
+        "project showcase",
+        "signup page",
+        "beta/early access",
+        "launch timing",
+        "technical angle",
+        "relevant subreddits",
+        "founder story",
+        "IH account",
+        "metrics/traction",
+        "GIF demo",
+        "maker account",
+        "GitHub link",
+        "authentic participation",
+        "product screenshots"
       ],
       "total_estimated_effort": 0,
       "demo_mode": true,
       "data_source": "profile_derived"
     },
     "backlink_opportunities": {
-      "generated_at": "2026-07-02T10:50:00.828641",
+      "generated_at": "2026-07-02T11:37:17.650599",
       "total_opportunities": 10,
       "opportunities": [
         {
@@ -489,7 +489,7 @@
       "data_source": "sample_fixture"
     },
     "outbound_queue": {
-      "generated_at": "2026-07-02T10:50:00.933864",
+      "generated_at": "2026-07-02T11:37:17.738113",
       "total_leads": 10,
       "high_priority": 0,
       "medium_priority": 0,
@@ -701,7 +701,7 @@
       "data_source": "sample_fixture"
     },
     "creator_campaign": {
-      "generated_at": "2026-07-02T10:50:01.036242",
+      "generated_at": "2026-07-02T11:37:17.904908",
       "total_proposals": 1,
       "total_budget": 375,
       "avg_relevance_score": 75.0,
@@ -751,7 +751,7 @@
           "requires_approval": true,
           "stripe_mode": "test",
           "payment_terms": "50% upfront, 50% on delivery + bonus on performance",
-          "created_at": "2026-07-02T10:50:01.035882",
+          "created_at": "2026-07-02T11:37:17.904568",
           "budget_impact": {
             "weekly_budget": 500,
             "max_single_spend": 100,
@@ -764,7 +764,7 @@
       "data_source": "sample_fixture"
     },
     "mpp_spend_cards": {
-      "generated_at": "2026-07-02T10:50:01.234267",
+      "generated_at": "2026-07-02T11:37:18.105568",
       "protocol": "stripe_mpp",
       "simulated": true,
       "integration_story": "Flywheel uses Stripe MPP as the transaction layer for approved GTM procurement.",
@@ -935,10 +935,11 @@
       "data_source": "pipeline_artifacts"
     },
     "mpp_receipts": {
-      "generated_at": "2026-07-02T10:50:01.234267",
+      "generated_at": "2026-07-02T11:37:18.105568",
       "protocol": "stripe_mpp",
       "mode": "test",
       "simulated": true,
+      "stripe_test_mode": false,
       "total_receipts": 4,
       "receipts": [
         {
@@ -1002,7 +1003,7 @@
       "data_source": "pipeline_artifacts"
     },
     "trend_content": {
-      "generated_at": "2026-07-02T10:50:01.350076",
+      "generated_at": "2026-07-02T11:37:17.822644",
       "total_trends": 1,
       "total_content_pieces": 5,
       "avg_viral_potential": 78.0,

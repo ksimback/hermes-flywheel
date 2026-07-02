@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.0 — 2026-07-02
+
+### Live integrations (with honest degradation)
+- **Headless research (`research.py`).** For cron/headless runs with no interactive agent, this turns a real Serper web search into the `--input` JSON that `backlink_hunter.py` and `trend_scan.py` consume — real backlink/listing discovery and trend signal. With `SERPER_API_KEY` set it searches live; without it, it exits with an actionable message and never falls back to fixtures. (Warm leads stay on the CSV / agent path — a search API doesn't produce engagement data.)
+- **Real Stripe test-mode (`stripe_client.py`).** When `STRIPE_API_KEY` is an `sk_test_` key, the MPP planner creates real test-mode PaymentIntents so the founder sees genuine authorization objects in their Stripe test dashboard. Intents are created unconfirmed/uncaptured (no charge), live keys are refused outright, and with no key the flow stays a labelled simulation. The validator enforces the honesty rule: an artifact must be `simulated: true` or explicitly `stripe_test_mode` — a bare `simulated: false` (which would imply an unlabelled live charge) fails.
+
+### One-command experience (`flywheel.py`)
+- `flywheel.py run --demo` runs the whole pipeline in one command; `flywheel.py run "Product: …"` runs a real sprint, using live research where available and cleanly skipping stages whose input is missing (a partial sprint, never faked). `flywheel.py doctor` reports Python version, script presence, and which optional keys are configured.
+
+### Hardening (pre-merge adversarial review)
+- **`--partial` validation downgrades by explicit type, never by text.** A partial (headless/real) sprint is legitimately smaller than the full demo, so `validate_outputs.py --partial` relaxes completeness thresholds — but only issues explicitly tagged `Completeness` are relaxed. Safety, approval, secret, and test-mode findings stay hard failures, so a data-injected string (e.g. a lead named "Expected Corp") can never spoof a safety issue into a warning, and a non-test-mode 402 challenge always fails.
+- **`flywheel.py` never reports a crashed stage as success.** A stage that exits with a real error (not the exit-2 "no input, skipped" code) fails the whole run.
+- Real Stripe test-mode intents (`pi_…`) now validate correctly (not only the simulated `pi_test_mpp_…` form); malformed search responses degrade instead of crashing; network clients catch `socket.timeout` on Python 3.8/3.9; and `md_safe` now defangs injected markdown links and headings in addition to code fences.
+
 ## 0.3.0 — 2026-07-02
 
 ### The flywheel is real (approval state machine + learning loop)

@@ -1,6 +1,6 @@
 # Backlink & Listing Opportunities
 
-Generated: 2026-07-02T10:50:00.828641
+Generated: 2026-07-02T11:37:17.650599
 **Total Opportunities:** 10
 **Demo Mode:** True
 
@@ -42,7 +42,7 @@ Best regards
 
 **Outreach Template:**
 ```
-## ExampleAI
+\## ExampleAI
 
 E-commerce intelligence engine for growth teams.
 

@@ -1,6 +1,6 @@
 # Creator Campaign Strategy
 
-Generated: 2026-07-02T10:50:01.036242
+Generated: 2026-07-02T11:37:17.904908
 **Total Proposals:** 1
 **Total Budget:** $375
 **Average Relevance:** 75.0/100
@@ -31,52 +31,51 @@ Generated: 2026-07-02T10:50:01.036242
 
 **Campaign Brief:**
 ```
-# Campaign Brief: Software Tool Review Campaign
+\# Campaign Brief: Software Tool Review Campaign
 
-## Product Overview
+\## Product Overview
 **Product:** ExampleAI (https://example.ai)
 **Description:** E-commerce intelligence engine for growth teams
 **Key Benefit:** Turns store and customer signals into weekly GTM actions
 **Target Audience:** e-commerce founders in e-commerce intelligence
 
-## Campaign Concept
+\## Campaign Concept
 Detailed review of the product with demo and commentary
 
-## Deliverables
+\## Deliverables
 - 5-10 minute video review
 - written post/thread
 - demo walkthrough
 
-## Key Messages
+\## Key Messages
 - ExampleAI solves manual store analysis
 - Turns store and customer signals into weekly GTM actions
 - Built specifically for e-commerce founders in e-commerce intelligence
 - Modern alternative to legacy solutions
 
-## Content Guidelines
+\## Content Guidelines
 - Keep focus on practical value and real-world use cases
 - Show actual product interface and workflows
 - Include your honest opinion and any limitations you notice
 - Encourage audience questions and engagement
 - Use provided discount code: CREATOR20 (20% off)
 
-## Timeline
+\## Timeline
 2 weeks from agreement to delivery
 
-## Success Metrics
+\## Success Metrics
 - views
 - clicks
 - signups
 
-## Assets Provided
+\## Assets Provided
 - Product demo account/access
 - High-res screenshots and logos
 - Key messaging document
 - Technical documentation as needed
 
-## Creative Freedom
+\## Creative Freedom
 You have full creative control over content style and format. This brief provides direction, but we trust your expertise on what resonates with your audience.
-
 ```
 
 **Approval Required:** ✅ YES
