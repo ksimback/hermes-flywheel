@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-02T10:50:01.234267",
+  "generated_at": "2026-07-02T11:37:18.105568",
   "protocol": "stripe_mpp",
   "simulated": true,
   "integration_story": "Flywheel uses Stripe MPP as the transaction layer for approved GTM procurement.",

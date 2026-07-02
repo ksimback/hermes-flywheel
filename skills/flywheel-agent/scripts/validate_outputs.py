@@ -24,6 +24,17 @@ from _common import (
 )
 import sprint_ledger as ledger
 
+
+class Completeness(str):
+    """Marks a validation issue as a completeness threshold (not a safety
+    invariant). A real/headless partial sprint is legitimately smaller than the
+    full demo, so in --partial mode these are downgraded to warnings. Safety,
+    approval, secret, and test-mode issues are plain strings and stay hard
+    failures -- classification is explicit here, never inferred from text, so a
+    data-injected string can never neutralize a safety finding.
+    """
+    pass
+
 # Credential-shaped patterns, scanned line by line. Fixture domains such as
 # example.com must never suppress detection.
 SECRET_PATTERNS = [
@@ -60,15 +71,21 @@ def check_file_exists(path, description: str) -> Tuple[bool, str]:
 
 
 def check_simulated_marker(payload: Dict[str, Any], label: str, warnings: List[str]) -> List[str]:
-    """Require simulated=true when the marker is present; warn when absent.
+    """Guard the honesty of MPP artifacts.
 
-    Older committed artifacts predate the "simulated" honesty marker, so a
-    missing field is warn-only. A present-but-untrue value is a hard failure.
+    An artifact is honest if it is either simulated (`simulated: true`) or an
+    explicit Stripe TEST-mode artifact (`simulated: false` with
+    `stripe_test_mode: true`). What must never appear is `simulated: false`
+    without a test-mode marker -- that would imply a live, unlabelled charge.
+    Older artifacts predate the marker, so a missing field is warn-only.
     """
     issues = []
     if "simulated" in payload:
-        if payload.get("simulated") is not True:
-            issues.append(f"{label} sets 'simulated' but not to true - simulated artifacts must be honest")
+        if payload.get("simulated") is not True and not payload.get("stripe_test_mode"):
+            issues.append(
+                f"{label} sets simulated=false without stripe_test_mode - "
+                f"MPP artifacts must be simulated or explicitly test-mode"
+            )
     else:
         warnings.append(f"{label} missing 'simulated': true marker (old-format artifact - regenerate to add it)")
     # "data_source" is an accepted informational field; nothing to enforce.
@@ -111,7 +128,7 @@ def validate_product_profile(path) -> List[str]:
 
         # Validate competitors
         if "competitors" in profile and len(profile["competitors"]) < 2:
-            issues.append("Should have at least 2 competitors for analysis")
+            issues.append(Completeness("Should have at least 2 competitors for analysis"))
 
     except FileNotFoundError:
         issues.append("Product profile file not found")
@@ -132,7 +149,7 @@ def validate_launch_plan(path) -> List[str]:
 
         channels = plan.get("launch_channels", [])
         if len(channels) < 6:
-            issues.append(f"Expected at least 6 launch channels, found {len(channels)}")
+            issues.append(Completeness(f"Expected at least 6 launch channels, found {len(channels)}"))
 
         for channel in channels:
             # Check required fields
@@ -147,7 +164,7 @@ def validate_launch_plan(path) -> List[str]:
 
         # Check asset requirements
         if not plan.get("asset_requirements") or len(plan["asset_requirements"]) == 0:
-            issues.append("Launch plan should include asset requirements")
+            issues.append(Completeness("Launch plan should include asset requirements"))
 
     except FileNotFoundError:
         issues.append("Launch plan file not found")
@@ -168,7 +185,7 @@ def validate_backlink_opportunities(path) -> List[str]:
 
         opportunities = data.get("opportunities", [])
         if len(opportunities) < 5:
-            issues.append(f"Expected at least 5 opportunities, found {len(opportunities)}")
+            issues.append(Completeness(f"Expected at least 5 opportunities, found {len(opportunities)}"))
 
         for opp in opportunities:
             # Check required fields
@@ -299,7 +316,7 @@ def validate_mpp_spend_cards(path, receipts_path, warnings: List[str], max_singl
         cards = data.get("spend_cards", [])
         receipts = receipts_data.get("receipts", [])
         if len(cards) < 3:
-            issues.append(f"Expected at least 3 MPP spend cards, found {len(cards)}")
+            issues.append(Completeness(f"Expected at least 3 MPP spend cards, found {len(cards)}"))
         if len(receipts) != len(cards):
             issues.append("MPP receipt count should match spend card count")
 
@@ -338,7 +355,9 @@ def validate_mpp_spend_cards(path, receipts_path, warnings: List[str], max_singl
         for receipt in receipts:
             if receipt.get("protocol") != "stripe_mpp" or receipt.get("mode") != "test":
                 issues.append(f"Receipt {receipt.get('receipt_id', 'unknown')} should be test-mode stripe_mpp")
-            if not receipt.get("payment_intent", "").startswith("pi_test_mpp_"):
+            # Accept both the simulated id (pi_test_mpp_*) and a real Stripe
+            # test-mode intent (pi_*). Either is a valid test-mode payment intent.
+            if not str(receipt.get("payment_intent", "")).startswith("pi_"):
                 issues.append(f"Receipt {receipt.get('receipt_id', 'unknown')} missing test payment intent")
             issues.extend(check_simulated_marker(receipt, f"Receipt {receipt.get('receipt_id', 'unknown')}", warnings))
     except FileNotFoundError:
@@ -393,14 +412,16 @@ def validate_sprint_report(path) -> List[str]:
 
         summary = report.get("sprint_summary", {})
 
-        # Check key metrics
+        # Check key metrics. These are presentation/volume completeness (a
+        # partial sprint has fewer actions); the real approval gate is enforced
+        # by check_approval_state, not by the report's summary text.
         if summary.get("total_actions", 0) == 0:
-            issues.append("Sprint report shows 0 total actions")
+            issues.append(Completeness("Sprint report shows 0 total actions"))
 
         # Check approval gates
         approval_gates = summary.get("approval_gates", {})
         if approval_gates.get("outbound_messages", 0) == 0 and approval_gates.get("content_posts", 0) == 0:
-            issues.append("Sprint report should show approval requirements")
+            issues.append(Completeness("Sprint report should show approval requirements"))
 
         # Check budget analysis
         budget_analysis = summary.get("budget_analysis", {})
@@ -562,37 +583,65 @@ def run_validations(args) -> int:
         (out_path(args, "weekly_flywheel_sprint.json"), "Sprint Report")
     ]
 
+    # In partial mode (a headless run that intentionally skipped stages), a
+    # missing artifact is expected -- it becomes a warning, not a failure.
+    # The profile is always required, and every artifact that IS present is
+    # still fully validated (safety/secret/approval checks never relax).
+    partial = getattr(args, "partial", False)
+
     print("📁 File Existence Check:")
+    missing_paths = set()
     for path, description in file_checks:
         exists, status = check_file_exists(path, description)
         print(f"   {status}")
         if not exists:
-            all_issues.append(f"Missing file: {path}")
+            missing_paths.add(str(path))
+            if partial and description != "Product Profile":
+                warnings.append(f"Missing file (partial run): {path}")
+            else:
+                all_issues.append(f"Missing file: {path}")
 
     print("\n🔍 Content Validation:")
 
-    # Content validation
+    # Content validation; each entry names its primary artifact so partial
+    # runs can skip validators whose input was intentionally not generated.
     validations = [
-        ("Product Profile", lambda: validate_product_profile(profile_path)),
-        ("Launch Plan", lambda: validate_launch_plan(out_path(args, "launch_plan.json"))),
-        ("Backlink Opportunities", lambda: validate_backlink_opportunities(out_path(args, "backlink_opportunities.json"))),
-        ("Outbound Queue", lambda: validate_outbound_queue(out_path(args, "outbound_queue.json"))),
-        ("Creator Campaign", lambda: validate_creator_campaign(out_path(args, "creator_campaign.json"))),
-        ("Stripe MPP Spend Cards", lambda: validate_mpp_spend_cards(
+        ("Product Profile", profile_path, lambda: validate_product_profile(profile_path)),
+        ("Launch Plan", out_path(args, "launch_plan.json"), lambda: validate_launch_plan(out_path(args, "launch_plan.json"))),
+        ("Backlink Opportunities", out_path(args, "backlink_opportunities.json"), lambda: validate_backlink_opportunities(out_path(args, "backlink_opportunities.json"))),
+        ("Outbound Queue", out_path(args, "outbound_queue.json"), lambda: validate_outbound_queue(out_path(args, "outbound_queue.json"))),
+        ("Creator Campaign", out_path(args, "creator_campaign.json"), lambda: validate_creator_campaign(out_path(args, "creator_campaign.json"))),
+        ("Stripe MPP Spend Cards", out_path(args, "mpp_spend_cards.json"), lambda: validate_mpp_spend_cards(
             out_path(args, "mpp_spend_cards.json"), out_path(args, "mpp_receipts.json"),
             warnings, max_single_spend_usd)),
-        ("Trend Content", lambda: validate_trend_content(out_path(args, "trend_content.json"))),
-        ("Sprint Report", lambda: validate_sprint_report(out_path(args, "weekly_flywheel_sprint.json")))
+        ("Trend Content", out_path(args, "trend_content.json"), lambda: validate_trend_content(out_path(args, "trend_content.json"))),
+        ("Sprint Report", out_path(args, "weekly_flywheel_sprint.json"), lambda: validate_sprint_report(out_path(args, "weekly_flywheel_sprint.json"))),
     ]
 
-    for name, validator in validations:
+    # In partial mode only, issues explicitly tagged Completeness (a
+    # real/headless sprint is legitimately smaller than the full demo) are
+    # downgraded to warnings. Classification is by type, never by text, so an
+    # attacker-controlled string interpolated into a SAFETY message can never
+    # be mistaken for a completeness note. Safety/secret/approval sections
+    # below stay hard regardless.
+    for name, primary_path, validator in validations:
+        if partial and str(primary_path) in missing_paths:
+            print(f"   ⏭️  {name}: skipped (not generated in partial run)")
+            continue
         try:
             issues = validator()
-            if issues:
-                print(f"   ❌ {name}: {len(issues)} issues")
-                all_issues.extend([f"{name}: {issue}" for issue in issues])
-            else:
+            if not issues:
                 print(f"   ✅ {name}: Valid")
+                continue
+            hard = [i for i in issues if not (partial and isinstance(i, Completeness))]
+            soft = [i for i in issues if partial and isinstance(i, Completeness)]
+            if hard:
+                print(f"   ❌ {name}: {len(hard)} issues")
+                all_issues.extend([f"{name}: {issue}" for issue in hard])
+            if soft:
+                warnings.extend([f"{name}: {issue} (partial run)" for issue in soft])
+            if not hard and soft:
+                print(f"   ⚠️  {name}: {len(soft)} completeness note(s), non-blocking")
         except Exception as e:
             print(f"   ❌ {name}: Validation failed - {e}")
             all_issues.append(f"{name}: Validation failed - {e}")
@@ -656,6 +705,12 @@ def main():
     print("Checking completeness, safety, and approval gates...\n")
 
     parser = build_parser("Validate flywheel outputs for completeness, safety, and approval gates.", research=False)
+    parser.add_argument(
+        "--partial",
+        action="store_true",
+        help="Treat intentionally-missing artifacts (a headless partial sprint) as "
+             "warnings instead of failures. Safety, secret, and approval checks stay strict.",
+    )
     args = parser.parse_args()
 
     try:

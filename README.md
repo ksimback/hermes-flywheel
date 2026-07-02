@@ -51,6 +51,19 @@ flywheel-agent chat
 
 Hermes profiles are isolated. Even if your default Hermes profile already has a model configured, the Flywheel profile may still need its own provider/model selection with `hermes -p flywheel-agent setup --portal` or `hermes -p flywheel-agent model`.
 
+## Quick start (one command)
+
+Outside of Hermes, `flywheel.py` wraps the whole deterministic pipeline (intake -> launch -> backlinks -> leads -> creators -> MPP -> trends -> sprint report -> validate) into a single command:
+
+```bash
+python skills/flywheel-agent/scripts/flywheel.py run --demo
+python skills/flywheel-agent/scripts/flywheel.py doctor
+```
+
+`run --demo` produces a full sprint with the ExampleAI fixture, no keys required. `doctor` checks your Python version, confirms the pipeline scripts are present, and reports whether `SERPER_API_KEY` / `STRIPE_API_KEY` are configured. For a real (non-demo) sprint, pass founder context instead of `--demo`: `flywheel.py run "Product: ... ICP: ... Budget: ..."` — stages that need research the agent hasn't supplied yet (no `SERPER_API_KEY`, no `--input`, no `data/leads.csv`) are skipped gracefully rather than failing, producing a partial sprint you can fill in and re-run.
+
+**Bring your own leads:** copy [`data/leads.example.csv`](data/leads.example.csv) to `data/leads.csv` (columns: `name,title,company,bio,source,url,engagement_context`) and `lead_scorer.py` / `flywheel.py run` will auto-detect it for warm outbound scoring.
+
 ## Usage
 
 Flywheel can run in the terminal, Slack, or Telegram through Hermes Gateway.
@@ -161,6 +174,10 @@ See:
 - [`demo/demo-output/mpp_spend_cards.json`](demo/demo-output/mpp_spend_cards.json)
 - [`demo/demo-output/mpp_receipts.json`](demo/demo-output/mpp_receipts.json)
 
+### Real Stripe test mode
+
+If you set `STRIPE_API_KEY` to a genuine Stripe **test** key (`sk_test_...`), `mpp_spend_planner.py` creates real, unconfirmed test-mode `PaymentIntent`s instead of simulating them — so you can see the actual authorization objects in your Stripe test dashboard. Nothing is ever charged: intents are created without a payment method and with `capture_method: manual`, so they stay "authorization pending founder approval." Live keys (`sk_live_...`) are always refused outright — Flywheel never touches live money. With no key configured (the default), everything stays a labeled simulation (`"simulated": true`), exactly as described above.
+
 ## Demo run, no keys required
 
 The ExampleAI fixture is public-safe and only used with `--demo`:
@@ -195,6 +212,15 @@ Every script supports `--profile` and `--output-dir`; the research-stage scripts
 
 In live (non-demo) runs, the research-stage scripts (`backlink_hunter`, `lead_scorer`, `creator_campaign`, `trend_scan`) expect agent-supplied research JSON via `--input` and exit with code 2 if it is missing — fixture data is only used with an explicit `--demo`.
 
+For headless/cron runs with no interactive agent attached, `skills/flywheel-agent/scripts/research.py` can pre-generate that `--input` JSON for `backlink_hunter` and `trend_scan` by running a real search via Serper when `SERPER_API_KEY` is set:
+
+```bash
+python skills/flywheel-agent/scripts/research.py --profile data/product_profile.json --for backlinks --output research/backlinks.json
+python skills/flywheel-agent/scripts/backlink_hunter.py --input research/backlinks.json
+```
+
+Without `SERPER_API_KEY` it exits cleanly with code 2 and actionable guidance — it never falls back to fixture data. Leads stay on the founder-CSV / interactive-agent path (`lead_scorer.py --leads-csv`); a search API cannot supply the engagement data leads need.
+
 ## Optional environment variables
 
 Copy `.env.EXAMPLE` to `.env` only for local/private use. Do not commit `.env`.
@@ -209,7 +235,7 @@ SLACK_BOT_TOKEN=replace_with_slack_bot_token
 SLACK_APP_TOKEN=replace_with_slack_app_token
 ```
 
-All keys are optional for the deterministic demo pipeline. These keys are currently consumed by the Hermes runtime/gateway (model providers, Slack, optional web search), not by the bundled scripts themselves.
+All keys are optional for the deterministic demo pipeline. Most are consumed by the Hermes runtime/gateway (model providers, Slack); `SERPER_API_KEY` is also read directly by `research.py` for headless search.
 
 ## Slack and Telegram
 

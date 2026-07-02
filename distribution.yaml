@@ -1,5 +1,5 @@
 name: flywheel-agent
-version: 0.3.0
+version: 0.4.0
 description: "Your hardest working GTM employee, packaged as a Hermes Profile Distribution."
 hermes_requires: ">=0.16.0"
 author: "Flywheel Demo Team"

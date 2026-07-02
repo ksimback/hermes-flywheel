@@ -2,6 +2,7 @@
   "name": "weekly-gtm-sprint",
   "schedule": "0 9 * * 1",
   "prompt": "Run my weekly customer acquisition flywheel sprint. Generate this week's GTM action plan including launch opportunities, backlink targets, warm outbound queue, creator campaigns, and trend-based content. Present top recommendations and mark all outbound/spend items for human approval.",
+  "notes": "For a fully headless run with no interactive agent attached, skills/flywheel-agent/scripts/research.py can pre-generate the --input research JSON for backlink_hunter.py and trend_scan.py via a real Serper search (requires SERPER_API_KEY; exits 2 with actionable guidance if the key is missing).",
   "skills": ["flywheel-agent"],
   "enabled": false,
   "repeat": 999,
