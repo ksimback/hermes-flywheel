@@ -246,6 +246,18 @@ Flywheel is chat-native when used with Hermes Gateway.
 
 Telegram uses the same text-command flow as Slack: short acknowledgement, quiet work, draft dashboard, walkthrough, finalization, and separate execution approvals.
 
+## Verify your install
+
+Three commands confirm a fresh clone works end to end, no keys required:
+
+```bash
+python skills/flywheel-agent/scripts/flywheel.py doctor   # environment/readiness
+python skills/flywheel-agent/scripts/flywheel.py run --demo  # full ExampleAI sprint
+python -m pytest -q                                        # full test suite
+```
+
+`doctor` should report Python OK and all scripts present; the demo run should end with `✓ Sprint compiled to demo/demo-output/weekly_flywheel_sprint.md`; the suite should pass. If all three succeed, the pipeline is working on your machine.
+
 ## Development
 
 Install test dependencies with `pip install -e .[dev]` (or just `pip install pytest`), then run the full public package test suite:

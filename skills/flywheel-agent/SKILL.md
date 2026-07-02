@@ -1,7 +1,7 @@
 ---
 name: flywheel-agent
 description: Run a weekly customer acquisition flywheel sprint for founders.
-version: 0.4.0
+version: 0.4.1
 platforms: [linux, macos, windows]
 tags: [gtm, growth, stripe, nvidia, hermes, startup]
 ---
