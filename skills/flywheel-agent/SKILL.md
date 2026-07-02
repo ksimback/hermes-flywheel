@@ -1,7 +1,7 @@
 ---
 name: flywheel-agent
 description: Run a weekly customer acquisition flywheel sprint for founders.
-version: 0.3.0
+version: 0.4.0
 platforms: [linux, macos, windows]
 tags: [gtm, growth, stripe, nvidia, hermes, startup]
 ---
@@ -37,6 +37,8 @@ Ask for missing fields only if they cannot be inferred:
 ## Core Procedure
 
 You (the agent) do the research; the scripts do the deterministic work (scoring, formatting, approval gates, ledger). Run the scripts as tools from **any directory** — all paths anchor to the repo root, so there is no need to `cd` anywhere. Do **not** use `--demo` for a real user request.
+
+**One-command path:** `skills/flywheel-agent/scripts/flywheel.py` wraps steps 1-8 below into a single call — `flywheel.py run --demo` for the no-keys demo, or `flywheel.py run "Product: ... ICP: ..."` for a real sprint (research-backed stages skip gracefully, producing a partial sprint, if no `SERPER_API_KEY`/`--input`/`data/leads.csv` is available). `flywheel.py doctor` checks Python version, script presence, and `SERPER_API_KEY`/`STRIPE_API_KEY` readiness before you run anything. The step-by-step commands below remain the way to run (or re-run) an individual stage.
 
 ### CLI contract (all pipeline scripts)
 
@@ -90,6 +92,8 @@ python skills/flywheel-agent/scripts/backlink_hunter.py --input /path/to/backlin
 
 Scores and formats the opportunities you found. Without `--input` (and without `--demo`) it exits 2 with an actionable message.
 
+Headless alternative: for cron/unattended runs with no interactive agent, `research.py --profile <profile> --for backlinks --output <path>` can produce this `--input` JSON itself via a real Serper search (requires `SERPER_API_KEY`; exits 2 with the same actionable guidance if the key is missing).
+
 ### 4. Lead Scoring & Warm Outbound
 
 Gather real leads (engagement, signups, community activity), normalize to the `leads` schema, then:
@@ -119,6 +123,14 @@ python skills/flywheel-agent/scripts/trend_scan.py --input /path/to/trends.json
 ```
 
 Generates trend-based content and weekly social media drafts.
+
+Headless alternative: `research.py --profile <profile> --for trends --output <path>` produces this `--input` JSON via a real Serper search (requires `SERPER_API_KEY`; exits 2 with actionable guidance if the key is missing).
+
+### 6.5 Stripe MPP Spend Planning
+```bash
+python skills/flywheel-agent/scripts/mpp_spend_planner.py
+```
+Builds MPP-style spend cards and test receipts from the upstream artifacts. Uses **real Stripe test-mode PaymentIntents** (unconfirmed, no charge) when `STRIPE_API_KEY` is set to an `sk_test_...` key; otherwise every card and receipt is a clearly-labeled simulation (`"simulated": true`). Live keys (`sk_live_...`) are refused outright — this step never touches live money.
 
 ### 7. Sprint Report Compilation
 ```bash

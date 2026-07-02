@@ -10,11 +10,13 @@ Flywheel connects the three hackathon sponsor technologies into one product stor
 | NVIDIA Nemotron | GTM reasoning layer | Sprint planning language and NVIDIA API configuration path for model-backed reasoning |
 | Stripe MPP | Transaction layer for paid GTM resources | MPP spend cards, simulated 402 challenges, test receipts, sprint ledger artifacts |
 
-## Stripe MPP: GTM procurement layer (simulated test mode)
+## Stripe MPP: GTM procurement layer (real test mode + simulation fallback)
 
 Stripe MPP is not treated as a generic payment logo. In Flywheel, MPP is the mechanism that turns a proposed paid GTM action into an approval-gated machine payment flow.
 
-The current MPP flow is **explicitly a simulation**: no live Stripe API is called, and every generated spend card and receipt carries the `"simulated": true` field. Stripe MCP (the `stripe-mcp-server` entry in `mcp.json`) is an optional future integration; `mcp.json` is a placeholder config and the server binary is not bundled with this repo.
+By default (no key, or no `sk_test_...` key), the MPP flow is **explicitly a simulation**: no live Stripe API is called, and every generated spend card and receipt carries the `"simulated": true` field.
+
+When `STRIPE_API_KEY` is set to a genuine Stripe **test** key (`sk_test_...`), `mpp_spend_planner.py` (via `skills/flywheel-agent/scripts/stripe_client.py`) creates real, unconfirmed test-mode `PaymentIntent`s for each spend card — so the founder sees genuine authorization objects in their own Stripe test dashboard instead of fabricated ids. Those intents are created with no payment method attached and `capture_method: manual`, so no charge is ever authorized or captured regardless; the resulting receipt is marked `"simulated": false, "stripe_test_mode": true` rather than a bare `"simulated": false`, so honesty about provenance is preserved even for a real object. Live keys (`sk_live_...`) are refused outright by `stripe_client.get_test_key()` — this integration will never touch live money. If any Stripe call errors, that card falls back to a simulated receipt so the pipeline never breaks. Stripe MCP (the `stripe-mcp-server` entry in `mcp.json`) remains a separate, optional future integration; `mcp.json` is a placeholder config and the server binary is not bundled with this repo.
 
 The intended loop is:
 
