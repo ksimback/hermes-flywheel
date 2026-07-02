@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 """
 Stripe MPP Spend Planner
-Builds deterministic MPP-style spend cards, payment challenges, and test receipts
-for Flywheel's approval-gated GTM procurement loop.
+Builds MPP-style spend cards, payment challenges, and test receipts for
+Flywheel's approval-gated GTM procurement loop.
 
-This is a demo-safe protocol SIMULATION: no live Stripe API calls are made and no
-money moves. Every persisted artifact is marked with "simulated": true so nothing
-downstream can mistake these for live Stripe objects. It models the handoff
-Flywheel would use with MPP-compatible paid resources after a founder approves
-spend in Slack or Telegram.
+Two modes, chosen automatically:
+- No Stripe test key configured: a demo-safe SIMULATION. No network calls, no
+  money moves, and every artifact is marked "simulated": true.
+- A Stripe TEST key (sk_test_...) configured: real test-mode PaymentIntents are
+  created, so the founder sees genuine authorization objects in their Stripe
+  test dashboard. The intents are created UNCONFIRMED / UNCAPTURED, so no charge
+  is ever authorized -- they are "authorization pending founder approval"
+  records. Test mode moves no real money regardless, and live keys are refused.
+
+Either way, payment stays approval-gated: these are authorization records, not
+confirmed charges.
 """
 
 import json
@@ -27,6 +33,7 @@ from _common import (
     write_json,
     write_text,
 )
+import stripe_client
 
 
 def load_json_safely(path) -> Optional[Dict[str, Any]]:
@@ -168,30 +175,72 @@ def generate_mpp_spend_cards(profile: Dict[str, Any], all_data: Dict[str, Any]) 
     return cards
 
 
-def build_demo_receipts(cards: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Create deterministic simulated test receipts that show what returns after approval."""
+def build_receipts(cards: List[Dict[str, Any]]) -> (List[Dict[str, Any]], bool):
+    """Build receipts, using real Stripe test-mode intents when a test key exists.
+
+    Returns (receipts, used_stripe). With a test key, each card gets a real
+    unconfirmed test-mode PaymentIntent (no charge); on any Stripe error the
+    card falls back to a simulated receipt so the pipeline never breaks.
+    """
+    use_stripe = stripe_client.available()
     receipts = []
+    any_real = False
     for index, card in enumerate(cards, 1):
-        receipts.append({
-            "receipt_id": f"mpp_receipt_{index:03d}",
-            "spend_card_id": card["id"],
-            "protocol": "stripe_mpp",
-            "mode": "test",
-            "simulated": True,
-            "status": "simulated_after_founder_approval",
-            "payment_intent": f"pi_test_mpp_{index:06d}",
-            "stripe_receipt_url": f"https://dashboard.stripe.com/test/payments/pi_test_mpp_{index:06d}",
-            "resource_unlocked": card["http_endpoint"],
-            "amount_usd": card["amount_usd"],
-            "currency": card["currency"],
-            "ledger_note": "Simulated receipt only. No live Stripe call and no money moved.",
-        })
-    return receipts
+        real = None
+        if use_stripe:
+            real = stripe_client.create_authorization_intent(
+                amount_cents=card["amount_cents"],
+                currency=card["currency"],
+                metadata={"spend_card_id": card["id"], "resource": card.get("resource_type", "")},
+            )
+            if "error" in real:
+                print(f"⚠️  Stripe test call failed for {card['id']} ({real['error']}); "
+                      f"using a simulated receipt for it.")
+                real = None
+
+        if real:
+            any_real = True
+            receipts.append({
+                "receipt_id": f"mpp_receipt_{index:03d}",
+                "spend_card_id": card["id"],
+                "protocol": "stripe_mpp",
+                "mode": "test",
+                "simulated": False,
+                "status": "authorization_pending_founder_approval",
+                "payment_intent": real["id"],
+                "payment_intent_status": real["status"],
+                "stripe_receipt_url": real["dashboard_url"],
+                "resource_unlocked": card["http_endpoint"],
+                "amount_usd": card["amount_usd"],
+                "currency": card["currency"],
+                "ledger_note": "Real Stripe TEST-mode PaymentIntent, unconfirmed/uncaptured. "
+                               "No charge authorized; test mode moves no real money.",
+            })
+        else:
+            receipts.append({
+                "receipt_id": f"mpp_receipt_{index:03d}",
+                "spend_card_id": card["id"],
+                "protocol": "stripe_mpp",
+                "mode": "test",
+                "simulated": True,
+                "status": "simulated_after_founder_approval",
+                "payment_intent": f"pi_test_mpp_{index:06d}",
+                "stripe_receipt_url": f"https://dashboard.stripe.com/test/payments/pi_test_mpp_{index:06d}",
+                "resource_unlocked": card["http_endpoint"],
+                "amount_usd": card["amount_usd"],
+                "currency": card["currency"],
+                "ledger_note": "Simulated receipt only. No live Stripe call and no money moved.",
+            })
+    return receipts, any_real
 
 
-def save_outputs(args, cards: List[Dict[str, Any]], receipts: List[Dict[str, Any]], demo_mode: bool) -> None:
+def save_outputs(args, cards: List[Dict[str, Any]], receipts: List[Dict[str, Any]],
+                 demo_mode: bool, used_stripe: bool) -> None:
     now = datetime.now().isoformat()
     total = sum(card["amount_usd"] for card in cards)
+    # Spend cards are always authorization challenges (no charge), so they
+    # stay simulated regardless. Receipts reflect whether a real test-mode
+    # PaymentIntent was created.
     spend_payload = {
         "generated_at": now,
         "protocol": "stripe_mpp",
@@ -214,7 +263,9 @@ def save_outputs(args, cards: List[Dict[str, Any]], receipts: List[Dict[str, Any
         "generated_at": now,
         "protocol": "stripe_mpp",
         "mode": "test",
-        "simulated": True,
+        # False only when every receipt is a real test-mode intent.
+        "simulated": not used_stripe,
+        "stripe_test_mode": used_stripe,
         "total_receipts": len(receipts),
         "receipts": receipts,
         "demo_mode": demo_mode,
@@ -282,10 +333,14 @@ def main() -> int:
             all_data[key] = data
 
         cards = generate_mpp_spend_cards(profile, all_data)
-        receipts = build_demo_receipts(cards)
-        save_outputs(args, cards, receipts, demo_mode)
+        receipts, used_stripe = build_receipts(cards)
+        save_outputs(args, cards, receipts, demo_mode, used_stripe)
         print(f"✓ Generated {len(cards)} MPP spend cards totaling ${sum(card['amount_usd'] for card in cards)}")
-        print("  (Simulated test-mode artifacts — no live Stripe call, no money moved.)")
+        if used_stripe:
+            print("  (Real Stripe TEST-mode PaymentIntents created — unconfirmed, no charge. "
+                  "Check your Stripe test dashboard.)")
+        else:
+            print("  (Simulated test-mode artifacts — no live Stripe call, no money moved.)")
         return EXIT_OK
     except Exception:
         traceback.print_exc()
