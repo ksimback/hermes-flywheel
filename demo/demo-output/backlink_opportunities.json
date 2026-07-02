@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-01T05:02:47.101660",
+  "generated_at": "2026-07-02T08:40:35.861778",
   "total_opportunities": 10,
   "opportunities": [
     {
@@ -11,11 +11,11 @@
       "why_relevant": "High-intent directory where e-commerce founders compare customer intelligence tools",
       "estimated_effort": "low",
       "estimated_impact": "medium",
-      "score": 100,
       "recommended_action": "Submit ExampleAI as an alternative for early-stage e-commerce teams",
       "outreach_template": "Hi team,\n\nI'd like to suggest adding ExampleAI (example.ai) to your e-commerce intelligence tools directory.\n\nExampleAI helps e-commerce founders turn store and customer signals into weekly growth actions. Happy to provide any additional details needed for the listing.\n\nBest regards",
       "approval_required": true,
-      "status": "new"
+      "status": "new",
+      "score": 100
     },
     {
       "id": "opp_002",
@@ -26,11 +26,11 @@
       "why_relevant": "Curated resource for founders evaluating tools like ExampleAI",
       "estimated_effort": "low",
       "estimated_impact": "high",
-      "score": 100,
       "recommended_action": "Submit PR to add ExampleAI to customer intelligence section",
       "outreach_template": "## ExampleAI\n\nE-commerce intelligence engine for growth teams.\n\n- **Link:** https://example.ai\n- **Features:** Customer segmentation, campaign opportunity discovery, weekly GTM recommendations\n- **Use case:** E-commerce founders and growth teams\n\nHelps teams move from manual store analysis to approval-gated weekly growth actions.",
       "approval_required": true,
-      "status": "new"
+      "status": "new",
+      "score": 100
     },
     {
       "id": "opp_009",
@@ -41,11 +41,11 @@
       "why_relevant": "Strong source for partnership and customer discovery targets",
       "estimated_effort": "low",
       "estimated_impact": "high",
-      "score": 100,
       "recommended_action": "Build a targeted e-commerce tool prospect list and draft partnership outreach",
       "outreach_template": "Hi {{name}},\n\nSaw you're building for e-commerce teams. We're building ExampleAI to make store intelligence and weekly GTM planning less manual. Would a short demo be useful?",
       "approval_required": true,
-      "status": "new"
+      "status": "new",
+      "score": 100
     },
     {
       "id": "opp_003",
@@ -56,11 +56,11 @@
       "why_relevant": "Comparison article where ExampleAI's founder-focused positioning fits",
       "estimated_effort": "medium",
       "estimated_impact": "high",
-      "score": 95,
       "recommended_action": "Pitch ExampleAI for the next e-commerce intelligence roundup",
       "outreach_template": "Hi editorial team,\n\nI noticed your roundup of e-commerce intelligence tools. ExampleAI helps early-stage e-commerce founders turn store data into weekly acquisition actions, with human approval gates before outreach or spend. Would this be a fit for a future update?\n\nBest regards",
       "approval_required": true,
-      "status": "new"
+      "status": "new",
+      "score": 95
     },
     {
       "id": "opp_004",
@@ -71,11 +71,11 @@
       "why_relevant": "Active conversation where ExampleAI could be mentioned as a lightweight intelligence layer",
       "estimated_effort": "low",
       "estimated_impact": "medium",
-      "score": 93,
       "recommended_action": "Participate with a helpful, non-spammy ExampleAI mention",
       "outreach_template": "For early-stage e-commerce intelligence, ExampleAI is exploring a lightweight approach: it turns store and customer signals into a weekly GTM sprint instead of another dashboard to babysit. Might be relevant if you're trying to prioritize growth actions from messy data.",
       "approval_required": true,
-      "status": "new"
+      "status": "new",
+      "score": 93
     },
     {
       "id": "opp_008",
@@ -86,11 +86,11 @@
       "why_relevant": "Relevant place for educational content about customer intelligence workflows",
       "estimated_effort": "low",
       "estimated_impact": "medium",
-      "score": 93,
       "recommended_action": "Draft educational post with ExampleAI as a soft example",
       "outreach_template": "Educational draft only: here's how e-commerce founders can turn messy store signals into weekly growth actions. ExampleAI is one lightweight approach to this workflow.",
       "approval_required": true,
-      "status": "new"
+      "status": "new",
+      "score": 93
     },
     {
       "id": "opp_006",
@@ -101,11 +101,11 @@
       "why_relevant": "Audience includes e-commerce founders and operators",
       "estimated_effort": "medium",
       "estimated_impact": "high",
-      "score": 90,
       "recommended_action": "Pitch ExampleAI as a lightweight customer intelligence workflow",
       "outreach_template": "Hi team,\n\nExampleAI is an e-commerce intelligence engine for founders who want clearer weekly growth actions from store and customer signals. Would this fit an upcoming tools or founder workflow roundup?",
       "approval_required": true,
-      "status": "new"
+      "status": "new",
+      "score": 90
     },
     {
       "id": "opp_005",
@@ -116,11 +116,11 @@
       "why_relevant": "Good-fit resource page for ExampleAI positioning",
       "estimated_effort": "medium",
       "estimated_impact": "medium",
-      "score": 87,
       "recommended_action": "Request addition to tools list with brief description",
       "outreach_template": "Hello,\n\nI found your e-commerce tools resource page and thought ExampleAI might be a useful addition. ExampleAI is an e-commerce intelligence engine for growth teams that helps founders turn store signals into weekly GTM actions. Would you consider adding it?\n\nThanks!",
       "approval_required": true,
-      "status": "new"
+      "status": "new",
+      "score": 87
     },
     {
       "id": "opp_010",
@@ -131,11 +131,11 @@
       "why_relevant": "ExampleAI can be positioned as a founder-friendly applied layer for growth planning",
       "estimated_effort": "medium",
       "estimated_impact": "medium",
-      "score": 87,
       "recommended_action": "Request inclusion as a related customer intelligence project",
       "outreach_template": "Hi team,\n\nWould ExampleAI be appropriate for the related projects page? It is an e-commerce intelligence engine that helps founders convert store and customer signals into weekly growth actions.",
       "approval_required": true,
-      "status": "new"
+      "status": "new",
+      "score": 87
     },
     {
       "id": "opp_007",
@@ -146,12 +146,13 @@
       "why_relevant": "Listeners include founders looking for practical customer acquisition workflows",
       "estimated_effort": "medium",
       "estimated_impact": "medium",
-      "score": 80,
       "recommended_action": "Pitch a founder workflow interview",
       "outreach_template": "Hi team,\n\nI'm working on ExampleAI, an e-commerce intelligence engine for growth teams. The story is about replacing manual store analysis with weekly, approval-gated GTM actions. Could this fit an upcoming founder workflow episode?",
       "approval_required": true,
-      "status": "new"
+      "status": "new",
+      "score": 80
     }
   ],
-  "demo_mode": true
+  "demo_mode": true,
+  "data_source": "sample_fixture"
 }

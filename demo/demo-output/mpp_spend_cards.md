@@ -1,10 +1,12 @@
 # Stripe MPP Spend Cards
 
-Generated: 2026-07-01T05:02:47.190358
+Generated: 2026-07-02T08:40:36.255672
 Protocol: Stripe MPP
 Demo mode: True
 
-Flywheel uses Stripe MPP as the transaction layer for approved GTM procurement. Paid resources become approval cards, payment stays locked until the founder approves, and test receipts return to the sprint ledger.
+> **Simulated test-mode artifacts — no live Stripe call, no money moved.**
+
+Flywheel uses Stripe MPP as the transaction layer for approved GTM procurement. Paid resources become approval cards, payment stays locked until the founder approves, and simulated test receipts return to the sprint ledger.
 
 ## MPP Workflow
 
@@ -18,7 +20,7 @@ Flywheel uses Stripe MPP as the transaction layer for approved GTM procurement. 
 
 | Card | Resource | Amount | Approval command | Expected outcome |
 |---|---|---:|---|---|
-| `mpp_creator_001` | StoreGrowthDemo launch-week test | $125 | `approve mpp_creator_001` | 5-10 minute video review, written post/thread, demo walkthrough |
+| `mpp_creator_001` | StoreGrowthDemo launch-week test | $100 | `approve mpp_creator_001` | 5-10 minute video review, written post/thread, demo walkthrough |
 | `mpp_data_001` | Competitor demand data pull | $12 | `approve mpp_data_001` | paid competitor placement paths, source URLs, and outreach priority scores |
 | `mpp_launch_001` | BetaList paid placement | $49 | `approve mpp_launch_001` | launch placement slot, submission receipt, and tracking link |
 | `mpp_execution_001` | Browser execution session | $1 | `approve mpp_execution_001` | one browser automation session with receipt attached to the sprint ledger |
@@ -32,4 +34,4 @@ Flywheel uses Stripe MPP as the transaction layer for approved GTM procurement. 
 | `mpp_receipt_003` | `mpp_launch_001` | `pi_test_mpp_000003` | https://mpp.example.ai/resources/launch-placement |
 | `mpp_receipt_004` | `mpp_execution_001` | `pi_test_mpp_000004` | https://mpp.example.ai/resources/browser-session |
 
-No live Stripe call is made in this deterministic demo.
+Simulated test-mode artifacts — no live Stripe call, no money moved.

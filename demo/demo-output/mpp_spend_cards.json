@@ -1,6 +1,7 @@
 {
-  "generated_at": "2026-07-01T05:02:47.190358",
+  "generated_at": "2026-07-02T08:40:36.255672",
   "protocol": "stripe_mpp",
+  "simulated": true,
   "integration_story": "Flywheel uses Stripe MPP as the transaction layer for approved GTM procurement.",
   "workflow": [
     "Flywheel discovers a paid GTM resource.",
@@ -10,7 +11,7 @@
     "The Stripe receipt returns to the sprint ledger."
   ],
   "total_spend_cards": 4,
-  "total_pending_amount_usd": 187,
+  "total_pending_amount_usd": 162,
   "spend_cards": [
     {
       "id": "mpp_creator_001",
@@ -22,8 +23,8 @@
       "resource_name": "StoreGrowthDemo launch-week test",
       "provider": "Example Creator Market",
       "http_endpoint": "https://mpp.example.ai/resources/creator-test",
-      "amount_usd": 125,
-      "amount_cents": 12500,
+      "amount_usd": 100,
+      "amount_cents": 10000,
       "currency": "usd",
       "reason": "unlock a creator test for the highest-scoring launch audience",
       "expected_outcome": "5-10 minute video review, written post/thread, demo walkthrough",
@@ -33,7 +34,7 @@
         "www_authenticate": "Payment",
         "method": "stripe.mpp.charge",
         "resource": "https://mpp.example.ai/resources/creator-test",
-        "amount_cents": 12500,
+        "amount_cents": 10000,
         "currency": "usd",
         "test_mode": true
       },
@@ -41,11 +42,11 @@
         "weekly_budget_usd": 500,
         "requires_human_approval": true,
         "autonomous_spend_limit_usd": 0,
-        "percentage_of_weekly_budget": 25.0
+        "percentage_of_weekly_budget": 20.0
       },
       "chat_card": {
         "title": "MPP spend request: StoreGrowthDemo launch-week test",
-        "body": "Pay $125 via Stripe MPP for unlock a creator test for the highest-scoring launch audience",
+        "body": "Pay $100 via Stripe MPP for unlock a creator test for the highest-scoring launch audience",
         "primary_action": "approve mpp_creator_001",
         "secondary_action": "reject mpp_creator_001"
       }
@@ -165,5 +166,6 @@
       }
     }
   ],
-  "demo_mode": true
+  "demo_mode": true,
+  "data_source": "pipeline_artifacts"
 }

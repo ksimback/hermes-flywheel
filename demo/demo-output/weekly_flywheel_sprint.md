@@ -1,17 +1,17 @@
 # Weekly Customer Acquisition Flywheel Sprint
 
 **Product:** ExampleAI
-**Sprint Week:** Week of July 01, 2026
-**Generated:** 2026-07-01T05:02:47.254718
+**Sprint Week:** Week of July 02, 2026
+**Generated:** 2026-07-02T08:40:36.582877
 **Demo Mode:** True
 
 ---
 
 ## 🎯 Executive Summary
 
-**Total Actions Generated:** 29
+**Total Actions Generated:** 38
 **Content Pieces:** 5
-**Budget Utilization:** 25.0% ($125 of $500 weekly budget)
+**Budget Utilization:** 20.0% ($100 of $500 weekly budget)
 
 ### Channel Breakdown
 - 🚀 **Launch Channels:** 8
@@ -19,7 +19,10 @@
 - 📧 **Warm Leads:** 10
 - 🎬 **Creator Partnerships:** 1
 
-### Estimated Impact (Conservative)
+### Estimated Impact (Illustrative)
+
+_Illustrative planning estimates, not forecasts._
+
 - **Weekly Traffic:** 1,250 visitors
 - **Content Reach:** 4,368 impressions
 - **Creator Reach:** 4,500 followers
@@ -76,8 +79,8 @@ Flywheel should show this dashboard first so the user can choose a section to in
 ### Execution Approval Gates (Locked Until Finalized)
 
 - 📧 **Outbound Messages:** 20 require execution approval after finalization
-- 💰 **Spend Requests:** 1 totaling $125 require execution approval after finalization
-- 💳 **Stripe MPP Spend Cards:** 4 totaling $187 require founder approval before payment authorization
+- 💰 **Spend Requests:** 1 totaling $100 require execution approval after finalization
+- 💳 **Stripe MPP Spend Cards:** 4 totaling $162 require founder approval before payment authorization
 - 📱 **Content Posts:** 5 social media posts require execution approval after finalization
 - 🚦 **All external actions remain blocked until section review + `finalize sprint`**
 
@@ -119,7 +122,7 @@ Flywheel should keep routine progress quiet and return the acknowledgement, draf
 ### 🎬 Creator Campaigns
 
 **Campaign Proposals:** 1
-**Total Budget:** $375 | **Upfront:** $125
+**Total Budget:** $375 | **Upfront:** $100
 **Budget Status:** ✅ Within Budget
 
 **Top Creator Partnerships:**
@@ -128,14 +131,14 @@ Flywheel should keep routine progress quiet and return the acknowledgement, draf
 ### 💳 Stripe MPP GTM Procurement
 
 **MPP Spend Cards:** 4
-**Pending MPP Amount:** $187
+**Pending MPP Amount:** $162
 **Receipts After Approval:** 4 test receipts
 
 Flywheel treats Stripe MPP as the transaction layer for approved GTM procurement: paid data, creator tests, launch placements, and execution infrastructure stay locked as spend cards until the founder approves.
 
 | Card | Paid GTM Resource | Amount | Approval Command |
 |---|---|---:|---|
-| `mpp_creator_001` | StoreGrowthDemo launch-week test | $125 | `approve mpp_creator_001` |
+| `mpp_creator_001` | StoreGrowthDemo launch-week test | $100 | `approve mpp_creator_001` |
 | `mpp_data_001` | Competitor demand data pull | $12 | `approve mpp_data_001` |
 | `mpp_launch_001` | BetaList paid placement | $49 | `approve mpp_launch_001` |
 | `mpp_execution_001` | Browser execution session | $1 | `approve mpp_execution_001` |
@@ -153,7 +156,7 @@ Flywheel treats Stripe MPP as the transaction layer for approved GTM procurement
 
 ---
 
-## 📅 Next Week Focus: Week of July 08, 2026
+## 📅 Next Week Focus: Week of July 09, 2026
 
 ### 🎯 Primary Focus Areas
 - Execute approved launch channels
@@ -190,10 +193,10 @@ Flywheel treats Stripe MPP as the transaction layer for approved GTM procurement
 ### Pre-Execution (Must Complete Before Actions)
 - [ ] **Review all priority actions above**
 - [ ] **Approve outbound messages** (20 waiting)
-- [ ] **Approve spend requests** ($125 total)
-- [ ] **Approve Stripe MPP spend cards** ($187 total, autonomous spend remains $0)
+- [ ] **Approve spend requests** ($100 total)
+- [ ] **Approve Stripe MPP spend cards** ($162 total, autonomous spend remains $0)
 - [ ] **Approve content posts** (5 drafted)
-- [ ] **Verify budget allocation** (25.0% of weekly budget)
+- [ ] **Verify budget allocation** (20.0% of weekly budget)
 
 ### Execution Phase
 - [ ] Execute approved launch channel submissions
@@ -214,7 +217,7 @@ Flywheel treats Stripe MPP as the transaction layer for approved GTM procurement
 
 1. **🚦 ALL external actions require explicit approval** - no auto-send, no auto-spend
 2. **💳 Stripe MPP is approval-gated** - paid GTM resources become spend cards before payment authorization
-3. **💰 Budget tracking** - weekly limit $500, single spend max $25
+3. **💰 Budget tracking** - weekly limit $500, single spend max $100
 4. **📊 Performance tracking** - measure what works for compound learning
 5. **🔄 Weekly cadence** - run this flywheel every Monday for consistent growth
 6. **🎯 Focus on execution** - plans only work when actions are taken
