@@ -31,9 +31,31 @@ Pipeline stages:
 5. `creator_campaign.py` turns agent-supplied creator research (`--input {"creators": [...]}`) into a creator plan and spend requests.
 6. `mpp_spend_planner.py` converts paid GTM resources into simulated Stripe MPP spend cards, simulated 402 challenges, and test receipts — every artifact is labeled `"simulated": true`; no live Stripe calls.
 7. `trend_scan.py` turns agent-supplied trend research (`--input {"trends": [...]}`) into content drafts.
-8. `sprint_report.py` aggregates all outputs into `weekly_flywheel_sprint.md` and writes Slack/thread actions.
+8. `sprint_report.py` aggregates all outputs into `weekly_flywheel_sprint.md` and writes Slack/thread actions. It also seeds the sprint's approval item registry, archives the prior (engaged) sprint to `data/sprint_history.jsonl`, and runs the learning loop (see below): the report JSON gains `run_id` and a `learning` block, and `next_week_plan` gains `based_on` and `vs_last_sprint`.
 9. `sprint_report.py` writes a lightweight run ledger to `demo/demo-output/runs/latest_run.json` (or the configured `--output-dir`).
-10. `validate_outputs.py` checks completeness, safety gates, MPP guardrails, and receipt coverage.
+10. `validate_outputs.py` checks completeness, safety gates, MPP guardrails, receipt coverage, and the approval-state invariant (no approved/executed items in a draft sprint; only approved items executed).
+
+Approval / learning components (shared state, not per-stage):
+
+- `sprint_ledger.py` — the shared state and history model. Defines the item registry, load/save of `sprint_state.json`, the append-only `sprint_history.jsonl` writer/reader, the state transitions with their safety guards, and the learning-loop scoring (`opportunity_scores`, `learning_summary`). Imported by `sprint_report.py`, `approvals.py`, and `validate_outputs.py`.
+- `approvals.py` — the approval state machine as an agent CLI. Subcommands `status | finalize | approve <id|section|all> | reject <target> | execute <id|approved>`, each taking `--profile <path>`. It maps the founder's chat commands (`show approvals`, `finalize sprint`, `approve <section>`, per-item approve/execute) onto durable transitions. Exit codes: `0` success, `1` blocked/error (the agent relays the message to the thread).
+
+### Approval state files (founder-local, gitignored)
+
+Two durable files live beside the product profile (`data/`), never committed:
+
+- `data/sprint_state.json` — the current sprint's approval state machine.
+- `data/sprint_history.jsonl` — append-only, one summarized record per completed sprint.
+
+### State machine
+
+- Sprint level: `draft → finalized`. `finalize sprint` is the only transition; it unlocks execution approvals.
+- Item level: `pending → approved | rejected`, and `approved → executed`. Approvable sections are `launch`, `backlinks`, `outbound`, `content`, `creator`, `mpp_spend`.
+- Enforced invariant: while the sprint is a draft, nothing can be approved or executed; only `approved` items can be executed (marked sent/posted/paid). `validate_outputs.py` fails if this is violated, so the safety model is code, not prose.
+
+### Learning loop
+
+When a new sprint is compiled, the prior engaged sprint is archived to `sprint_history.jsonl`. `sprint_report.py` reads that history and computes a per-section approval rate (`opportunity_scores`), then orders next week's focus by what the founder actually approved — prioritizing high-approval sections and deprioritizing rejected ones. Once history exists, the markdown report shows a "vs Last Sprint (Flywheel Learning)" section.
 
 ## Outputs
 

@@ -1,8 +1,8 @@
 {
-  "run_id": "flywheel-20260702-084036-586114-32212",
+  "run_id": "flywheel-20260702-105001-600397-59212",
   "source": "demo_or_slack",
   "status": "completed",
-  "generated_at": "2026-07-02T08:40:36.582877",
+  "generated_at": "2026-07-02T10:50:01.603490",
   "product": "ExampleAI",
   "thread_native_interface": {
     "primary_surface": "Slack or Telegram",

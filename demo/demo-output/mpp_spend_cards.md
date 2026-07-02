@@ -1,6 +1,6 @@
 # Stripe MPP Spend Cards
 
-Generated: 2026-07-02T08:40:36.255672
+Generated: 2026-07-02T10:50:01.234267
 Protocol: Stripe MPP
 Demo mode: True
 

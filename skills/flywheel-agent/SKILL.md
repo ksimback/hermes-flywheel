@@ -1,7 +1,7 @@
 ---
 name: flywheel-agent
 description: Run a weekly customer acquisition flywheel sprint for founders.
-version: 0.2.0
+version: 0.3.0
 platforms: [linux, macos, windows]
 tags: [gtm, growth, stripe, nvidia, hermes, startup]
 ---
@@ -139,6 +139,27 @@ When the sprint is triggered from Slack or Telegram:
 - Use `review launch`, `review backlinks`, `review outbound`, `review content`, `review mpp spend`, `review budget`, `approve <section>`, `edit <section>: <change>`, `finalize sprint`, `revise <change>`, and `show approvals` as source-thread control phrases.
 - Execution approval commands must stay locked until the user finalizes the sprint plan.
 - Treat approvals as intent; never auto-send, auto-post, or auto-spend.
+
+### Approval & Execution (the flywheel core)
+
+The chat control phrases are no longer prompt-only concepts — they are backed by a persisted approval state machine. Run `approvals.py` as a tool to turn each command into a real, durable state transition against `data/sprint_state.json` (which lives beside the profile). The safety model is enforced in code: a draft sprint cannot approve or execute anything, and only approved items can be executed.
+
+Map each chat command to its subcommand (every call takes `--profile <path>`):
+
+| Chat command | Tool call |
+|---|---|
+| `show approvals` | `approvals.py status` |
+| `finalize sprint` | `approvals.py finalize` (draft → finalized; unlocks execution) |
+| `approve <section>` | `approvals.py approve <section>` (e.g. `launch`, `backlinks`, `outbound`, `content`, `creator`, `mpp_spend`) |
+| `approve <id>` / per-item approve | `approvals.py approve <item_id>` |
+| `approve all` | `approvals.py approve all` |
+| `reject <id | section | all>` | `approvals.py reject <target>` |
+| `execute <id>` / mark sent-posted-paid | `approvals.py execute <item_id>` |
+| `execute approved` | `approvals.py execute approved` |
+
+The flow is: **draft dashboard → review/edit → `finalize sprint` → `approve <section>`/`approve <id>` → `execute`.** Execution stays code-locked until `finalize sprint` runs; `approvals.py` returns exit 0 on success and exit 1 when blocked (e.g. approving inside a draft), and you relay its message to the thread.
+
+**Learning loop:** each sprint's approvals are recorded to `data/sprint_history.jsonl` when the next sprint is compiled. `sprint_report.py` reads that history and orders next week's focus by which sections the founder actually approved before — Flywheel proposes more of what gets greenlit and less of what gets rejected.
 
 ## Flywheel Help Message
 

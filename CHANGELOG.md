@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0 — 2026-07-02
+
+### The flywheel is real (approval state machine + learning loop)
+- **Approval state machine as code.** The chat commands (`finalize sprint`, `approve <section>`, `show approvals`, per-item approve/reject/execute) are now durable state transitions driven by a new `approvals.py` tool, not prompt-only concepts. A sprint moves `draft → finalized`; each item moves `pending → approved | rejected → executed`.
+- **Safety model enforced, not just described.** Execution is code-locked until the founder runs `finalize sprint`: a draft sprint may have zero approved or executed items, and only approved items can be executed. `validate_outputs.py` fails if these invariants are violated — even if the state file is tampered with directly.
+- **Weekly learning loop.** `sprint_report.py` now archives each engaged sprint to `data/sprint_history.jsonl` and orders next week's focus by which sections the founder actually approved before. The report gains a `learning` block (`opportunity_scores`, prioritize/deprioritize sections) and a "vs Last Sprint" recap. The `sprint_history` and `opportunity_scores` memory settings in `config.yaml` are now backed by real files instead of being aspirational.
+- New shared module `sprint_ledger.py` owns the state + history model. State files (`data/sprint_state.json`, `data/sprint_history.jsonl`) are founder-local and gitignored.
+
+### Hardening (pre-merge adversarial review)
+- **Re-compiling a sprint is non-destructive.** Re-running `sprint_report.py` for the same product continues the current sprint and preserves founder approvals (previously it minted a new sprint and silently reset approvals — a duplicate-execution footgun). Starting a genuinely new week is now the explicit `--new-sprint` flag.
+- **Tamper-evidence.** Each approval transition is logged; `validate_outputs.py` flags an item that claims `approved`/`executed` without a consistent log or with a duplicate id. Scoping is honest: the state file is founder-local and unauthenticated, so this is defense-in-depth against bugs and casual edits, not a guarantee against an adversary with write access — the real guarantee is the enforced CLI path.
+- Corrupt/malformed state or history no longer crashes the pipeline (a bad state file is set aside as `.corrupt`; malformed history lines are skipped); item ids are de-duplicated; `approve "mpp spend"` (spaced) is accepted alongside `mpp_spend`; state writes use a per-process temp file.
+
 ## 0.2.0 — 2026-07-02
 
 ### Data provenance & honesty

@@ -18,8 +18,9 @@ agent:
   auto_approve: false         # Never auto-approve outbound or spend
   require_confirmation: true   # Always confirm before external actions
 
-# Memory settings for persistent customer acquisition context
+# Memory settings for persistent customer acquisition context.
+# These are now backed by real founder-local state (gitignored), not aspirational:
 memory:
-  product_profiles: true      # Remember product context across sessions
-  sprint_history: true        # Track what worked in previous weeks
-  opportunity_scores: true    # Learn which channels convert best
+  product_profiles: true      # Remember product context across sessions (data/product_profile.json)
+  sprint_history: true        # Archived per-sprint approvals in data/sprint_history.jsonl
+  opportunity_scores: true    # Learn which channels convert best from the approval state / history

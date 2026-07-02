@@ -1,5 +1,6 @@
 {
-  "generated_at": "2026-07-02T08:40:36.582877",
+  "generated_at": "2026-07-02T10:50:01.603490",
+  "run_id": "flywheel-20260702-105001-600397-59212",
   "sprint_summary": {
     "sprint_week": "Week of July 02, 2026",
     "product_name": "ExampleAI",
@@ -69,10 +70,18 @@
     },
     "demo_mode": true
   },
+  "learning": {
+    "has_history": false,
+    "prior_sprints": 0,
+    "last_sprint": null,
+    "opportunity_scores": {},
+    "prioritize_sections": [],
+    "deprioritize_sections": []
+  },
   "detailed_data": {
     "launch_plan": {
       "product_name": "ExampleAI",
-      "generated_at": "2026-07-02T08:40:35.749533",
+      "generated_at": "2026-07-02T10:50:00.711311",
       "launch_channels": [
         {
           "channel": "betalist",
@@ -291,38 +300,38 @@
         }
       },
       "asset_requirements": [
-        "relationship building",
         "HN account with karma",
-        "relevant subreddits",
-        "project showcase",
+        "IH account",
+        "GIF demo",
+        "beta/early access",
         "value-first posts",
-        "niche identification",
-        "maker account",
+        "screenshots",
+        "founder story",
+        "hunter network",
         "professional profile",
         "developer tool angle",
-        "screenshots",
-        "network",
-        "technical angle",
+        "project showcase",
         "authentic participation",
-        "founder story",
-        "metrics/traction",
-        "launch timing",
-        "beta/early access",
-        "signup page",
-        "hunter network",
-        "GIF demo",
-        "product screenshots",
+        "technical screenshots",
         "GitHub link",
+        "maker account",
+        "product screenshots",
+        "metrics/traction",
         "community research",
-        "IH account",
-        "technical screenshots"
+        "launch timing",
+        "niche identification",
+        "relevant subreddits",
+        "signup page",
+        "network",
+        "relationship building",
+        "technical angle"
       ],
       "total_estimated_effort": 0,
       "demo_mode": true,
       "data_source": "profile_derived"
     },
     "backlink_opportunities": {
-      "generated_at": "2026-07-02T08:40:35.861778",
+      "generated_at": "2026-07-02T10:50:00.828641",
       "total_opportunities": 10,
       "opportunities": [
         {
@@ -480,7 +489,7 @@
       "data_source": "sample_fixture"
     },
     "outbound_queue": {
-      "generated_at": "2026-07-02T08:40:35.972723",
+      "generated_at": "2026-07-02T10:50:00.933864",
       "total_leads": 10,
       "high_priority": 0,
       "medium_priority": 0,
@@ -692,7 +701,7 @@
       "data_source": "sample_fixture"
     },
     "creator_campaign": {
-      "generated_at": "2026-07-02T08:40:36.076611",
+      "generated_at": "2026-07-02T10:50:01.036242",
       "total_proposals": 1,
       "total_budget": 375,
       "avg_relevance_score": 75.0,
@@ -742,7 +751,7 @@
           "requires_approval": true,
           "stripe_mode": "test",
           "payment_terms": "50% upfront, 50% on delivery + bonus on performance",
-          "created_at": "2026-07-02T08:40:36.076230",
+          "created_at": "2026-07-02T10:50:01.035882",
           "budget_impact": {
             "weekly_budget": 500,
             "max_single_spend": 100,
@@ -755,7 +764,7 @@
       "data_source": "sample_fixture"
     },
     "mpp_spend_cards": {
-      "generated_at": "2026-07-02T08:40:36.255672",
+      "generated_at": "2026-07-02T10:50:01.234267",
       "protocol": "stripe_mpp",
       "simulated": true,
       "integration_story": "Flywheel uses Stripe MPP as the transaction layer for approved GTM procurement.",
@@ -926,7 +935,7 @@
       "data_source": "pipeline_artifacts"
     },
     "mpp_receipts": {
-      "generated_at": "2026-07-02T08:40:36.255672",
+      "generated_at": "2026-07-02T10:50:01.234267",
       "protocol": "stripe_mpp",
       "mode": "test",
       "simulated": true,
@@ -993,7 +1002,7 @@
       "data_source": "pipeline_artifacts"
     },
     "trend_content": {
-      "generated_at": "2026-07-02T08:40:36.362573",
+      "generated_at": "2026-07-02T10:50:01.350076",
       "total_trends": 1,
       "total_content_pieces": 5,
       "avg_viral_potential": 78.0,
@@ -1112,30 +1121,26 @@
       "Execute approved launch channels",
       "Follow up on backlink outreach responses",
       "Execute approved outbound messages",
-      "Finalize creator partnerships and content briefs",
-      "Publish approved trend-based content"
+      "Publish approved trend-based content",
+      "Finalize creator partnerships and content briefs"
     ],
     "follow_up_actions": [
       "Monitor launch performance and engagement",
       "Submit to approved directories and listings",
       "Follow up with non-responders after 1 week",
-      "Provide product access and assets to creators",
-      "Engage with comments and track performance"
+      "Engage with comments and track performance",
+      "Provide product access and assets to creators"
     ],
     "optimization_opportunities": [
       "A/B test different outbound message templates",
       "Track which launch channels drive highest quality traffic",
       "Measure creator campaign performance vs other channels",
-      "Identify trending topics for next week's content",
-      "Analyze competitor activity for new opportunities"
+      "Identify trending topics for next week's content"
     ],
     "compound_learning": [
-      "Document what worked: successful channels, message templates, content formats",
-      "Update ICP profile based on responder characteristics",
-      "Refine creator selection criteria based on campaign performance",
-      "Build library of high-performing content templates",
-      "Establish performance benchmarks for future sprint comparison"
-    ]
+      "First sprint: approvals recorded now become next week's channel priorities."
+    ],
+    "based_on": "current_sprint_only"
   },
   "help_catalog": {
     "trigger_commands": [

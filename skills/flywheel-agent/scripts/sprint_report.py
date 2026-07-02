@@ -22,6 +22,7 @@ from _common import (
     write_json,
     write_text,
 )
+import sprint_ledger as ledger
 
 
 def load_json_safely(path) -> Optional[Dict[str, Any]]:
@@ -228,55 +229,89 @@ def estimate_weekly_impact(all_data: Dict[str, Any]) -> Dict[str, Any]:
         "confidence_level": "illustrative"  # Planning illustrations, not forecasts
     }
 
-def generate_next_week_plan(profile: Dict[str, Any], all_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Generate plan for next week based on this week's actions."""
+SECTION_FOCUS = {
+    "launch": ("Execute approved launch channels", "Monitor launch performance and engagement"),
+    "backlinks": ("Follow up on backlink outreach responses", "Submit to approved directories and listings"),
+    "outbound": ("Execute approved outbound messages", "Follow up with non-responders after 1 week"),
+    "content": ("Publish approved trend-based content", "Engage with comments and track performance"),
+    "creator": ("Finalize creator partnerships and content briefs", "Provide product access and assets to creators"),
+}
+
+# Which artifact presence implies which section is live this week.
+SECTION_ARTIFACT = {
+    "launch": "launch_plan",
+    "backlinks": "backlink_opportunities",
+    "outbound": "outbound_queue",
+    "content": "trend_content",
+    "creator": "creator_campaign",
+}
+
+
+def generate_next_week_plan(profile: Dict[str, Any], all_data: Dict[str, Any],
+                            learning: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Plan next week, ordering focus by what the founder actually approves.
+
+    With no history this behaves like the original (focus follows whatever
+    was generated). Once prior sprints exist, sections the founder keeps
+    approving lead the focus list and sections they keep rejecting are flagged
+    for pruning -- the compounding "flywheel" the product promises.
+    """
+    learning = learning or {"has_history": False}
 
     next_week = {
         "week": (datetime.now() + timedelta(days=7)).strftime("Week of %B %d, %Y"),
         "focus_areas": [],
         "follow_up_actions": [],
         "optimization_opportunities": [],
-        "compound_learning": []
+        "compound_learning": [],
+        "based_on": "prior_sprint_approvals" if learning.get("has_history") else "current_sprint_only",
     }
 
-    # Determine focus areas based on what was generated this week
-    if all_data.get("launch_plan"):
-        next_week["focus_areas"].append("Execute approved launch channels")
-        next_week["follow_up_actions"].append("Monitor launch performance and engagement")
+    live_sections = [sec for sec, art in SECTION_ARTIFACT.items() if all_data.get(art)]
 
-    if all_data.get("backlink_opportunities"):
-        next_week["focus_areas"].append("Follow up on backlink outreach responses")
-        next_week["follow_up_actions"].append("Submit to approved directories and listings")
+    # Order the live sections: prioritized (high past approval) first, then
+    # untested, then deprioritized (repeatedly rejected) last.
+    prioritize = learning.get("prioritize_sections", [])
+    deprioritize = learning.get("deprioritize_sections", [])
+    ordered = (
+        [s for s in prioritize if s in live_sections]
+        + [s for s in live_sections if s not in prioritize and s not in deprioritize]
+        + [s for s in deprioritize if s in live_sections]
+    )
+    for sec in ordered:
+        focus, follow = SECTION_FOCUS[sec]
+        next_week["focus_areas"].append(focus)
+        next_week["follow_up_actions"].append(follow)
 
-    if all_data.get("outbound_queue"):
-        next_week["focus_areas"].append("Execute approved outbound messages")
-        next_week["follow_up_actions"].append("Follow up with non-responders after 1 week")
+    if learning.get("has_history"):
+        last = learning.get("last_sprint") or {}
+        next_week["vs_last_sprint"] = {
+            "prior_sprints": learning.get("prior_sprints", 0),
+            "last_approved": last.get("approved", 0),
+            "last_rejected": last.get("rejected", 0),
+            "last_executed": last.get("executed", 0),
+            "last_approved_spend_usd": last.get("approved_spend_usd", 0),
+        }
+        next_week["opportunity_scores"] = learning.get("opportunity_scores", {})
+        for sec in prioritize:
+            next_week["compound_learning"].append(
+                f"Keep leaning into '{sec}': high past approval rate."
+            )
+        for sec in deprioritize:
+            next_week["compound_learning"].append(
+                f"Propose less '{sec}': the founder keeps rejecting it."
+            )
 
-    if all_data.get("creator_campaign"):
-        next_week["focus_areas"].append("Finalize creator partnerships and content briefs")
-        next_week["follow_up_actions"].append("Provide product access and assets to creators")
-
-    if all_data.get("trend_content"):
-        next_week["focus_areas"].append("Publish approved trend-based content")
-        next_week["follow_up_actions"].append("Engage with comments and track performance")
-
-    # Optimization opportunities
     next_week["optimization_opportunities"] = [
         "A/B test different outbound message templates",
         "Track which launch channels drive highest quality traffic",
         "Measure creator campaign performance vs other channels",
         "Identify trending topics for next week's content",
-        "Analyze competitor activity for new opportunities"
     ]
-
-    # Compound learning for future sprints
-    next_week["compound_learning"] = [
-        "Document what worked: successful channels, message templates, content formats",
-        "Update ICP profile based on responder characteristics",
-        "Refine creator selection criteria based on campaign performance",
-        "Build library of high-performing content templates",
-        "Establish performance benchmarks for future sprint comparison"
-    ]
+    if not learning.get("has_history"):
+        next_week["compound_learning"].append(
+            "First sprint: approvals recorded now become next week's channel priorities."
+        )
 
     return next_week
 
@@ -444,13 +479,14 @@ def build_thread_actions(summary: Dict[str, Any]) -> List[Dict[str, Any]]:
     return actions
 
 
-def save_run_ledger(report: Dict[str, Any], args, output_path) -> str:
-    """Save a lightweight run ledger for Slack/thread-native demos."""
+def save_run_ledger(report: Dict[str, Any], args, output_path, run_id) -> str:
+    """Save a lightweight run ledger for Slack/thread-native demos.
+
+    run_id is shared with the sprint approval state so the ledger and the
+    approval state machine refer to the same sprint.
+    """
     summary = report["sprint_summary"]
-    # Microseconds + pid keep same-second (and concurrent) runs from
-    # overwriting each other's ledger entries.
-    run_id = datetime.now().strftime("flywheel-%Y%m%d-%H%M%S-%f") + f"-{os.getpid()}"
-    ledger = {
+    run_ledger = {
         "run_id": run_id,
         "source": "demo_or_slack",
         "status": "completed",
@@ -481,19 +517,22 @@ def save_run_ledger(report: Dict[str, Any], args, output_path) -> str:
             "The final callback should summarize outcomes and ask for numbered approvals."
         ]
     }
-    write_json(out_path(args, f"runs/{run_id}.json"), ledger)
-    latest_path = write_json(out_path(args, "runs/latest_run.json"), ledger)
+    write_json(out_path(args, f"runs/{run_id}.json"), run_ledger)
+    latest_path = write_json(out_path(args, "runs/latest_run.json"), run_ledger)
     print(f"✓ Run ledger saved to {latest_path}")
     return str(latest_path)
 
 
-def save_sprint_report(summary: Dict[str, Any], all_data: Dict[str, Any], next_week: Dict[str, Any], args):
+def save_sprint_report(summary: Dict[str, Any], all_data: Dict[str, Any], next_week: Dict[str, Any],
+                       args, run_id: str, learning: Dict[str, Any]):
     """Save complete sprint report to JSON."""
     output_path = out_path(args, "weekly_flywheel_sprint.json")
 
     report = {
         "generated_at": datetime.now().isoformat(),
+        "run_id": run_id,
         "sprint_summary": summary,
+        "learning": learning,
         "detailed_data": all_data,
         "next_week_plan": next_week,
         "help_catalog": build_help_catalog(),
@@ -521,7 +560,7 @@ def save_sprint_report(summary: Dict[str, Any], all_data: Dict[str, Any], next_w
     # Also save markdown report
     md_path = output_path.with_suffix('.md')
     save_sprint_markdown(report, md_path)
-    save_run_ledger(report, args, output_path)
+    save_run_ledger(report, args, output_path, run_id)
 
     return output_path
 
@@ -530,6 +569,7 @@ def save_sprint_markdown(report: Dict[str, Any], output_path):
 
     summary = report["sprint_summary"]
     next_week = report["next_week_plan"]
+    learning = report.get("learning", {}) or {}
 
     md_content = f"""# Weekly Customer Acquisition Flywheel Sprint
 
@@ -561,7 +601,28 @@ _Illustrative planning estimates, not forecasts._
 - **Creator Reach:** {summary['estimated_weekly_impact']['estimated_creator_reach']:,} followers
 - **Outbound Responses:** {summary['estimated_weekly_impact']['estimated_outbound_responses']} expected
 
----
+"""
+
+    if learning.get("has_history"):
+        last = learning.get("last_sprint") or {}
+        md_content += f"""---
+
+## 🔁 vs Last Sprint (Flywheel Learning)
+
+Building on **{learning.get('prior_sprints', 0)}** prior sprint(s). Last sprint the founder approved **{last.get('approved', 0)}** item(s), rejected **{last.get('rejected', 0)}**, executed **{last.get('executed', 0)}**, and approved **${last.get('approved_spend_usd', 0)}** in spend.
+
+**Channel priorities this week (by past approval rate):**
+"""
+        scores = learning.get("opportunity_scores", {})
+        if scores:
+            for sec, s in sorted(scores.items(), key=lambda kv: (kv[1].get("approval_rate") or 0), reverse=True):
+                rate = s.get("approval_rate")
+                rate_txt = f"{int(rate * 100)}%" if rate is not None else "n/a"
+                md_content += f"- **{sec}**: {rate_txt} approved ({s.get('approved', 0)}/{s.get('decided', 0)} decided)\n"
+        else:
+            md_content += "- No decisions recorded yet — this sprint's approvals seed next week's priorities.\n"
+
+    md_content += """---
 
 ## 🔥 Top 5 Priority Actions (This Week)
 
@@ -802,6 +863,13 @@ def main():
     print("Compiling weekly customer acquisition flywheel sprint...\n")
 
     parser = build_parser("Compile all GTM activities into the weekly flywheel sprint report.", research=False)
+    parser.add_argument(
+        "--new-sprint",
+        action="store_true",
+        help="Start a new sprint (archive the prior one to history) instead of "
+             "continuing the current one. Re-compiling without this flag preserves "
+             "founder approvals.",
+    )
     args = parser.parse_args()
 
     try:
@@ -843,12 +911,29 @@ def main():
         summary = generate_executive_summary(profile, all_data)
         print("✓ Generated executive summary")
 
-        # Generate next week plan
-        next_week = generate_next_week_plan(profile, all_data)
+        # Seed the approval state machine for this sprint. This archives the
+        # prior sprint's decisions to history (if the founder engaged with it),
+        # so the learning loop below reflects what they actually approved.
+        run_id = datetime.now().strftime("flywheel-%Y%m%d-%H%M%S-%f") + f"-{os.getpid()}"
+        state_dir = ledger.state_dir_for(args)
+        sprint_state = ledger.seed_sprint(
+            state_dir, run_id, profile.get("product_name"), all_data,
+            generated_at=summary.get("generated_at"), new_sprint=args.new_sprint)
+        # A continued sprint keeps its original id; only a new sprint uses the
+        # freshly minted one. Report and approval state must agree.
+        run_id = sprint_state.get("run_id", run_id)
+        if sprint_state.get("sprint_state") == ledger.SPRINT_FINALIZED and not args.new_sprint:
+            print("ℹ️  Continuing a finalized sprint; approvals preserved. Use --new-sprint for a new week.")
+        learning = ledger.learning_summary(ledger.read_history(state_dir))
+        if learning.get("has_history"):
+            print(f"✓ Learning loop: {learning['prior_sprints']} prior sprint(s) inform next week")
+
+        # Generate next week plan (ordered by prior-sprint approvals)
+        next_week = generate_next_week_plan(profile, all_data, learning)
         print("✓ Generated next week plan")
 
         # Save complete report
-        output_path = save_sprint_report(summary, all_data, next_week, args)
+        output_path = save_sprint_report(summary, all_data, next_week, args, run_id, learning)
 
         # Print summary
         approval_gates = summary.get("approval_gates", {})
