@@ -96,7 +96,23 @@ show approvals
 4. **Creator campaigns** - create creator briefs and test plans.
 5. **Trend content** - turn current market conversations into demo-led narratives.
 6. **Stripe MPP spend cards** - convert paid GTM resources into approval-gated payment cards.
-7. **Weekly learning loop** - preserve a run ledger so each sprint can improve the next one.
+7. **Weekly learning loop** - archive each sprint's approvals so next week's focus is ordered by the channels the founder actually greenlit.
+
+## Approval workflow
+
+The chat control phrases are backed by a persisted approval state machine (`approvals.py`), so approvals are real, durable state transitions — not prompt-only concepts. The flow is:
+
+```text
+draft dashboard -> review/edit -> finalize sprint -> approve <section>/<id> -> execute
+```
+
+- `finalize sprint` moves the sprint `draft -> finalized` and unlocks execution.
+- `approve <section>` / `approve <id>` marks items approved; `execute` marks approved items sent/posted/paid.
+- `show approvals` renders the current state.
+
+The safety model is enforced in code, not just prose: nothing can be approved or executed while the sprint is a draft, and only approved items can be executed. `validate_outputs.py` fails if these invariants are violated. Approval state lives in `data/sprint_state.json` and archived history in `data/sprint_history.jsonl` — both founder-local and gitignored.
+
+**Weekly learning loop:** when the next sprint is compiled, the prior sprint's approvals are archived, and Flywheel orders next week's focus by which sections the founder approved before — more of what gets greenlit, less of what gets rejected.
 
 ## Safety model
 
@@ -165,6 +181,14 @@ Result:
 
 ```text
 demo/demo-output/weekly_flywheel_sprint.md
+```
+
+After a sprint is compiled, drive the approval state machine (still no keys required):
+
+```bash
+python skills/flywheel-agent/scripts/approvals.py finalize        # draft -> finalized, unlocks execution
+python skills/flywheel-agent/scripts/approvals.py approve launch  # approve a section (or an item id)
+python skills/flywheel-agent/scripts/approvals.py status          # show current approval state
 ```
 
 Every script supports `--profile` and `--output-dir`; the research-stage scripts (`backlink_hunter`, `lead_scorer`, `creator_campaign`, `trend_scan`) also accept `--input` and `--demo`. Scripts work from any directory (paths anchor to the repo root). Windows is now supported alongside Linux and macOS.
