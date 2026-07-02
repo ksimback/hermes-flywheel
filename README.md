@@ -2,7 +2,7 @@
 
 > **An installable Hermes Agent profile that acts like a GTM employee for early-stage founders.**
 
-Flywheel turns a product, ICP, competitors, and budget into a weekly customer acquisition sprint. It researches launch channels, finds competitor demand paths, drafts warm outbound, plans creator tests, proposes Stripe MPP spend cards, and returns a reviewable sprint with explicit approval gates before anything is sent, posted, or paid.
+Flywheel turns a product, ICP, competitors, and budget into a weekly customer acquisition sprint. The agent researches launch channels, competitor demand paths, leads, creators, and trends using its own Hermes web/browser toolsets, then feeds those findings into the bundled scripts — a deterministic sprint pipeline that handles scoring, formatting, approval gates, and the run ledger. The result is a reviewable sprint with explicit approval gates before anything is sent, posted, or paid. Sample fixtures power the no-keys demo only.
 
 Official website: **[hermesflywheel.com](https://hermesflywheel.com)**
 
@@ -106,7 +106,7 @@ Flywheel is intentionally approval-gated:
 - No auto-email.
 - No auto-posting.
 - No autonomous spend.
-- Stripe MPP cards default to deterministic test-mode artifacts.
+- Stripe MPP cards are simulated test-mode artifacts (`"simulated": true`) — no live Stripe calls.
 - External actions require explicit founder approval.
 - Demo fixture data is only used when `--demo` is passed.
 
@@ -114,13 +114,15 @@ Flywheel is intentionally approval-gated:
 
 Flywheel treats Stripe MPP as the transaction layer for paid customer acquisition inputs.
 
+The MPP artifacts are **simulated test-mode artifacts**: no live Stripe API call is made, and every generated card and receipt carries `"simulated": true`. Real Stripe MCP integration is on the roadmap.
+
 The deterministic demo flow is:
 
 1. Identify organic and paid GTM opportunities.
 2. Convert paid resources into MPP-style spend cards.
 3. Keep autonomous spend at `$0` until a founder approves.
 4. Simulate the `402 Payment Required` challenge and test-mode authorization.
-5. Save receipts back to the sprint ledger.
+5. Save simulated receipts back to the sprint ledger.
 
 Example spend card:
 
@@ -165,6 +167,10 @@ Result:
 demo/demo-output/weekly_flywheel_sprint.md
 ```
 
+Every script supports `--profile` and `--output-dir`; the research-stage scripts (`backlink_hunter`, `lead_scorer`, `creator_campaign`, `trend_scan`) also accept `--input` and `--demo`. Scripts work from any directory (paths anchor to the repo root). Windows is now supported alongside Linux and macOS.
+
+In live (non-demo) runs, the research-stage scripts (`backlink_hunter`, `lead_scorer`, `creator_campaign`, `trend_scan`) expect agent-supplied research JSON via `--input` and exit with code 2 if it is missing — fixture data is only used with an explicit `--demo`.
+
 ## Optional environment variables
 
 Copy `.env.EXAMPLE` to `.env` only for local/private use. Do not commit `.env`.
@@ -174,11 +180,12 @@ OPENAI_API_KEY=replace_with_openai_key
 NVIDIA_API_KEY=replace_with_nvidia_key
 SERPER_API_KEY=replace_with_serper_key
 STRIPE_API_KEY=replace_with_stripe_test_key
+STRIPE_WEBHOOK_SECRET=replace_with_stripe_webhook_secret
 SLACK_BOT_TOKEN=replace_with_slack_bot_token
 SLACK_APP_TOKEN=replace_with_slack_app_token
 ```
 
-All keys are optional for the deterministic demo pipeline.
+All keys are optional for the deterministic demo pipeline. These keys are currently consumed by the Hermes runtime/gateway (model providers, Slack, optional web search), not by the bundled scripts themselves.
 
 ## Slack and Telegram
 
@@ -191,11 +198,13 @@ Telegram uses the same text-command flow as Slack: short acknowledgement, quiet 
 
 ## Development
 
-Run the full public package test suite:
+Install test dependencies with `pip install -e .[dev]` (or just `pip install pytest`), then run the full public package test suite:
 
 ```bash
 python -m pytest -q
 ```
+
+CI runs the suite on a Linux/macOS/Windows matrix (`.github/workflows/ci.yml`).
 
 Run the deterministic validator only:
 

@@ -62,8 +62,9 @@ No paid keys are required for the deterministic demo pipeline. Optional keys:
 - `OPENAI_API_KEY` — optional fallback model provider.
 - `SLACK_BOT_TOKEN` — optional Slack bot token for the GTM employee demo.
 - `SLACK_APP_TOKEN` — optional Slack app-level token for Socket Mode.
-- `STRIPE_API_KEY` — optional Stripe MPP test-mode transaction path for approval-gated GTM procurement.
+- `STRIPE_API_KEY` — optional Stripe MPP simulated test-mode transaction path for approval-gated GTM procurement.
 - `STRIPE_WEBHOOK_SECRET` — optional Stripe webhook verification.
+- `SERPER_API_KEY` — optional web-search API for headless research runs.
 
 Copy `.env.EXAMPLE` to `.env` and fill keys locally. Never commit `.env`.
 

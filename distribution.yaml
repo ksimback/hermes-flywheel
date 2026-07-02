@@ -1,5 +1,5 @@
 name: flywheel-agent
-version: 0.1.0
+version: 0.2.0
 description: "Your hardest working GTM employee, packaged as a Hermes Profile Distribution."
 hermes_requires: ">=0.16.0"
 author: "Flywheel Demo Team"
@@ -24,6 +24,9 @@ env_requires:
     required: false
   - name: STRIPE_WEBHOOK_SECRET
     description: "Optional Stripe webhook secret for payment confirmations."
+    required: false
+  - name: SERPER_API_KEY
+    description: "Optional web-search API for headless research runs"
     required: false
 files:
   - SOUL.md
