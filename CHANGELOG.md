@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.2 — 2026-07-02
+
+### Documentation for real users (get a working sprint for your company)
+- **README restructured around the two ways to run Flywheel.** New up-front orientation (standalone CLI vs. Hermes chat), a **Prerequisites** section, a **Get the code** (`git clone`) step, an honest **"What is Hermes?"** note (it's an external Nous Research runtime, not bundled; only needed for chat), and a concrete **"Run a real sprint for your company"** recipe with a table of what each optional input (SERPER key, leads CSV, `--input`) unlocks. The chat-command list is now labelled as chat-mode.
+- The three docs that assumed Hermes was mandatory (`distribution.md`, `slack-gtm-employee.md`, `sponsor-integrations.md`) now document the no-Hermes standalone path, state the prerequisites, and disclose that Hermes is external. The Stripe section is broken into a skimmable list, and the "`stripe-mcp-server` is not bundled" warning is now prominent.
+- `mcp.json` carries an in-file warning that its `stripe-mcp-server` entry is an unbundled placeholder (the built-in `stripe_client.py` path needs no MCP server), so nobody enables it expecting it to work.
+
+### Usability
+- `flywheel.py run` accepts `--leads-csv <file>`, so a founder can point at their own leads file instead of being forced to place it at exactly `data/leads.csv`.
+
 ## 0.4.1 — 2026-07-02
 
 ### Polish
