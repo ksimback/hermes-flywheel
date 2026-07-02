@@ -2,9 +2,41 @@
 
 > **An installable Hermes Agent profile that acts like a GTM employee for early-stage founders.**
 
-Flywheel turns a product, ICP, competitors, and budget into a weekly customer acquisition sprint. The agent researches launch channels, competitor demand paths, leads, creators, and trends using its own Hermes web/browser toolsets, then feeds those findings into the bundled scripts — a deterministic sprint pipeline that handles scoring, formatting, approval gates, and the run ledger. The result is a reviewable sprint with explicit approval gates before anything is sent, posted, or paid. Sample fixtures power the no-keys demo only.
+Flywheel turns a product, ICP, competitors, and budget into a weekly customer acquisition sprint: launch channels, competitor demand paths, warm outbound, creator campaigns, trend content, and approval-gated spend cards. Research comes from live sources (the Hermes chat agent's web/browser tools, a Serper search key, or your own leads CSV), then the bundled scripts handle scoring, formatting, approval gates, and the run ledger. The result is a reviewable sprint with explicit approval gates before anything is sent, posted, or paid. It runs two ways — a standalone CLI that needs only Python, or a full chat agent via Hermes — and the sample fixtures power a no-keys demo so you can see it work before configuring anything.
 
 Official website: **[hermesflywheel.com](https://hermesflywheel.com)**
+
+## Two ways to run Flywheel
+
+Pick the path that fits you — they use the same pipeline underneath.
+
+| | **A. Standalone CLI** | **B. Chat agent (Hermes)** |
+|---|---|---|
+| **What it is** | Run the Python pipeline directly | The full conversational GTM employee in terminal / Slack / Telegram |
+| **Needs** | Python 3.8+ and git. Nothing else to try the demo. | [Hermes](#what-is-hermes) (an external runtime) plus a model provider |
+| **Best for** | Trying it now, cron/automation, wiring Flywheel into your own agent | The "hire a GTM teammate" experience with live research and chat approvals |
+| **Start here** | [Get the code](#get-the-code) → [Run a real sprint for your company](#run-a-real-sprint-for-your-company) | [Install as a Hermes profile](#b-chat-agent-via-hermes) |
+
+Everything except the interactive chat surface runs standalone with no keys, so you can evaluate Flywheel end to end before deciding on Hermes.
+
+## Prerequisites
+
+- **Python 3.8+** and **git** (that's all you need for the CLI and the demo).
+- Optional keys that unlock more of a *real* sprint (none required for the demo):
+  - `SERPER_API_KEY` — live backlink/listing and trend research ([serper.dev](https://serper.dev)).
+  - `STRIPE_API_KEY` (a **test** key, `sk_test_...`) — real test-mode payment authorization cards.
+  - A leads CSV — your own warm-outbound targets.
+  - Hermes + a model provider — only for the chat/Slack/Telegram experience.
+
+## Get the code
+
+```bash
+git clone https://github.com/ksimback/hermes-flywheel
+cd hermes-flywheel
+python skills/flywheel-agent/scripts/flywheel.py doctor
+```
+
+`doctor` confirms your Python version, that the pipeline scripts are present, and which optional keys are configured. If it prints `✓ Ready.`, you can run the demo immediately (see [Verify your install](#verify-your-install)).
 
 ## What is included
 
@@ -22,7 +54,54 @@ docs/                                    # Install, architecture, sponsor integr
 tests/                                   # Public package completeness and pipeline tests
 ```
 
-## Quick install
+## A. Standalone CLI (start here)
+
+No Hermes, no keys — see a full sprint in one command:
+
+```bash
+python skills/flywheel-agent/scripts/flywheel.py run --demo
+```
+
+This wraps the whole deterministic pipeline (intake → launch → backlinks → leads → creators → MPP → trends → sprint report → validate) and writes a complete ExampleAI sprint to `demo/demo-output/weekly_flywheel_sprint.md`. To run it for *your* company, see [Run a real sprint for your company](#run-a-real-sprint-for-your-company) below.
+
+## Run a real sprint for your company
+
+Standalone, no Hermes. The pipeline always produces launch planning and approval-gated MPP cards from your product profile alone; each optional input below adds another live section. Anything you don't supply is skipped cleanly (a partial sprint you can fill in and re-run) — Flywheel never fabricates data for a real run.
+
+```bash
+# 1. (optional) Live backlink + trend research
+export SERPER_API_KEY=sk_your_serper_key            # from serper.dev; unlocks backlinks + trends
+
+# 2. (optional) Your warm-outbound targets
+#    columns: name,title,company,bio,source,url,engagement_context
+cp data/leads.example.csv data/leads.csv            # then edit with your real leads
+
+# 3. Compile the sprint from your product context
+python skills/flywheel-agent/scripts/flywheel.py run \
+  "Product: MyCo (https://myco.com) ICP: <who you sell to> Competitors: rival-a.com, rival-b.com Budget: $500 Focus: outbound + launch" \
+  --leads-csv data/leads.csv
+
+# 4. Review, then approve what you want to act on (nothing is sent/posted/paid automatically)
+python skills/flywheel-agent/scripts/approvals.py status
+python skills/flywheel-agent/scripts/approvals.py finalize
+python skills/flywheel-agent/scripts/approvals.py approve outbound
+```
+
+What each input unlocks in a real (non-demo) run:
+
+| Section | Requires | Without it |
+|---|---|---|
+| Launch plan | your product profile (always) | always included |
+| MPP spend cards | your product profile (always) | always included (simulated unless a Stripe test key is set) |
+| Backlinks & Trends | `SERPER_API_KEY` (or your own `--input` JSON) | skipped |
+| Warm outbound | `--leads-csv <file>` or `data/leads.csv` | skipped |
+| Creator campaigns | agent research via `--input` (no headless source yet) | skipped |
+
+Read the result in `demo/demo-output/weekly_flywheel_sprint.md` (or the folder you pass to `--output-dir`). Re-running for the same product continues the sprint and preserves your approvals; pass `--new-sprint` to start a fresh week.
+
+## B. Chat agent (via Hermes)
+
+For the conversational GTM-employee experience (terminal, Slack, or Telegram), install Flywheel as a Hermes profile.
 
 ### If Hermes Agent is already installed
 
@@ -51,22 +130,13 @@ flywheel-agent chat
 
 Hermes profiles are isolated. Even if your default Hermes profile already has a model configured, the Flywheel profile may still need its own provider/model selection with `hermes -p flywheel-agent setup --portal` or `hermes -p flywheel-agent model`.
 
-## Quick start (one command)
+### What is Hermes?
 
-Outside of Hermes, `flywheel.py` wraps the whole deterministic pipeline (intake -> launch -> backlinks -> leads -> creators -> MPP -> trends -> sprint report -> validate) into a single command:
+Hermes is a separate open agent runtime from Nous Research — it provides the chat interface, model connection, web/browser research tools, and the Slack/Telegram gateway that turn these scripts into a conversational GTM teammate. **It is not part of this repository**, and you only need it for chat mode (paths above). The standalone CLI and the entire demo work without it. If the Hermes installer or your model provider isn't set up, use the [standalone CLI](#a-standalone-cli-start-here) instead — you get the same sprint, driven by commands rather than chat.
 
-```bash
-python skills/flywheel-agent/scripts/flywheel.py run --demo
-python skills/flywheel-agent/scripts/flywheel.py doctor
-```
+## Usage (chat mode)
 
-`run --demo` produces a full sprint with the ExampleAI fixture, no keys required. `doctor` checks your Python version, confirms the pipeline scripts are present, and reports whether `SERPER_API_KEY` / `STRIPE_API_KEY` are configured. For a real (non-demo) sprint, pass founder context instead of `--demo`: `flywheel.py run "Product: ... ICP: ... Budget: ..."` — stages that need research the agent hasn't supplied yet (no `SERPER_API_KEY`, no `--input`, no `data/leads.csv`) are skipped gracefully rather than failing, producing a partial sprint you can fill in and re-run.
-
-**Bring your own leads:** copy [`data/leads.example.csv`](data/leads.example.csv) to `data/leads.csv` (columns: `name,title,company,bio,source,url,engagement_context`) and `lead_scorer.py` / `flywheel.py run` will auto-detect it for warm outbound scoring.
-
-## Usage
-
-Flywheel can run in the terminal, Slack, or Telegram through Hermes Gateway.
+In **chat mode** (path B, via Hermes) Flywheel runs in the terminal, Slack, or Telegram through Hermes Gateway. (Standalone CLI users drive the same flow with `flywheel.py run` and `approvals.py` — see [Run a real sprint for your company](#run-a-real-sprint-for-your-company).)
 
 Example prompt:
 
@@ -178,9 +248,9 @@ See:
 
 If you set `STRIPE_API_KEY` to a genuine Stripe **test** key (`sk_test_...`), `mpp_spend_planner.py` creates real, unconfirmed test-mode `PaymentIntent`s instead of simulating them — so you can see the actual authorization objects in your Stripe test dashboard. Nothing is ever charged: intents are created without a payment method and with `capture_method: manual`, so they stay "authorization pending founder approval." Live keys (`sk_live_...`) are always refused outright — Flywheel never touches live money. With no key configured (the default), everything stays a labeled simulation (`"simulated": true`), exactly as described above.
 
-## Demo run, no keys required
+## The pipeline stage by stage (under the hood)
 
-The ExampleAI fixture is public-safe and only used with `--demo`:
+`flywheel.py run --demo` runs all of the below for you. This is the granular view — useful for understanding each stage, running one in isolation, or wiring individual scripts into your own agent. The ExampleAI fixture is public-safe and only used with `--demo`:
 
 ```bash
 python skills/flywheel-agent/scripts/flywheel_intake.py --demo

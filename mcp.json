@@ -1,8 +1,9 @@
 {
+  "_comment": "PLACEHOLDER. The stripe-mcp-server binary below is NOT bundled with this repo and is disabled (optional:true). Do not enable it expecting it to work out of the box. Flywheel's Stripe MPP flow does NOT require it: with no key it runs a labelled simulation, and with a Stripe TEST key (sk_test_...) mpp_spend_planner.py talks to the Stripe API directly via stripe_client.py (stdlib only, no MCP server needed). This entry documents the shape of a future optional MCP integration.",
   "servers": [
     {
       "name": "stripe-mcp",
-      "description": "Stripe MCP server for approval-gated payments and spend requests",
+      "description": "Optional/future Stripe MCP server for approval-gated payments. NOT bundled — the stripe-mcp-server command is not provided by this repo. See _comment above; the built-in stripe_client.py path needs no MCP server.",
       "transport": {
         "type": "stdio",
         "command": "stripe-mcp-server",

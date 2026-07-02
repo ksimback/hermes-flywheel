@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hermes-flywheel"
-version = "0.4.1"
+version = "0.4.2"
 description = "Flywheel Agent - a Hermes Agent profile that runs weekly customer acquisition sprints with approval gates."
 readme = "README.md"
 requires-python = ">=3.8"

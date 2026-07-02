@@ -1,5 +1,9 @@
 # Slack GTM Employee Demo
 
+> This material originated as a hackathon submission (the sponsor-integration framing below reflects that). The underlying pipeline is now a maintained standalone tool — the CLI works independently of the hackathon context; the Slack experience described here is one optional front end for it.
+
+**What is Hermes?** Hermes is a separate, external agent runtime built by Nous Research (hermes-agent.nousresearch.com). It is not part of this repository. You only need it for the chat/Slack/Telegram experience described in this doc. The standalone CLI runs the full GTM pipeline without Hermes — see README "A. Standalone CLI".
+
 Flywheel should feel like a teammate you tag in Slack, not a dashboard you have to remember to open.
 
 This doc borrows the useful pattern from OpenTag / Claude Tag style workflows:

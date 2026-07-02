@@ -2,6 +2,18 @@
 
 Flywheel Agent is packaged as a Hermes Profile Distribution so users can install a complete GTM employee from GitHub instead of copying prompts, scripts, cron jobs, and configuration by hand.
 
+## Standalone CLI (no Hermes)
+
+Everything below this point covers the Hermes chat-agent install path. You do not need Hermes to run Flywheel. The standalone Python CLI runs the full deterministic pipeline (intake, launch plan, backlinks, leads, creators, MPP, trends, sprint report, validation) with no Hermes and no paid keys:
+
+```bash
+python skills/flywheel-agent/scripts/flywheel.py run --demo
+```
+
+See the README section "Run a real sprint for your company" for running it against your own product instead of the demo fixture. The only thing the standalone CLI can't do is interactive chat (Slack/Telegram/terminal chat) — that's what Hermes adds.
+
+**Prerequisites:** Python 3.8+ and git for the standalone CLI. Hermes plus a model provider (e.g. an NVIDIA API key or `OPENAI_API_KEY`) are only needed for the chat path below.
+
 ## Install
 
 ### Existing Hermes install
@@ -13,6 +25,8 @@ flywheel-agent chat
 ```
 
 ### Fresh machine or VPS
+
+This installs Hermes itself — an external, third-party agent runtime built by Nous Research, not part of this repository. Only needed for the chat/Slack/Telegram path; skip it if you only want the standalone CLI above.
 
 ```bash
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
@@ -56,7 +70,7 @@ Distribution-owned files update cleanly. User-owned memories, sessions, chats, `
 
 ## Required/Optional Keys
 
-No paid keys are required for the deterministic demo pipeline. Optional keys:
+No paid keys are required for the deterministic demo pipeline. Run `python skills/flywheel-agent/scripts/flywheel.py doctor` to see exactly which optional keys are configured on your machine. Optional keys:
 
 - `NVIDIA_API_KEY` — optional NVIDIA/NIM/Nemotron sponsor path.
 - `OPENAI_API_KEY` — optional fallback model provider.
