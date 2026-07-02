@@ -131,10 +131,12 @@ def _stage_leads(args, prof, out, skipped, crashed):
         if _run("lead_scorer.py", *prof, *out, "--demo") != 0:
             crashed.append("outbound (demo, crashed)")
         return
-    # lead_scorer auto-detects data/leads.csv; exit 2 means none available.
-    rc = _run("lead_scorer.py", *prof, *out)
+    # Use an explicit --leads-csv if given, else lead_scorer auto-detects
+    # data/leads.csv. Exit 2 means no lead source is available.
+    extra = ["--leads-csv", args.leads_csv] if getattr(args, "leads_csv", None) else []
+    rc = _run("lead_scorer.py", *prof, *out, *extra)
     if rc == 2:
-        skipped.append("outbound (add data/leads.csv or --input leads research)")
+        skipped.append("outbound (pass --leads-csv <file>, add data/leads.csv, or --input leads research)")
     elif rc != 0:
         crashed.append(f"outbound (exit {rc})")
 
@@ -193,6 +195,10 @@ def main():
     p_run.add_argument("--demo", action="store_true", help="Run the ExampleAI demo (no keys).")
     p_run.add_argument("--profile", default="data/product_profile.json")
     p_run.add_argument("--output-dir", default="demo/demo-output")
+    p_run.add_argument("--leads-csv",
+                       help="Path to your leads CSV for warm outbound "
+                            "(columns: name,title,company,bio,source,url,engagement_context). "
+                            "Defaults to auto-detecting data/leads.csv.")
     p_run.add_argument("--new-sprint", action="store_true",
                        help="Start a new sprint (archive the prior one) instead of continuing.")
 

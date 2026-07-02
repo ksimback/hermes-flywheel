@@ -67,6 +67,28 @@ def test_run_no_context_no_demo_exits_2_with_guidance():
     assert "Provide product context" in result.stdout
 
 
+def test_run_with_leads_csv_produces_founder_outbound(tmp_path, monkeypatch):
+    """A founder can point --leads-csv at their own file (not only data/leads.csv)
+    and get warm outbound sourced from it."""
+    monkeypatch.delenv("SERPER_API_KEY", raising=False)
+    monkeypatch.delenv("STRIPE_API_KEY", raising=False)
+    leads = tmp_path / "myleads.csv"
+    leads.write_text((ROOT / "data" / "leads.example.csv").read_text(encoding="utf-8"),
+                     encoding="utf-8")
+    out_dir = tmp_path / "out"
+    profile = tmp_path / "p.json"
+    result = run([
+        sys.executable, str(FLYWHEEL), "run",
+        "Product: MyCo (https://myco.example) ICP: founders Budget: $300 Focus: outbound",
+        "--profile", str(profile), "--output-dir", str(out_dir),
+        "--leads-csv", str(leads),
+    ])
+    assert result.returncode == 0, result.stdout
+    outbound = load_json(out_dir / "outbound_queue.json")
+    assert outbound["data_source"] == "founder_csv"
+    assert outbound["total_leads"] >= 1
+
+
 def test_doctor_flags_live_key_as_refused(monkeypatch):
     monkeypatch.setenv("STRIPE_API_KEY", "sk_live_ABC")
     monkeypatch.delenv("SERPER_API_KEY", raising=False)
