@@ -221,8 +221,25 @@ def get_pain_points(profile):
 
 
 def md_safe(text):
-    """Neutralize markdown code-fence breakout in untrusted strings."""
-    return str(text).replace("```", "ʼʼʼ")
+    """Neutralize markdown structure in untrusted strings.
+
+    Live web-search and agent-supplied text is embedded into the founder-facing
+    sprint markdown, so defang the constructs that let such text escape its
+    context or phish the reader: code-fence breakout, link syntax, and
+    leading heading/blockquote markers.
+    """
+    s = str(text).replace("```", "ʼʼʼ")
+    # Break clickable-link / image syntax so a search result can't inject a
+    # disguised link into the founder's dashboard.
+    s = s.replace("](", "] (")
+    # Defang leading structural markers on any line (headings, blockquotes).
+    out_lines = []
+    for line in s.splitlines():
+        stripped = line.lstrip()
+        if stripped[:1] in ("#", ">"):
+            line = line.replace(stripped[:1], "\\" + stripped[:1], 1)
+        out_lines.append(line)
+    return "\n".join(out_lines) if out_lines else s
 
 
 def md_cell(text):
