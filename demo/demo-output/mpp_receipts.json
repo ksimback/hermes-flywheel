@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-02T11:37:18.105568",
+  "generated_at": "2026-07-05T15:15:16.464643",
   "protocol": "stripe_mpp",
   "mode": "test",
   "simulated": true,
@@ -63,6 +63,7 @@
       "ledger_note": "Simulated receipt only. No live Stripe call and no money moved."
     }
   ],
+  "product_name": "ExampleAI",
   "demo_mode": true,
   "data_source": "pipeline_artifacts"
 }

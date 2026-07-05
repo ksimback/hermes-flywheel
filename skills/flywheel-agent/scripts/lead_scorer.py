@@ -13,6 +13,7 @@ Otherwise the script exits with EXIT_MISSING_INPUT and an actionable message.
 
 import copy
 import csv
+import re
 import sys
 import traceback
 from datetime import datetime
@@ -46,43 +47,46 @@ LEADS_SCHEMA_HINT = (
 
 AUTO_CSV_CANDIDATES = ["data/leads.csv", "data/prospects.csv"]
 
-# Sample leads for demo mode
+# Sample leads for demo mode. Written to read like realistically scraped
+# bios/engagement for a mixed-quality lead list: a few clearly on-ICP
+# founders, a middle band, and some marginal fits - so the demo shows the
+# scorer separating leads, not a wall of identical scores.
 SAMPLE_LEADS = [
     {
         "name": "Alex Rivera",
         "title": "Founder",
         "company": "CartPilot Labs",
-        "bio": "Runs a fast-growing Shopify app team and is looking for better customer intelligence workflows.",
+        "bio": "E-commerce founder running a Shopify app studio; writes about growth, retention, and customer intelligence for early-stage store teams.",
         "source": "LinkedIn engagement on e-commerce AI post",
         "url": "https://example.com/profiles/alex-rivera",
-        "engagement_context": "Commented that early-stage e-commerce teams need clearer customer segment signals."
+        "engagement_context": "Commented that his team still does manual store analysis in spreadsheets and needs better customer segment insights."
     },
     {
         "name": "Maya Chen",
         "title": "Head of Growth",
         "company": "ShopFlow Analytics",
-        "bio": "Leads growth for an e-commerce analytics startup serving independent store operators.",
+        "bio": "Leads growth for an e-commerce analytics startup; owns retention and merchandising experiments for independent store operators.",
         "source": "Newsletter subscriber",
         "url": "https://example.com/profiles/maya-chen",
-        "engagement_context": "Subscribed after reading about AI-assisted merchandising and retention workflows."
+        "engagement_context": "Subscribed after a post on AI customer intelligence, saying she is interested in better segment insights for growth teams."
     },
     {
         "name": "Jordan Park",
         "title": "Founder",
         "company": "GrowthDock",
-        "bio": "Builds tools for online merchants and frequently tests new customer acquisition channels.",
+        "bio": "Founder building e-commerce growth tools for online merchants; tests new customer acquisition channels weekly.",
         "source": "Product Hunt engagement",
         "url": "https://example.com/profiles/jordan-park",
-        "engagement_context": "Commented on a launch about replacing manual store analysis with better automation."
+        "engagement_context": "Commented that manual store analysis and spreadsheet-heavy growth planning are exactly the problems he is building around."
     },
     {
         "name": "Priya Shah",
         "title": "Product Lead",
         "company": "RetailOps Demo",
-        "bio": "Owns product-led growth experiments for a small e-commerce operations platform.",
+        "bio": "Owns product-led growth experiments for an early-stage e-commerce operations platform.",
         "source": "Webinar attendee",
         "url": "https://example.com/profiles/priya-shah",
-        "engagement_context": "Asked how AI can turn storefront data into weekly growth actions."
+        "engagement_context": "Asked how AI can replace spreadsheet-heavy growth planning with weekly storefront actions her team needs."
     },
     {
         "name": "Noah Kim",
@@ -97,10 +101,10 @@ SAMPLE_LEADS = [
         "name": "Aisha Morgan",
         "title": "Founder",
         "company": "StackCart",
-        "bio": "Runs a small e-commerce infrastructure startup focused on customer retention workflows.",
+        "bio": "Founder of an e-commerce retention platform for DTC brands; previously ran growth at a Shopify agency.",
         "source": "X post engagement",
         "url": "https://example.com/profiles/aisha-morgan",
-        "engagement_context": "Liked a thread about AI-native customer intelligence for online stores."
+        "engagement_context": "Posted that she is looking for better customer intelligence tooling because competitor research is slow and manual."
     },
     {
         "name": "Elena Brooks",
@@ -109,7 +113,7 @@ SAMPLE_LEADS = [
         "bio": "Builds internal dashboards and growth loops for e-commerce teams.",
         "source": "GitHub activity",
         "url": "https://example.com/profiles/elena-brooks",
-        "engagement_context": "Starred several e-commerce intelligence repositories."
+        "engagement_context": "Starred several e-commerce customer intelligence repositories."
     },
     {
         "name": "Kenji Sato",
@@ -124,10 +128,10 @@ SAMPLE_LEADS = [
         "name": "Sam Taylor",
         "title": "Founder",
         "company": "StoreWorks",
-        "bio": "Building tooling for store operators who want lightweight customer intelligence.",
+        "bio": "Building lightweight customer intelligence tooling for e-commerce store operators.",
         "source": "Founder community",
         "url": "https://example.com/profiles/sam-taylor",
-        "engagement_context": "Asked for recommendations on customer segment discovery tools."
+        "engagement_context": "Asked for recommendations on customer segment discovery tools, looking for something his small team can adopt."
     },
     {
         "name": "Riley Stone",
@@ -192,6 +196,35 @@ def resolve_leads(args, profile):
     exit_missing_input("leads", LEADS_SCHEMA_HINT, extra_lines)
 
 
+# Filler words that carry no ICP signal when matching phrase tokens.
+_MATCH_STOPWORDS = {"the", "and", "for", "with", "who", "that", "your", "our", "their", "into"}
+
+
+def _match_tokens(text: str) -> set:
+    """Normalize text to a set of comparable tokens.
+
+    Lowercase, split on non-alphanumerics, drop stopwords/short tokens, and
+    strip a plural 's' so "founders" matches "founder". Phrase-level ICP
+    fields ("e-commerce founders", "manual store analysis") almost never
+    appear verbatim in a real bio - token overlap is what actually signals fit.
+    """
+    tokens = set()
+    for raw in re.split(r"[^a-z0-9]+", str(text or "").lower()):
+        if len(raw) < 3 or raw in _MATCH_STOPWORDS:
+            continue
+        tokens.add(raw[:-1] if raw.endswith("s") and len(raw) > 3 else raw)
+    return tokens
+
+
+def _phrase_matches(phrase: str, text_tokens: set) -> bool:
+    """A phrase counts as matched when at least half its tokens appear."""
+    phrase_tokens = _match_tokens(phrase)
+    if not phrase_tokens:
+        return False
+    needed = max(1, (len(phrase_tokens) + 1) // 2)
+    return len(phrase_tokens & text_tokens) >= needed
+
+
 def calculate_icp_fit_score(lead: Dict[str, Any], profile: Dict[str, Any]) -> int:
     """Calculate how well a lead fits the ICP (0-100)."""
 
@@ -202,25 +235,27 @@ def calculate_icp_fit_score(lead: Dict[str, Any], profile: Dict[str, Any]) -> in
     title = str(lead.get("title") or "").lower()
     company = str(lead.get("company") or "").lower()
     bio = str(lead.get("bio") or "").lower()
+    engagement_text = str(lead.get("engagement_context") or "").lower()
 
-    # ICP buyer match
-    icp_buyer = icp.get("buyer", "").lower()
-    if icp_buyer and (icp_buyer in title or icp_buyer in bio):
-        score += 25
+    lead_tokens = _match_tokens(f"{title} {company} {bio} {engagement_text}")
 
-    # Pain point keyword matching
+    # ICP buyer match: token coverage, scaled to 25 points. "e-commerce
+    # founders" should match a lead whose title says Founder and whose bio
+    # talks e-commerce, even though the exact phrase never appears.
+    buyer_tokens = _match_tokens(icp.get("buyer", ""))
+    if buyer_tokens:
+        matched = len(buyer_tokens & lead_tokens)
+        score += int(25 * matched / len(buyer_tokens) + 0.5)
+
+    # Pain point / keyword matching: token overlap per phrase (up to 40 points)
     pain_points = icp.get("pain_points", []) or []
     keywords = icp.get("keywords", []) or []
 
-    all_keywords = list(pain_points) + list(keywords)
-    text_to_check = f"{title} {bio} {str(lead.get('engagement_context') or '')}".lower()
-
     keyword_matches = 0
-    for keyword in all_keywords:
-        if str(keyword).lower() in text_to_check:
+    for keyword in list(pain_points) + list(keywords):
+        if _phrase_matches(str(keyword), lead_tokens):
             keyword_matches += 1
 
-    # Score based on keyword matches (up to 40 points)
     score += min(40, keyword_matches * 8)
 
     # Company stage/size indicators
@@ -388,6 +423,7 @@ def save_lead_queue(args, scored_leads: List[Dict[str, Any]], profile: Dict[str,
         "low_priority": len([l for l in scored_leads if l["priority"] == "low"]),
         "avg_score": sum(l["icp_fit_score"] for l in scored_leads) / len(scored_leads) if scored_leads else 0,
         "leads": scored_leads,
+        "product_name": str(profile.get("product_name") or ""),
         "demo_mode": artifact_demo_mode(profile, data_source),
         "data_source": data_source,
     }

@@ -462,6 +462,7 @@ def save_trend_content(args, content_drafts: List[Dict[str, Any]], trends: List[
         "avg_viral_potential": sum(t["viral_potential"] for t in trends) / len(trends) if trends else 0,
         "relevant_trends": trends,
         "content_drafts": content_drafts,
+        "product_name": str(profile.get("product_name") or ""),
         "demo_mode": artifact_demo_mode(profile, data_source),
         "data_source": data_source,
     }

@@ -1,125 +1,125 @@
 {
-  "generated_at": "2026-07-02T11:37:17.738113",
+  "generated_at": "2026-07-05T15:15:16.108616",
   "total_leads": 10,
-  "high_priority": 0,
-  "medium_priority": 0,
-  "low_priority": 10,
-  "avg_score": 20.6,
+  "high_priority": 3,
+  "medium_priority": 2,
+  "low_priority": 5,
+  "avg_score": 53.9,
   "leads": [
-    {
-      "name": "Aisha Morgan",
-      "title": "Founder",
-      "company": "StackCart",
-      "bio": "Runs a small e-commerce infrastructure startup focused on customer retention workflows.",
-      "source": "X post engagement",
-      "url": "https://example.com/profiles/aisha-morgan",
-      "engagement_context": "Liked a thread about AI-native customer intelligence for online stores.",
-      "icp_fit_score": 34,
-      "personalized_message": "Hi Aisha Morgan,\n\nI came across your work at StackCart and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-      "message_drafts": {
-        "dm": "Hi Aisha Morgan,\n\nI came across your work at StackCart and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "email": "Hi Aisha Morgan,\n\nI came across your work at StackCart and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "reply": "Hi Aisha Morgan,\n\nI came across your work at StackCart and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
-      },
-      "approval_required": true,
-      "requires_human_approval": true,
-      "status": "draft",
-      "priority": "low"
-    },
-    {
-      "name": "Maya Chen",
-      "title": "Head of Growth",
-      "company": "ShopFlow Analytics",
-      "bio": "Leads growth for an e-commerce analytics startup serving independent store operators.",
-      "source": "Newsletter subscriber",
-      "url": "https://example.com/profiles/maya-chen",
-      "engagement_context": "Subscribed after reading about AI-assisted merchandising and retention workflows.",
-      "icp_fit_score": 32,
-      "personalized_message": "Hi Maya Chen,\n\nI came across your work at ShopFlow Analytics and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-      "message_drafts": {
-        "dm": "Hi Maya Chen,\n\nI came across your work at ShopFlow Analytics and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "email": "Hi Maya Chen,\n\nI came across your work at ShopFlow Analytics and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "reply": "Hi Maya Chen,\n\nI came across your work at ShopFlow Analytics and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
-      },
-      "approval_required": true,
-      "requires_human_approval": true,
-      "status": "draft",
-      "priority": "low"
-    },
     {
       "name": "Alex Rivera",
       "title": "Founder",
       "company": "CartPilot Labs",
-      "bio": "Runs a fast-growing Shopify app team and is looking for better customer intelligence workflows.",
+      "bio": "E-commerce founder running a Shopify app studio; writes about growth, retention, and customer intelligence for early-stage store teams.",
       "source": "LinkedIn engagement on e-commerce AI post",
       "url": "https://example.com/profiles/alex-rivera",
-      "engagement_context": "Commented that early-stage e-commerce teams need clearer customer segment signals.",
-      "icp_fit_score": 31,
-      "personalized_message": "Hi Alex Rivera,\n\nI came across your work at CartPilot Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+      "engagement_context": "Commented that his team still does manual store analysis in spreadsheets and needs better customer segment insights.",
+      "icp_fit_score": 85,
+      "personalized_message": "Hi Alex Rivera,\n\nI noticed your recent activity about manual store analysis - it really resonated with what we're seeing across the e-commerce intelligence.\n\nAs a Founder at CartPilot Labs, you might be interested in ExampleAI (https://example.ai). We built it specifically for professionals dealing with manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" That could be a game changer for CartPilot Labs's e-commerce intelligence work.\n\nWould love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!\n\nBest,\n[Your name]",
       "message_drafts": {
-        "dm": "Hi Alex Rivera,\n\nI came across your work at CartPilot Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "email": "Hi Alex Rivera,\n\nI came across your work at CartPilot Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "reply": "Hi Alex Rivera,\n\nI came across your work at CartPilot Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+        "dm": "Hi Alex Rivera,\n\nI noticed your recent activity about manual store analysis - it really resonated with what we're seeing across the e-commerce intelligence.\n\nAs a Founder at CartPilot Labs, you might be interested in ExampleAI (https://example.ai). We built it specifically for professionals dealing with manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" That could be a game changer for CartPilot Labs's e-commerce intelligence work.\n\nWould love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!\n\nBest,\n[Your name]",
+        "email": "Hi Alex Rivera,\n\nI noticed your recent activity about manual store analysis - it really resonated with what we're seeing across the e-commerce intelligence.\n\nAs a Founder at CartPilot Labs, you might be interested in ExampleAI (https://example.ai). We built it specifically for professionals dealing with manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" That could be a game changer for CartPilot Labs's e-commerce intelligence work.\n\nWould love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!\n\nBest,\n[Your name]",
+        "reply": "Hi Alex Rivera,\n\nI noticed your recent activity about manual store analysis - it really resonated with what we're seeing across the e-commerce intelligence.\n\nAs a Founder at CartPilot Labs, you might be interested in ExampleAI (https://example.ai). We built it specifically for professionals dealing with manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" That could be a game changer for CartPilot Labs's e-commerce intelligence work.\n\nWould love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!\n\nBest,\n[Your name]"
       },
       "approval_required": true,
       "requires_human_approval": true,
       "status": "draft",
-      "priority": "low"
+      "priority": "high"
     },
     {
       "name": "Jordan Park",
       "title": "Founder",
       "company": "GrowthDock",
-      "bio": "Builds tools for online merchants and frequently tests new customer acquisition channels.",
+      "bio": "Founder building e-commerce growth tools for online merchants; tests new customer acquisition channels weekly.",
       "source": "Product Hunt engagement",
       "url": "https://example.com/profiles/jordan-park",
-      "engagement_context": "Commented on a launch about replacing manual store analysis with better automation.",
-      "icp_fit_score": 23,
-      "personalized_message": "Hi Jordan Park,\n\nI came across your work at GrowthDock and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+      "engagement_context": "Commented that manual store analysis and spreadsheet-heavy growth planning are exactly the problems he is building around.",
+      "icp_fit_score": 85,
+      "personalized_message": "Hi Jordan Park,\n\nI noticed your recent activity about manual store analysis - it really resonated with what we're seeing across the e-commerce intelligence.\n\nAs a Founder at GrowthDock, you might be interested in ExampleAI (https://example.ai). We built it specifically for professionals dealing with manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" That could be a game changer for GrowthDock's e-commerce intelligence work.\n\nWould love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!\n\nBest,\n[Your name]",
       "message_drafts": {
-        "dm": "Hi Jordan Park,\n\nI came across your work at GrowthDock and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "email": "Hi Jordan Park,\n\nI came across your work at GrowthDock and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "reply": "Hi Jordan Park,\n\nI came across your work at GrowthDock and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+        "dm": "Hi Jordan Park,\n\nI noticed your recent activity about manual store analysis - it really resonated with what we're seeing across the e-commerce intelligence.\n\nAs a Founder at GrowthDock, you might be interested in ExampleAI (https://example.ai). We built it specifically for professionals dealing with manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" That could be a game changer for GrowthDock's e-commerce intelligence work.\n\nWould love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!\n\nBest,\n[Your name]",
+        "email": "Hi Jordan Park,\n\nI noticed your recent activity about manual store analysis - it really resonated with what we're seeing across the e-commerce intelligence.\n\nAs a Founder at GrowthDock, you might be interested in ExampleAI (https://example.ai). We built it specifically for professionals dealing with manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" That could be a game changer for GrowthDock's e-commerce intelligence work.\n\nWould love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!\n\nBest,\n[Your name]",
+        "reply": "Hi Jordan Park,\n\nI noticed your recent activity about manual store analysis - it really resonated with what we're seeing across the e-commerce intelligence.\n\nAs a Founder at GrowthDock, you might be interested in ExampleAI (https://example.ai). We built it specifically for professionals dealing with manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" That could be a game changer for GrowthDock's e-commerce intelligence work.\n\nWould love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!\n\nBest,\n[Your name]"
       },
       "approval_required": true,
       "requires_human_approval": true,
       "status": "draft",
-      "priority": "low"
+      "priority": "high"
     },
     {
-      "name": "Priya Shah",
-      "title": "Product Lead",
-      "company": "RetailOps Demo",
-      "bio": "Owns product-led growth experiments for a small e-commerce operations platform.",
-      "source": "Webinar attendee",
-      "url": "https://example.com/profiles/priya-shah",
-      "engagement_context": "Asked how AI can turn storefront data into weekly growth actions.",
-      "icp_fit_score": 21,
-      "personalized_message": "Hi Priya Shah,\n\nI came across your work at RetailOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+      "name": "Aisha Morgan",
+      "title": "Founder",
+      "company": "StackCart",
+      "bio": "Founder of an e-commerce retention platform for DTC brands; previously ran growth at a Shopify agency.",
+      "source": "X post engagement",
+      "url": "https://example.com/profiles/aisha-morgan",
+      "engagement_context": "Posted that she is looking for better customer intelligence tooling because competitor research is slow and manual.",
+      "icp_fit_score": 85,
+      "personalized_message": "Hi Aisha Morgan,\n\nI noticed your recent activity about manual store analysis - it really resonated with what we're seeing across the e-commerce intelligence.\n\nAs a Founder at StackCart, you might be interested in ExampleAI (https://example.ai). We built it specifically for professionals dealing with manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" That could be a game changer for StackCart's e-commerce intelligence work.\n\nWould love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!\n\nBest,\n[Your name]",
       "message_drafts": {
-        "dm": "Hi Priya Shah,\n\nI came across your work at RetailOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "email": "Hi Priya Shah,\n\nI came across your work at RetailOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "reply": "Hi Priya Shah,\n\nI came across your work at RetailOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+        "dm": "Hi Aisha Morgan,\n\nI noticed your recent activity about manual store analysis - it really resonated with what we're seeing across the e-commerce intelligence.\n\nAs a Founder at StackCart, you might be interested in ExampleAI (https://example.ai). We built it specifically for professionals dealing with manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" That could be a game changer for StackCart's e-commerce intelligence work.\n\nWould love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!\n\nBest,\n[Your name]",
+        "email": "Hi Aisha Morgan,\n\nI noticed your recent activity about manual store analysis - it really resonated with what we're seeing across the e-commerce intelligence.\n\nAs a Founder at StackCart, you might be interested in ExampleAI (https://example.ai). We built it specifically for professionals dealing with manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" That could be a game changer for StackCart's e-commerce intelligence work.\n\nWould love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!\n\nBest,\n[Your name]",
+        "reply": "Hi Aisha Morgan,\n\nI noticed your recent activity about manual store analysis - it really resonated with what we're seeing across the e-commerce intelligence.\n\nAs a Founder at StackCart, you might be interested in ExampleAI (https://example.ai). We built it specifically for professionals dealing with manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" That could be a game changer for StackCart's e-commerce intelligence work.\n\nWould love to get your thoughts if you have 5 minutes to check it out. Happy to answer any questions!\n\nBest,\n[Your name]"
       },
       "approval_required": true,
       "requires_human_approval": true,
       "status": "draft",
-      "priority": "low"
+      "priority": "high"
     },
     {
       "name": "Sam Taylor",
       "title": "Founder",
       "company": "StoreWorks",
-      "bio": "Building tooling for store operators who want lightweight customer intelligence.",
+      "bio": "Building lightweight customer intelligence tooling for e-commerce store operators.",
       "source": "Founder community",
       "url": "https://example.com/profiles/sam-taylor",
-      "engagement_context": "Asked for recommendations on customer segment discovery tools.",
-      "icp_fit_score": 18,
-      "personalized_message": "Hi Sam Taylor,\n\nI came across your work at StoreWorks and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+      "engagement_context": "Asked for recommendations on customer segment discovery tools, looking for something his small team can adopt.",
+      "icp_fit_score": 64,
+      "personalized_message": "Hi Sam Taylor,\n\nSaw your activity around Founder and thought ExampleAI might be relevant for your work at StoreWorks.\n\nE-commerce intelligence engine for growth teams - specifically designed for e-commerce founders who need better solutions for manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" It could help with the challenges you mentioned.\n\nWorth a quick look: https://example.ai\n\nBest,\n[Your name]",
       "message_drafts": {
-        "dm": "Hi Sam Taylor,\n\nI came across your work at StoreWorks and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "email": "Hi Sam Taylor,\n\nI came across your work at StoreWorks and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "reply": "Hi Sam Taylor,\n\nI came across your work at StoreWorks and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+        "dm": "Hi Sam Taylor,\n\nSaw your activity around Founder and thought ExampleAI might be relevant for your work at StoreWorks.\n\nE-commerce intelligence engine for growth teams - specifically designed for e-commerce founders who need better solutions for manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" It could help with the challenges you mentioned.\n\nWorth a quick look: https://example.ai\n\nBest,\n[Your name]",
+        "email": "Hi Sam Taylor,\n\nSaw your activity around Founder and thought ExampleAI might be relevant for your work at StoreWorks.\n\nE-commerce intelligence engine for growth teams - specifically designed for e-commerce founders who need better solutions for manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" It could help with the challenges you mentioned.\n\nWorth a quick look: https://example.ai\n\nBest,\n[Your name]",
+        "reply": "Hi Sam Taylor,\n\nSaw your activity around Founder and thought ExampleAI might be relevant for your work at StoreWorks.\n\nE-commerce intelligence engine for growth teams - specifically designed for e-commerce founders who need better solutions for manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" It could help with the challenges you mentioned.\n\nWorth a quick look: https://example.ai\n\nBest,\n[Your name]"
+      },
+      "approval_required": true,
+      "requires_human_approval": true,
+      "status": "draft",
+      "priority": "medium"
+    },
+    {
+      "name": "Maya Chen",
+      "title": "Head of Growth",
+      "company": "ShopFlow Analytics",
+      "bio": "Leads growth for an e-commerce analytics startup; owns retention and merchandising experiments for independent store operators.",
+      "source": "Newsletter subscriber",
+      "url": "https://example.com/profiles/maya-chen",
+      "engagement_context": "Subscribed after a post on AI customer intelligence, saying she is interested in better segment insights for growth teams.",
+      "icp_fit_score": 63,
+      "personalized_message": "Hi Maya Chen,\n\nSaw your activity around Newsletter and thought ExampleAI might be relevant for your work at ShopFlow Analytics.\n\nE-commerce intelligence engine for growth teams - specifically designed for e-commerce founders who need better solutions for manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" It could help with the challenges you mentioned.\n\nWorth a quick look: https://example.ai\n\nBest,\n[Your name]",
+      "message_drafts": {
+        "dm": "Hi Maya Chen,\n\nSaw your activity around Newsletter and thought ExampleAI might be relevant for your work at ShopFlow Analytics.\n\nE-commerce intelligence engine for growth teams - specifically designed for e-commerce founders who need better solutions for manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" It could help with the challenges you mentioned.\n\nWorth a quick look: https://example.ai\n\nBest,\n[Your name]",
+        "email": "Hi Maya Chen,\n\nSaw your activity around Newsletter and thought ExampleAI might be relevant for your work at ShopFlow Analytics.\n\nE-commerce intelligence engine for growth teams - specifically designed for e-commerce founders who need better solutions for manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" It could help with the challenges you mentioned.\n\nWorth a quick look: https://example.ai\n\nBest,\n[Your name]",
+        "reply": "Hi Maya Chen,\n\nSaw your activity around Newsletter and thought ExampleAI might be relevant for your work at ShopFlow Analytics.\n\nE-commerce intelligence engine for growth teams - specifically designed for e-commerce founders who need better solutions for manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\" It could help with the challenges you mentioned.\n\nWorth a quick look: https://example.ai\n\nBest,\n[Your name]"
+      },
+      "approval_required": true,
+      "requires_human_approval": true,
+      "status": "draft",
+      "priority": "medium"
+    },
+    {
+      "name": "Priya Shah",
+      "title": "Product Lead",
+      "company": "RetailOps Demo",
+      "bio": "Owns product-led growth experiments for an early-stage e-commerce operations platform.",
+      "source": "Webinar attendee",
+      "url": "https://example.com/profiles/priya-shah",
+      "engagement_context": "Asked how AI can replace spreadsheet-heavy growth planning with weekly storefront actions her team needs.",
+      "icp_fit_score": 47,
+      "personalized_message": "Hi Priya Shah,\n\nI came across your work at RetailOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+      "message_drafts": {
+        "dm": "Hi Priya Shah,\n\nI came across your work at RetailOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+        "email": "Hi Priya Shah,\n\nI came across your work at RetailOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+        "reply": "Hi Priya Shah,\n\nI came across your work at RetailOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
       },
       "approval_required": true,
       "requires_human_approval": true,
@@ -133,53 +133,13 @@
       "bio": "Builds internal dashboards and growth loops for e-commerce teams.",
       "source": "GitHub activity",
       "url": "https://example.com/profiles/elena-brooks",
-      "engagement_context": "Starred several e-commerce intelligence repositories.",
-      "icp_fit_score": 16,
+      "engagement_context": "Starred several e-commerce customer intelligence repositories.",
+      "icp_fit_score": 37,
       "personalized_message": "Hi Elena Brooks,\n\nI came across your work at Commerce Data Collective and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
       "message_drafts": {
         "dm": "Hi Elena Brooks,\n\nI came across your work at Commerce Data Collective and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
         "email": "Hi Elena Brooks,\n\nI came across your work at Commerce Data Collective and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
         "reply": "Hi Elena Brooks,\n\nI came across your work at Commerce Data Collective and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
-      },
-      "approval_required": true,
-      "requires_human_approval": true,
-      "status": "draft",
-      "priority": "low"
-    },
-    {
-      "name": "Kenji Sato",
-      "title": "Growth Operations Lead",
-      "company": "Checkout Pathways",
-      "bio": "Runs checkout optimization and lifecycle experiments for online stores.",
-      "source": "Conference speaker list",
-      "url": "https://example.com/profiles/kenji-sato",
-      "engagement_context": "Talk title mentioned the limits of current growth planning tools.",
-      "icp_fit_score": 13,
-      "personalized_message": "Hi Kenji Sato,\n\nI came across your work at Checkout Pathways and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-      "message_drafts": {
-        "dm": "Hi Kenji Sato,\n\nI came across your work at Checkout Pathways and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "email": "Hi Kenji Sato,\n\nI came across your work at Checkout Pathways and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "reply": "Hi Kenji Sato,\n\nI came across your work at Checkout Pathways and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
-      },
-      "approval_required": true,
-      "requires_human_approval": true,
-      "status": "draft",
-      "priority": "low"
-    },
-    {
-      "name": "Riley Stone",
-      "title": "Marketing Lead",
-      "company": "LaunchOps Demo",
-      "bio": "Runs launch and creator experiments for early-stage e-commerce products.",
-      "source": "Launch community",
-      "url": "https://example.com/profiles/riley-stone",
-      "engagement_context": "Engaged with posts about weekly GTM sprint planning.",
-      "icp_fit_score": 13,
-      "personalized_message": "Hi Riley Stone,\n\nI came across your work at LaunchOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-      "message_drafts": {
-        "dm": "Hi Riley Stone,\n\nI came across your work at LaunchOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "email": "Hi Riley Stone,\n\nI came across your work at LaunchOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
-        "reply": "Hi Riley Stone,\n\nI came across your work at LaunchOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
       },
       "approval_required": true,
       "requires_human_approval": true,
@@ -194,7 +154,7 @@
       "source": "Community discussion",
       "url": "https://example.com/profiles/noah-kim",
       "engagement_context": "Posted about needing simpler ways to prioritize campaigns from store data.",
-      "icp_fit_score": 5,
+      "icp_fit_score": 26,
       "personalized_message": "Hi Noah Kim,\n\nI came across your work at Catalog Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
       "message_drafts": {
         "dm": "Hi Noah Kim,\n\nI came across your work at Catalog Labs and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
@@ -205,8 +165,49 @@
       "requires_human_approval": true,
       "status": "draft",
       "priority": "low"
+    },
+    {
+      "name": "Riley Stone",
+      "title": "Marketing Lead",
+      "company": "LaunchOps Demo",
+      "bio": "Runs launch and creator experiments for early-stage e-commerce products.",
+      "source": "Launch community",
+      "url": "https://example.com/profiles/riley-stone",
+      "engagement_context": "Engaged with posts about weekly GTM sprint planning.",
+      "icp_fit_score": 26,
+      "personalized_message": "Hi Riley Stone,\n\nI came across your work at LaunchOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+      "message_drafts": {
+        "dm": "Hi Riley Stone,\n\nI came across your work at LaunchOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+        "email": "Hi Riley Stone,\n\nI came across your work at LaunchOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+        "reply": "Hi Riley Stone,\n\nI came across your work at LaunchOps Demo and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+      },
+      "approval_required": true,
+      "requires_human_approval": true,
+      "status": "draft",
+      "priority": "low"
+    },
+    {
+      "name": "Kenji Sato",
+      "title": "Growth Operations Lead",
+      "company": "Checkout Pathways",
+      "bio": "Runs checkout optimization and lifecycle experiments for online stores.",
+      "source": "Conference speaker list",
+      "url": "https://example.com/profiles/kenji-sato",
+      "engagement_context": "Talk title mentioned the limits of current growth planning tools.",
+      "icp_fit_score": 21,
+      "personalized_message": "Hi Kenji Sato,\n\nI came across your work at Checkout Pathways and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+      "message_drafts": {
+        "dm": "Hi Kenji Sato,\n\nI came across your work at Checkout Pathways and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+        "email": "Hi Kenji Sato,\n\nI came across your work at Checkout Pathways and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]",
+        "reply": "Hi Kenji Sato,\n\nI came across your work at Checkout Pathways and thought you might be interested in ExampleAI.\n\nE-commerce intelligence engine for growth teams - we built it to help e-commerce founders overcome manual store analysis.\n\nEarly feedback has been encouraging, with users telling us: \"Turns store and customer signals into weekly GTM actions.\"\n\nCheck it out if it seems relevant: https://example.ai\n\nBest,\n[Your name]"
+      },
+      "approval_required": true,
+      "requires_human_approval": true,
+      "status": "draft",
+      "priority": "low"
     }
   ],
+  "product_name": "ExampleAI",
   "demo_mode": true,
   "data_source": "sample_fixture"
 }

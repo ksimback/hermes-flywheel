@@ -204,6 +204,26 @@ def artifact_demo_mode(profile, data_source):
     return data_source == "sample_fixture" or bool(profile.get("demo_mode", False))
 
 
+def artifact_is_stale(artifact, profile):
+    """Provenance rule: why this artifact must NOT be consumed with this
+    profile, or None if it may be.
+
+    Stale = a demo-mode artifact being read by a real (non-demo) run, or an
+    artifact stamped for a different product. Every artifact consumer
+    (sprint_report, mpp_spend_planner, flywheel.py cleanup) must apply this,
+    or leftovers from a prior --demo run get presented as real data.
+    """
+    if not isinstance(artifact, dict) or not artifact:
+        return None
+    if artifact.get("demo_mode") and not profile.get("demo_mode", False):
+        return "demo-mode artifact left over from a --demo run"
+    artifact_product = str(artifact.get("product_name") or "")
+    product = str(profile.get("product_name") or "")
+    if artifact_product and product and artifact_product != product:
+        return f"stamped for '{artifact_product}', current product is '{product}'"
+    return None
+
+
 def get_proof_points(profile):
     """Sanitized positioning proof points for outbound/content copy.
 

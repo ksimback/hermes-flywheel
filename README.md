@@ -38,6 +38,8 @@ python skills/flywheel-agent/scripts/flywheel.py doctor
 
 `doctor` confirms your Python version, that the pipeline scripts are present, and which optional keys are configured. If it prints `✓ Ready.`, you can run the demo immediately (see [Verify your install](#verify-your-install)).
 
+Shell snippets in this README are written for bash; they work as-is in Git Bash on Windows, and PowerShell equivalents are noted inline where they differ. If you prefer an isolated environment, create one first with `python -m venv .venv` and activate it.
+
 ## What is included
 
 ```text
@@ -71,10 +73,12 @@ Standalone, no Hermes. The pipeline always produces launch planning and approval
 ```bash
 # 1. (optional) Live backlink + trend research
 export SERPER_API_KEY=sk_your_serper_key            # from serper.dev; unlocks backlinks + trends
+#   PowerShell: $env:SERPER_API_KEY = "sk_your_serper_key"
 
 # 2. (optional) Your warm-outbound targets
 #    columns: name,title,company,bio,source,url,engagement_context
 cp data/leads.example.csv data/leads.csv            # then edit with your real leads
+#   PowerShell: Copy-Item data/leads.example.csv data/leads.csv
 
 # 3. Compile the sprint from your product context
 python skills/flywheel-agent/scripts/flywheel.py run \
@@ -118,6 +122,8 @@ start my acquisition flywheel
 ```
 
 ### Fresh machine
+
+The Hermes installer targets Linux/macOS (on Windows, use WSL — or stay on the [standalone CLI](#a-standalone-cli-start-here), which is fully Windows-native):
 
 ```bash
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash

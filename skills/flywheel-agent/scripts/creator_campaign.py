@@ -408,6 +408,7 @@ def save_creator_campaign(args, proposals: List[Dict[str, Any]], spend_requests:
         "avg_relevance_score": sum(p["relevance_score"] for p in proposals) / len(proposals) if proposals else 0,
         "campaign_proposals": proposals,
         "spend_requests": spend_requests,
+        "product_name": str(profile.get("product_name") or ""),
         "demo_mode": artifact_demo_mode(profile, data_source),
         "data_source": data_source,
     }

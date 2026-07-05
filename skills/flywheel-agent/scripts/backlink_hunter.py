@@ -307,6 +307,7 @@ def save_opportunities(opportunities: List[Dict[str, Any]], args, profile: Dict[
         "generated_at": datetime.now().isoformat(),
         "total_opportunities": len(opportunities),
         "opportunities": opportunities,
+        "product_name": str(profile.get("product_name") or ""),
         "demo_mode": artifact_demo_mode(profile, data_source),
         "data_source": data_source
     }

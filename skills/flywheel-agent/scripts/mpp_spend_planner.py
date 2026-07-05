@@ -25,6 +25,7 @@ from typing import Any, Dict, List, Optional
 from _common import (
     EXIT_ERROR,
     EXIT_OK,
+    artifact_is_stale,
     build_parser,
     configure_stdout,
     load_profile,
@@ -235,7 +236,7 @@ def build_receipts(cards: List[Dict[str, Any]]) -> (List[Dict[str, Any]], bool):
 
 
 def save_outputs(args, cards: List[Dict[str, Any]], receipts: List[Dict[str, Any]],
-                 demo_mode: bool, used_stripe: bool) -> None:
+                 demo_mode: bool, used_stripe: bool, product_name: str = "") -> None:
     now = datetime.now().isoformat()
     total = sum(card["amount_usd"] for card in cards)
     # Spend cards are always authorization challenges (no charge), so they
@@ -256,6 +257,7 @@ def save_outputs(args, cards: List[Dict[str, Any]], receipts: List[Dict[str, Any
         "total_spend_cards": len(cards),
         "total_pending_amount_usd": total,
         "spend_cards": cards,
+        "product_name": product_name,
         "demo_mode": demo_mode,
         "data_source": "pipeline_artifacts",
     }
@@ -268,6 +270,7 @@ def save_outputs(args, cards: List[Dict[str, Any]], receipts: List[Dict[str, Any
         "stripe_test_mode": used_stripe,
         "total_receipts": len(receipts),
         "receipts": receipts,
+        "product_name": product_name,
         "demo_mode": demo_mode,
         "data_source": "pipeline_artifacts",
     }
@@ -330,11 +333,19 @@ def main() -> int:
             if data is None:
                 print(f"⚠️  Note: {filename} not found at {path} — continuing without that sprint section.")
                 data = {}
+            else:
+                # Provenance guard: never build spend cards from another
+                # run's leftovers (e.g. demo creator requests in a real run).
+                stale_reason = artifact_is_stale(data, profile)
+                if stale_reason:
+                    print(f"⚠️  Ignoring stale {filename}: {stale_reason}.")
+                    data = {}
             all_data[key] = data
 
         cards = generate_mpp_spend_cards(profile, all_data)
         receipts, used_stripe = build_receipts(cards)
-        save_outputs(args, cards, receipts, demo_mode, used_stripe)
+        save_outputs(args, cards, receipts, demo_mode, used_stripe,
+                     product_name=str(profile.get("product_name") or ""))
         print(f"✓ Generated {len(cards)} MPP spend cards totaling ${sum(card['amount_usd'] for card in cards)}")
         if used_stripe:
             print("  (Real Stripe TEST-mode PaymentIntents created — unconfirmed, no charge. "

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-02T11:37:17.822644",
+  "generated_at": "2026-07-05T15:15:16.193352",
   "total_trends": 1,
   "total_content_pieces": 5,
   "avg_viral_potential": 78.0,
@@ -108,6 +108,7 @@
       "posting_guidelines": "Post consistently at same time. Use clear thumbnails. Optimize for mobile viewing. Cross-promote on other platforms."
     }
   ],
+  "product_name": "ExampleAI",
   "demo_mode": true,
   "data_source": "sample_fixture"
 }
