@@ -71,3 +71,26 @@ def test_outbound_messages_are_well_formed():
     # The proof point must read as a natural quoted sentence, not be spliced
     # mid-clause (the v0.2.0 grammar regression).
     assert "reporting Turns store" not in text
+
+
+def test_demo_first_impression_shows_differentiated_leads():
+    """The demo sprint is the top of the funnel: the shipped outbound queue
+    must show the scorer separating leads (some high-priority, a credible
+    average, a non-zero response estimate) - not the all-low/0-expected wall
+    that made the first-run output read as broken."""
+    import json
+
+    queue = json.loads((ROOT / "demo" / "demo-output" / "outbound_queue.json")
+                       .read_text(encoding="utf-8"))
+    assert queue["high_priority"] >= 1, "demo must surface at least one high-priority lead"
+    assert queue["avg_score"] >= 40, "demo average ICP fit should look credible"
+    assert queue["low_priority"] >= 1, "a realistic demo list still has weak leads"
+
+    report = json.loads((ROOT / "demo" / "demo-output" / "weekly_flywheel_sprint.json")
+                        .read_text(encoding="utf-8"))
+    impact = report["sprint_summary"]["estimated_weekly_impact"]
+    assert impact["estimated_outbound_responses"] >= 1
+
+    sprint_md = (ROOT / "demo" / "demo-output" / "weekly_flywheel_sprint.md").read_text(encoding="utf-8")
+    assert "**Priority Outreach:**\n1." in sprint_md.replace("\r\n", "\n"), \
+        "Priority Outreach must list leads, not render empty"

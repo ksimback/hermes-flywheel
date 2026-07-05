@@ -15,6 +15,7 @@ from _common import (
     EXIT_OK,
     ROOT,
     anchor,
+    artifact_is_stale,
     build_parser,
     configure_stdout,
     load_profile,
@@ -206,10 +207,16 @@ def estimate_weekly_impact(all_data: Dict[str, Any]) -> Dict[str, Any]:
     high_impact_opps = len([o for o in opportunities if o.get("estimated_impact") == "high"])
     estimated_backlink_traffic = high_impact_opps * 50  # Conservative monthly traffic per high-impact backlink
 
-    # Outbound estimates
+    # Outbound estimates: high-fit leads ~15% response, medium-fit ~8%.
+    # Round rather than truncate, and never show 0 when high-fit leads
+    # exist - "0 expected" reads as "don't bother" for a queue that is
+    # genuinely worth sending.
     leads = all_data.get("outbound_queue", {}).get("leads", [])
     high_priority_leads = len([l for l in leads if l.get("priority") == "high"])
-    estimated_outbound_responses = int(high_priority_leads * 0.15)  # 15% response rate
+    medium_priority_leads = len([l for l in leads if l.get("priority") == "medium"])
+    estimated_outbound_responses = round(high_priority_leads * 0.15 + medium_priority_leads * 0.08)
+    if high_priority_leads and not estimated_outbound_responses:
+        estimated_outbound_responses = 1
 
     # Content estimates
     content_drafts = all_data.get("trend_content", {}).get("content_drafts", [])
@@ -245,6 +252,34 @@ SECTION_ARTIFACT = {
     "content": "trend_content",
     "creator": "creator_campaign",
 }
+
+# How to regenerate each artifact, for stale-artifact warnings.
+ARTIFACT_REGEN_HINT = {
+    "launch_plan": "launch_plan.py",
+    "backlink_opportunities": "backlink_hunter.py",
+    "outbound_queue": "lead_scorer.py",
+    "creator_campaign": "creator_campaign.py",
+    "mpp_spend_cards": "mpp_spend_planner.py",
+    "mpp_receipts": "mpp_spend_planner.py",
+    "trend_content": "trend_scan.py",
+}
+
+
+def drop_stale_artifacts(all_data: Dict[str, Any], profile: Dict[str, Any]) -> List[tuple]:
+    """Provenance guard: exclude artifacts that don't belong to this run.
+
+    A real (non-demo) sprint must never absorb leftover demo-mode artifacts
+    from a prior --demo run, and no sprint may absorb artifacts stamped for a
+    different product. Mutates all_data (stale entries -> None) and returns
+    [(artifact_key, reason)] for reporting.
+    """
+    dropped = []
+    for key, artifact in all_data.items():
+        reason = artifact_is_stale(artifact, profile)
+        if reason:
+            all_data[key] = None
+            dropped.append((key, reason))
+    return dropped
 
 
 def generate_next_week_plan(profile: Dict[str, Any], all_data: Dict[str, Any],
@@ -729,8 +764,13 @@ Flywheel should keep routine progress quiet and return the acknowledgement, draf
 
 **Priority Outreach:**
 """
-        high_priority_leads = [l for l in leads_data["leads"] if l.get("priority") == "high"][:3]
-        for i, lead in enumerate(high_priority_leads, 1):
+        # Lead with the high-priority leads; if none cleared the bar, show the
+        # top-scored leads instead of an empty section.
+        priority_leads = [l for l in leads_data["leads"] if l.get("priority") == "high"][:3]
+        if not priority_leads:
+            priority_leads = leads_data["leads"][:3]
+            md_content += "*No leads cleared the high-priority bar this week - top-scored leads below:*\n"
+        for i, lead in enumerate(priority_leads, 1):
             md_content += f"{i}. **{lead['name']}** at {lead['company']} (Score: {lead.get('icp_fit_score', 0)}) - {lead.get('title', 'Professional')}\n"
     else:
         md_content += "\n*No outbound queue generated - run lead_scorer.py*\n"
@@ -887,6 +927,14 @@ def main():
             "mpp_receipts": load_json_safely(out_path(args, "mpp_receipts.json")),
             "trend_content": load_json_safely(out_path(args, "trend_content.json"))
         }
+
+        # Provenance guard: never compile another run's leftovers into this
+        # sprint (demo fixtures into a real run, or another product's data).
+        stale = drop_stale_artifacts(all_data, profile)
+        for key, reason in stale:
+            hint = ARTIFACT_REGEN_HINT.get(key, "the matching stage script")
+            print(f"⚠️  Ignoring stale {key}.json: {reason}.")
+            print(f"    Re-run {hint} with real inputs (or delete the file) to include this section.")
 
         # Count loaded components
         loaded_components = len([k for k, v in all_data.items() if v is not None])

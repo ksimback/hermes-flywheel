@@ -433,6 +433,20 @@ def validate_sprint_report(path) -> List[str]:
         if not next_week.get("focus_areas") or len(next_week["focus_areas"]) == 0:
             issues.append("Sprint report missing next week focus areas")
 
+        # Provenance invariant: a real (non-demo) report must never contain
+        # demo-mode artifacts - stale --demo leftovers presented as real data
+        # would break the "never fabricates data" guarantee. sprint_report
+        # drops these at compile time; this is the regression guard. A plain
+        # string (not Completeness) so --partial can never downgrade it.
+        if not summary.get("demo_mode"):
+            detailed = report.get("detailed_data", {}) or {}
+            for section, artifact in detailed.items():
+                if isinstance(artifact, dict) and artifact.get("demo_mode"):
+                    issues.append(
+                        f"Real (non-demo) sprint report contains demo-mode artifact '{section}' - "
+                        "stale --demo output must not be compiled into a real run"
+                    )
+
     except FileNotFoundError:
         issues.append("Sprint report file not found")
     except json.JSONDecodeError:

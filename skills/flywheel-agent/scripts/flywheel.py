@@ -18,15 +18,60 @@ can fill the gaps with --input and re-run. Nothing is ever silently faked.
 """
 
 import argparse
+import json
 import os
 import subprocess
 import sys
 from pathlib import Path
 
-from _common import configure_stdout
+from _common import anchor, artifact_is_stale, configure_stdout
 
 SCRIPTS = Path(__file__).resolve().parent
 PY = sys.executable
+
+# Artifact files owned by each skippable stage (json first, then siblings).
+_STAGE_ARTIFACTS = {
+    "backlinks": ("backlink_opportunities.json", "backlink_opportunities.md"),
+    "outbound": ("outbound_queue.json", "outbound_queue.md"),
+    "creators": ("creator_campaign.json", "creator_campaign.md"),
+    "trends": ("trend_content.json", "trend_content.md"),
+}
+
+
+def _clear_stale_skipped_artifacts(args, skipped):
+    """A skipped stage must leave no stale artifact behind.
+
+    A prior run in the same output dir (typically --demo) may have written a
+    skipped stage's files; without cleanup those leftovers would sit next to
+    real output and get consumed downstream. Only files that are provably
+    stale for the current profile (demo-mode in a real run, or a different
+    product's stamp) are removed - a re-run of the SAME product keeps its own
+    artifacts, so continuing a sprint stays non-destructive.
+    """
+    try:
+        with anchor(args.profile).open(encoding="utf-8") as f:
+            profile = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return
+    for entry in skipped:
+        stage = entry.split(" ", 1)[0]
+        filenames = _STAGE_ARTIFACTS.get(stage)
+        if not filenames:
+            continue
+        json_path = anchor(str(Path(args.output_dir) / filenames[0]))
+        try:
+            with json_path.open(encoding="utf-8") as f:
+                artifact = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            continue
+        reason = artifact_is_stale(artifact, profile)
+        if not reason:
+            continue
+        for name in filenames:
+            path = anchor(str(Path(args.output_dir) / name))
+            if path.exists():
+                path.unlink()
+        print(f"🧹 Removed stale {filenames[0]} ({reason}); the {stage} section stays skipped until real input is supplied.")
 
 
 def _run(script, *args):
@@ -80,12 +125,14 @@ def cmd_run(args):
     _stage_leads(args, prof, out, skipped, crashed)
     _stage_research(args, "trend_scan.py", "trends", prof, out, skipped, crashed)
 
-    # 4. Creators, MPP
+    # 4. Creators, then stale-leftover cleanup, then MPP (which reads the
+    #    sibling artifacts and must never see another run's files).
     if args.demo:
         stage("creators", "creator_campaign.py", "--demo")
     else:
         if stage("creators", "creator_campaign.py") == 2:
             skipped.append("creators (needs --input creator research)")
+    _clear_stale_skipped_artifacts(args, skipped)
     stage("mpp", "mpp_spend_planner.py")
 
     # 5. Compile + validate. A partial run (stages skipped for lack of input)

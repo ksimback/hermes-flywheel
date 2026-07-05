@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.4.3 — 2026-07-05
+
+### Provenance guard (fixes a real honesty bug, found by a cold clone-and-follow test)
+- **A real run can no longer absorb another run's leftovers.** Previously: `flywheel.py run --demo`, then a real sprint for your own product in the same output dir, produced a report containing the demo's fake leads, backlinks, and creator spend cards — labelled `Demo Mode: False`. Now a single staleness rule (`_common.artifact_is_stale`) is enforced at every consumer: `sprint_report.py` and `mpp_spend_planner.py` refuse stale artifacts (demo-mode leftovers in a real run, or artifacts stamped for a different product), and `flywheel.py run` deletes a skipped stage's stale files outright, with a clear message. Re-running the *same* product still continues its sprint non-destructively.
+- All stage artifacts now carry a `product_name` stamp alongside `demo_mode`.
+- `validate_outputs.py` hard-fails a real (non-demo) report that contains demo-mode artifacts — as a plain error that `--partial` can never downgrade.
+
+### Lead scoring that actually differentiates (demo and real CSVs)
+- **Token-based ICP matching.** Buyer, pain-point, and keyword fit were matched as whole-phrase substrings ("e-commerce founders" had to appear verbatim in a bio), which made 65 of 100 points structurally unreachable — every lead scored "low" and outbound predicted "0 expected responses". Scoring now tokenizes phrases (with light plural-stemming and stopword removal): the buyer match scales with token coverage, and a phrase counts when at least half its tokens appear. Real founder CSVs benefit the same way the demo does.
+- The demo lead fixture now reads like a realistically scraped mixed-quality list, and scores accordingly: 3 high / 2 medium / 5 low (avg ~54) instead of ten lows (avg ~21).
+- The response estimate includes medium-priority leads (15% high + 8% medium, rounded) and never renders a deflating "0 expected" when high-fit leads exist. An empty "Priority Outreach" section now falls back to the top-scored leads with an honest note.
+
+### Windows onboarding
+- README shell snippets get PowerShell equivalents inline (`$env:...`, `Copy-Item`), a Git Bash note, an optional venv line, and a callout that the Hermes installer is Linux/macOS-only (the standalone CLI is fully Windows-native).
+
 ## 0.4.2 — 2026-07-02
 
 ### Documentation for real users (get a working sprint for your company)
